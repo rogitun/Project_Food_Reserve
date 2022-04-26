@@ -1,6 +1,6 @@
-# ground,
+# 음식점 예약
 토이프로젝트
 
-필요한 기능을 모두 작성하고 테스트 한 뒤
-+ SSL, MySQL, Docker 적용하고 
-+ 운영까지 해보는 것이 목표입니다.
++ Spring Security + JWT + Mysql (진행중)
++ import
++ Docker
