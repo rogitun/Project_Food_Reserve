@@ -34,7 +34,7 @@
                 <br>
                 <h3 th:text="|${MsgForm.receiverName}님께 보내기|" th:value="${MsgForm.receiverName}"
                 name="receiverName"></h3>
-                <form class="form" method="POST" th:object="${MsgForm}" th:action="@{/{id}/message(id=${mid})}">
+                <form class="form" method="POST" th:object="${MsgForm}" th:action="@{/messages/{id}/send(id=${mid})}">
                     <input th:value="*{receiverName}"
                         name="receiverName" hidden>
                     <div class="form__field">

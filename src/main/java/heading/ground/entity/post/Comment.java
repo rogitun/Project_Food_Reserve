@@ -19,16 +19,17 @@ import javax.persistence.*;
 @Getter
 public class Comment extends Base {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(columnDefinition = "text")
+    @Lob
+    @Column(name="comment_desc",length = 512)
     private String desc;
 
     private int star;
 
     @ManyToOne(cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "student_id")
+    @JoinColumn(name = "user_id")
     private Student writer;
 
     @ManyToOne

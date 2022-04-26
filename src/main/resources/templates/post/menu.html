@@ -38,13 +38,13 @@
                 <div class="singleProject__toolStack">
                     <textarea class="input input--textarea" disabled th:text="${menu.sources}">식재료</textarea>
                 </div>
-                <a class="singleProject__liveLink" th:href="@{/seller/{id}(id=${sellerId})}" target="_self"><i
+                <a class="singleProject__liveLink" th:href="@{/sellerInfo/{id}(id=${sellerId})}" target="_self"><i
                         class="im im-external-link"></i>가게로 이동</a>
             </div>
             <div class="column column--2of3">
                 <img class="singleProject__preview" th:if="${menu.image}" th:src="|/image/${menu.image}|"/>
                 <img class="singleProject__preview" th:unless="${menu.image}" th:src="@{/images/default_food.png}"/>
-                <a th:href="@{/seller/{id}(id=${sellerId})}" class="singleProject__developer" th:text="${menu.seller}">가게
+                <a th:href="@{/sellerInfo/{id}(id=${sellerId})}" class="singleProject__developer" th:text="${menu.seller}">가게
                     이름</a>
                 <h2 class="singleProject__title" th:text="${menu.name}">메뉴이름</h2>
                 <h3 class="singleProject__subtitle">메뉴 설명</h3>
@@ -54,7 +54,7 @@
                     <h5 class="project--rating" th:if="${menu.commentNumber>0}" th:text="|전체 별점 : ${menu.star / menu.commentNumber}점|"></h5>
 
                     <h3 class="singleProject__subtitle">댓글</h3>
-                    <form class="form" action="#" method="POST" th:object="${comment}" th:if="${comment.isStudent}">
+                    <form class="form" th:action="@{/menu/{id}/add-comment(id=${})}" method="POST" th:object="${comment}" th:if="${comment.isStudent}">
                         <!-- Textarea -->
                         <div class="form__field">
                             <label for="formInput#textarea">댓글: </label>
@@ -104,8 +104,8 @@
         if(!confirm("정말 삭제하시겠습니까?")){
             return;
         }
-        let backUrl = "/menus/" + bid;
-        let postUrl = "/menus/comment/" + cid;
+        let backUrl = "/menu/" + bid;
+        let postUrl = "/menu/del-comment/" + cid;
 
         console.log(backUrl);
         console.log(postUrl);

@@ -16,6 +16,7 @@ import heading.ground.repository.user.UserRepository;
 import heading.ground.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -32,9 +33,11 @@ import java.util.stream.Collectors;
 @Controller
 @RequiredArgsConstructor
 public class UserController {
+//TODO 로그인, 회원가입 URL 시큐리티 처리 후 나머지는 RequestMapping으로 Profile
 
     private final UserService userService;
     private final UserRepository userRepository;
+    //private final BCryptPasswordEncoder passwordEncoder;
 
     @GetMapping("/login")
     public String loginForm(@ModelAttribute("user") LoginForm form,
@@ -56,35 +59,27 @@ public class UserController {
         return "/user/seller-signup";
     }
 
+    //TODO 폼 구분
     @PostMapping("/signup")
     public String signUp(@Validated @ModelAttribute("user") BaseSignUp form,
                          BindingResult bindingResult,
                          @RequestParam(value = "companyId", required = false) String cId) {
         log.info("cid = {} ", cId);
 
-        if (bindingResult.hasErrors()) { //필드 에러 처리
-            return "/user/seller-signup";
-        }
-
-        if (!form.getPassword().equals(form.getPassword2())) {//비밀번호 다름(글로벌 에러 처리)
-            bindingResult.reject("NotEquals", "비밀번호가 서로 일치하지 않습니다.");
-            return "/user/seller-signup";
-        }
-
-        //TODO 서비스 처리 / 이미 가입된 아이디인지 체크
-        long is_duplicated = userRepository.countByLoginId(form.getLoginId());
-        if (is_duplicated > 0) {//중복된 아이디임;
-            bindingResult.reject("Duplicate", "이미 가입된 아이디");
-            return "/user/seller-signup";
-        }
+        String x = userService.isValidated(form, bindingResult);
+        if (x != null) return x;
         if (cId != null) {
+            //form.setPassword(passwordEncoder.encode(form.getPassword()));
             userRepository.save(form.toSeller(form));
         } else {
+            //form.setPassword(passwordEncoder.encode(form.getPassword()));
             userRepository.save(form.toStudent(form));
         }
 
         return "redirect:/login";
     }
+
+
 
     @PostMapping("/login")
     public String login(@Validated @ModelAttribute("user") LoginForm form,

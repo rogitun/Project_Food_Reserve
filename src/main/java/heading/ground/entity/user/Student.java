@@ -15,6 +15,7 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor
+@PrimaryKeyJoinColumn(name="user_id")
 public class Student extends BaseUser {
 
     private String email;

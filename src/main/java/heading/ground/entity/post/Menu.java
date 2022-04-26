@@ -17,16 +17,18 @@ import java.util.List;
 @NoArgsConstructor
 public class Menu extends Base {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "menu_id")
     private Long id;
     
     private String name; //음식 이름
     private int price; //음식 가격
 
+    @Lob
+    @Column(name="menu_desc",length = 512)
     private String desc; //음식 설명
 
-    @Column(columnDefinition = "text")
+    @Column(columnDefinition = "TEXT")
     private String sources;//음식에 들어가는 재료, 굳이 엔티로 뽑을 필요 없음
 
     private int commentNumber;
@@ -42,7 +44,7 @@ public class Menu extends Base {
 
     //메뉴가 소속된 가게
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "seller_id")
+    @JoinColumn(name = "user_id")
     private Seller seller;
 
     @OneToMany(mappedBy = "menu",cascade = CascadeType.REMOVE)

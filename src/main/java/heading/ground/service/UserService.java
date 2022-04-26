@@ -10,6 +10,7 @@ import heading.ground.entity.user.Seller;
 import heading.ground.entity.user.Student;
 import heading.ground.file.FileRepository;
 import heading.ground.file.FileStore;
+import heading.ground.forms.user.BaseSignUp;
 import heading.ground.forms.user.SellerEditForm;
 import heading.ground.forms.user.UserEditForm;
 import heading.ground.repository.post.MenuRepository;
@@ -23,6 +24,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BindingResult;
 
 
 import java.io.IOException;
@@ -96,6 +98,27 @@ public class UserService {
 
     public Paging pageTemp(Page<SellerDto> page){
         return new Paging(page.getTotalPages(), page.getNumber());
+    }
+
+    public String isValidated(BaseSignUp form, BindingResult bindingResult) {
+        String returnUrl = form.getCompanyId()==null?"/user/signup":"/user/seller-signup";
+
+        if (bindingResult.hasErrors()) { //필드 에러 처리
+            return returnUrl;
+        }
+
+        if (!form.getPassword().equals(form.getPassword2())) {//비밀번호 다름(글로벌 에러 처리)
+            bindingResult.reject("NotEquals", "비밀번호가 서로 일치하지 않습니다.");
+            return returnUrl;
+        }
+
+        //TODO 서비스 처리 / 이미 가입된 아이디인지 체크
+        long is_duplicated = userRepository.countByLoginId(form.getLoginId());
+        if (is_duplicated > 0) {//중복된 아이디임;
+            bindingResult.reject("Duplicate", "이미 가입된 아이디");
+            return returnUrl;
+        }
+        return null;
     }
 
 }

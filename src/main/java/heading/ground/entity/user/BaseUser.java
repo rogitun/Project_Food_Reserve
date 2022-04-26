@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 @Getter
 public class BaseUser extends Base {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
     protected Long id;
 
@@ -29,6 +29,9 @@ public class BaseUser extends Base {
     protected String name; // 이름(가게이름, 학생 별명)
 
    protected String phoneNumber;
+
+   @Embedded
+   protected MyRole role;
 
     public void update(SellerEditForm form){
         this.name = form.getName();

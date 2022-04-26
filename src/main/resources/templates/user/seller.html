@@ -39,7 +39,7 @@
               <p class="dev__title" th:text="${seller.phoneNumber}">전화번호</p>
               <p class="dev__location" th:text="TODO">가게위치</p>
               <span th:if="${session.user !=null && session.user instanceof T(heading.ground.entity.user.Student)}">
-                <a th:href="@{/{id}/message(id=${seller.id})}" class="btn btn--sub">문의하기</a>
+                <a th:href="@{/messages/{id}/send(id=${seller.id})}" class="btn btn--sub">문의하기</a>
               <a th:onclick="|book('${seller.id}')|" class="btn btn--sub">예약하기</a></span>
 
             </div>
@@ -97,8 +97,8 @@
     if(!confirm("예약 하시겠습니까?")){
       return;
     }
-    let nextUrl = "/seller/" + sid + "/book";
-    let bookUrl = "/seller/" + sid + "/bookRequest";
+    let nextUrl = "/book/" + sid + "/bookForm";
+    let bookUrl = "/book/" + sid + "/bookRequest";
 
     $.ajax({
       type : 'get',

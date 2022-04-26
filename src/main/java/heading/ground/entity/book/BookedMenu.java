@@ -13,6 +13,7 @@ import javax.persistence.*;
 public class BookedMenu {
 
     @Id @GeneratedValue
+    @Column(name = "bookedMenu_id")
     private Long id;
 
     @ManyToOne(cascade = CascadeType.REMOVE)

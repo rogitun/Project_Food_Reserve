@@ -53,9 +53,9 @@
                 </div>
                 <div class="settings">
                     <h3 class="settings__title">대표 메뉴</h3>
-                    <span><a class="tag tag--pill tag--sub settings__btn tag--lg" th:href="@{/menus/add-menu}"><i
+                    <span><a class="tag tag--pill tag--sub settings__btn tag--lg" th:href="@{/menu/add-menu}"><i
                             class="im im-plus"></i> 메뉴 추가</a>
-                    <a class="tag tag--pill tag--sub settings__btn tag--lg" th:href="@{/menus/manage}"><i
+                    <a class="tag tag--pill tag--sub settings__btn tag--lg" th:href="@{/menu/manage}"><i
                             class="im im-plus"></i> 메뉴 관리</a></span>
                 </div>
 
@@ -66,7 +66,7 @@
                             <p th:text="${m.desc}"></p>
                         </td>
                         <td class="settings__tableActions">
-                            <a class="tag tag--pill tag--main settings__btn" th:href="@{/menus/{id}/edit(id=${m.id})}"><i class="im im-edit"></i>수정</a>
+                            <a class="tag tag--pill tag--main settings__btn" th:href="@{/menu/{id}/edit(id=${m.id})}"><i class="im im-edit"></i>수정</a>
                             <a class="tag tag--pill tag--main settings__btn" href="#"><i
                                     class="im im-x-mark-circle-o"></i>
                                 삭제</a>
@@ -108,7 +108,7 @@
     function accept(bid){
         let id = bid;
         let acceptUrl = "/book/" + id + "/accept";
-        let seller = "/seller/account"
+        let seller = "/profile"
 
         console.log(id);
         $.ajax({

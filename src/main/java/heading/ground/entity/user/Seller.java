@@ -18,8 +18,8 @@ import java.util.Set;
 @Entity
 @NoArgsConstructor
 @Getter
+@PrimaryKeyJoinColumn(name="user_id")
 public class Seller extends BaseUser{
-
     @Embedded
     private Address address; //주소
 
@@ -31,9 +31,8 @@ public class Seller extends BaseUser{
     //가게 정보
     private String companyId; //사업자 번호
 
-    private boolean isAdmin;
-
-    @Column(columnDefinition = "text")
+    @Lob
+    @Column(name="seller_desc",length = 512)
     private String desc;
 
     //가게가 가진 메뉴를 연관
@@ -50,7 +49,6 @@ public class Seller extends BaseUser{
         this.name = sf.getName();
         this.phoneNumber = sf.getPhoneNumber();
         this.companyId = sf.getCompanyId();
-        this.isAdmin = true;
     }
 
     public void updateSeller(SellerEditForm form){

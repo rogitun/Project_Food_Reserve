@@ -27,7 +27,8 @@ public class Message extends Base {
     @Column(length = 16,nullable = false)
     private String title;
 
-    @Column(columnDefinition = "text")
+    @Lob
+    @Column(name="body",length = 512)
     private String body;
 
     private boolean isRead;

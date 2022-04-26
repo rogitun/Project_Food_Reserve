@@ -36,7 +36,8 @@ public interface BookRepository extends JpaRepository<Book,Long> {
 
     @Query("select b from Book b " +
             "join fetch b.seller s " +
-            "where s.id = :pid")
-    Optional<Book> findBookWithSeller(@Param("pid") Long id);
+            "where s.id = :pid and " +
+            "b.id = :bid")
+    Optional<Book> findBookWithSeller(@Param("pid") Long id,@Param("bid") Long bid);
     
 }

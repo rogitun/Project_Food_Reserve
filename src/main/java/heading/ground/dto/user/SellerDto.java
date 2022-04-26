@@ -43,7 +43,7 @@ public class SellerDto {
         this.id = seller.getId();
         this.name = seller.getName();
         this.phoneNumber = seller.getPhoneNumber();
-        this.address = seller.getAddress();
+       // this.address = seller.getAddress();
         this.sellerId = seller.getCompanyId();
         this.desc = seller.getDesc();
         photoCheck(seller.getImageFile());
@@ -63,7 +63,7 @@ public class SellerDto {
         this.id = seller.getId();
         this.name = seller.getName();
         this.phoneNumber = seller.getPhoneNumber();
-        this.address = seller.getAddress();
+       // this.address = seller.getAddress();
         this.sellerId = seller.getCompanyId();
         this.desc = seller.getDesc();
         photoCheck(seller.getImageFile());

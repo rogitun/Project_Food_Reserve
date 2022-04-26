@@ -54,7 +54,7 @@
                 <img class="project__thumbnail" th:unless="${m.image}" th:src="@{/images/default_food.png}" />
                 <div class="card__body">
                   <h3 class="project__title" th:text="${m.name}">메뉴이름</h3>
-                  <p><a class="project__author" href="profile.html" th:text="${m.seller}">가게이름</a></p>
+                  <p class="project__author" th:text="${m.seller}">가게이름</p>
                   <p class="project--rating">
                     <span style="font-weight: bold;">98%</span> Postitive
                     Feedback (72 Votes)
@@ -74,9 +74,6 @@
               </a>
             </div>
           </div>
-
-
-
         </div>
       </div>
     </section>

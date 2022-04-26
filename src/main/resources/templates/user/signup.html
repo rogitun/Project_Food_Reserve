@@ -28,8 +28,7 @@
           <a th:href="@{/}">
             <img src="images/icon.svg" alt="icon" />
           </a>
-          <h3>Account SignUp</h3>
-          <p>Create a new developer account</p>
+          <h3>회원 가입</h3>
         </div>
 
         <form th:action class="form auth__form" th:object="${user}" method="post">
@@ -49,7 +48,7 @@
           <!-- Input:Email -->
           <div class="form__field">
             <label for="formInput#email" th:text="이메일">Email Address: </label>
-            <span th:errors="*{email}">오류</span>
+            <span th:errors="*{email}" th:class="field-error">오류</span>
             <input th:field="*{email}"
               class="input input--email"
               id="formInput#email"
@@ -60,7 +59,7 @@
           </div>
           <div class="form__field">
             <label for="formInput#text"  th:text="닉네임">Full Name: </label>
-            <span th:errors="*{name}">오류</span>
+            <span th:errors="*{name}" th:class="field-error">오류</span>
             <input th:field="*{name}"
                     class="input input--text"
                     id="formInput#text"
@@ -71,7 +70,7 @@
           </div>
           <div class="form__field">
             <label for="formInput#text"  th:text="|전화번호|">Full Name: </label>
-            <span th:errors="*{phoneNumber}">오류</span>
+            <span th:errors="*{phoneNumber}" th:class="field-error">오류</span>
             <input th:field="*{phoneNumber}"
                    class="input input--text"
                    id="formInput#text"

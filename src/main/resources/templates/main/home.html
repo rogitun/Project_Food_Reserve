@@ -49,7 +49,7 @@
             <div class="grid grid--three">
                 <div class="column card" th:each="s : ${seller}">
                     <div class="dev">
-                        <a th:href="@{/seller/{id}(id=${s.id})}" class="card__body">
+                        <a th:href="@{/sellerInfo/{id}(id=${s.id})}" class="card__body">
                             <div class="dev__profile">
                                 <img class="avatar avatar--md" th:if="${s.photo}" th:src="|/image/${s.photo}|"/>
                                 <img class="avatar avatar--md" th:unless="${s.photo}" th:src="@{/images/user.png}"/>

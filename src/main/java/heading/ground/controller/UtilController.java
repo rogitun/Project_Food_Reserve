@@ -1,14 +1,11 @@
 package heading.ground.controller;
 
-import heading.ground.dto.util.MessageDto;
 import heading.ground.entity.user.BaseUser;
-import heading.ground.entity.user.Seller;
 import heading.ground.entity.user.Student;
 import heading.ground.entity.util.Message;
 import heading.ground.forms.util.MsgForm;
 import heading.ground.repository.user.UserRepository;
 import heading.ground.repository.util.MessageRepository;
-import heading.ground.service.UserService;
 import heading.ground.service.UtilService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -72,7 +69,7 @@ public class UtilController {
     }
 
 
-    @GetMapping("/{id}/message")
+    @GetMapping("/messages/{id}/send")
     public String messageForm(@PathVariable("id") Long id,
                               Model model,
                               @SessionAttribute("user") BaseUser user) {
@@ -91,7 +88,7 @@ public class UtilController {
         return "message/messageForm";
     }
 
-    @GetMapping("/{id}/message-reply")
+    @GetMapping("/message/{id}/reply")
     public String replyForm(@PathVariable("id") Long id,
                               Model model,
                               @SessionAttribute("user") BaseUser user) {
@@ -108,7 +105,7 @@ public class UtilController {
         return "message/messageForm";
     }
 
-    @PostMapping("/{id}/message")
+    @PostMapping("/message/{id}/send")
     public String messageSend(@Validated @ModelAttribute("MsgForm") MsgForm form, BindingResult bindingResult,
                               @SessionAttribute("user") BaseUser user) {
         if (bindingResult.hasErrors()) {

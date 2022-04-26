@@ -43,25 +43,12 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Controller
-@RequestMapping("/menus")
+@RequestMapping("/menu")
 @RequiredArgsConstructor
 public class PostController {
     private final MenuRepository menuRepository;
     private final PostService postService;
     private final CommentRepository commentRepository;
-
-
-    @GetMapping
-    public String menuList(Model model, Pageable pageable) {
-        int page = (pageable.getPageNumber()==0)? 0: (pageable.getPageNumber()-1);
-        Page<MenuDto> all = postService.page(page, 9);//현재 인덱스, 보여줄 객체 갯수
-        Paging paging = postService.pageTemp(all);
-
-        model.addAttribute("menus", all);
-        model.addAttribute("paging",paging);
-       // model.addAttribute("paging",paging);
-        return "post/menus";
-    }
 
     @GetMapping("/add-menu")
     public String menuForm(Model model,
@@ -111,36 +98,7 @@ public class PostController {
         return "redirect:/profile";
     }
 
-    @GetMapping("/{id}")
-    public String singleMenu(@PathVariable("id") Long id, Model model,
-                             @SessionAttribute(value = "user",required = false) BaseUser user) {
 
-        CommentForm commentForm = new CommentForm();
-        if (user instanceof Student)
-            commentForm.setStudent(true);
-
-        Optional<Menu> optional = menuRepository.findMenuByIdWithCoSe(id);
-        if(optional.isEmpty())
-            return "redirect:/";
-        Menu entity = optional.get();
-        MenuDto menu = new MenuDto(entity);
-
-        //댓글 목록 가져오기
-        List<Comment> comments = entity.getComments();
-        if (comments !=null) {
-            List<CommentDto> commentDtos = comments.stream()
-                    .map(c -> new CommentDto(c))
-                    .collect(Collectors.toList());
-            model.addAttribute("comments",commentDtos);
-        }
-
-        model.addAttribute("menu", menu);
-        model.addAttribute("sellerId", entity.getSeller().getId());
-        model.addAttribute("comment", commentForm);
-
-        log.info("menu-comment-size-on-page = {}",entity.getComments().size());
-        return "post/menu";
-    }
 
     @GetMapping("/manage")
     public String managingMenus(Model model,
@@ -160,7 +118,7 @@ public class PostController {
         log.info("controller In");
         String flag = data.get("data");
         postService.setMenuStatus(id,flag);
-        return "redirect:/menus/manage";
+        return "redirect:/menu/manage";
     }
 
     @PostMapping("/{id}/del")
@@ -171,7 +129,7 @@ public class PostController {
             return null;
         }
         menuRepository.deleteById(id);
-        return "redirect:/menus/manage";
+        return "redirect:/menu/manage";
     }
 
 
@@ -180,7 +138,7 @@ public class PostController {
      * 1. 댓글은 메뉴와 사용자의 연관관계를 가진다.
      * 2. 댓글과 메뉴는 M:1 / 사용자도 M:1
      */
-    @PostMapping("/{id}")
+    @PostMapping("/{id}/add-comment")
     public String addComment(@PathVariable("id") Long id,
                              @Validated @ModelAttribute("comment") CommentForm form,
                              BindingResult bindingResult,
@@ -197,15 +155,17 @@ public class PostController {
         return "redirect:/menus/" + id;
     }
 
-    @PostMapping("/comment/{id}")
+    @PostMapping("/{id}/del-comment")
     public String delComment(@PathVariable("id") Long id,
                              @SessionAttribute("user") BaseUser sei){
         //TODO comment - User 같이
         Optional<Comment> comment = commentRepository.findByIdWithUser(id, sei.getId());
         if(comment.isEmpty())
             return "/"; //TODO 잘못된 접근 처리하기
-        commentRepository.delete(comment.get());
-        return "redirect:/menus";
+        Comment cmt = comment.get();
+        Long menuId = cmt.getMenu().getId();
+        commentRepository.delete(cmt);
+        return "redirect:/menus/" + menuId;
     }
 
 }
