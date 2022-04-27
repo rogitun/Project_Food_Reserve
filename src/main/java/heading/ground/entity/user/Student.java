@@ -33,6 +33,7 @@ public class Student extends BaseUser {
             this.name = std.getName();
             this.email = std.getEmail();
             this.phoneNumber = std.getPhoneNumber();
+            this.role = MyRole.STUDENT;
     }
 
     public void update(UserEditForm form){

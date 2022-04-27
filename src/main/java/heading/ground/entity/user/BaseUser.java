@@ -30,7 +30,7 @@ public class BaseUser extends Base {
 
    protected String phoneNumber;
 
-   @Embedded
+   @Enumerated(EnumType.STRING)
    protected MyRole role;
 
     public void update(SellerEditForm form){

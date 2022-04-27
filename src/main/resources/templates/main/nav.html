@@ -21,9 +21,9 @@
                 <li class="header__menuItem" ><a th:href="@{/menus}">메뉴정보</a></li>
                 <li class="header__menuItem" th:if="${session.user != null}"><a th:href="@{/messages}">메세지</a></li>
                 <li class="header__menuItem" th:if="${session.user != null}"><a th:href="@{/profile}">내 정보</a></li>
-<!--                <li class="header__menuItem" th:if="${session.user != null && !session.user.isAdmin}"><a th:href="@{/student/profile}">내 정보</a></li>-->
-                <li class="header__menuItem" th:if="${session.user == null}"><a th:href="@{/login}" class="btn btn--sub">Login/Sign Up</a></li>
-                <form method="post" th:action="@{/logout}"><li class="header__menuItem" th:if="${session.user != null}"><button type="submit" class="btn btn--sub">Logout</button></li></form>
+<!--                <li class="header__menuItem" th:if="${session.user == null}"><a th:href="@{/loginForm}" class="btn btn&#45;&#45;sub">Login/Sign Up</a></li>-->
+                <li class="header__menuItem"><a th:href="@{/loginForm}" class="btn btn--sub">Login/Sign Up</a></li>
+                <form method="post" th:action="@{/logout}"><li class="header__menuItem"><button type="submit" class="btn btn--sub">Logout</button></li></form>
             </ul>
         </nav>
     </div>

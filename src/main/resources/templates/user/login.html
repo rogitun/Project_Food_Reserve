@@ -33,7 +33,7 @@
           <p>Hello Developer, Welcome Back!</p>
         </div>
 
-        <form th:action class="form auth__form" method="post" th:object="${user}">
+        <form th:action="@{/login}" class="form auth__form" method="post" th:object="${user}">
           <!-- Input:Email -->
           <div th:if="${#fields.hasGlobalErrors()}">
             <p class="field-error" th:each="err : ${#fields.globalErrors()}" th:text="${err}"></p>

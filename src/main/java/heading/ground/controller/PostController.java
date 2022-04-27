@@ -13,11 +13,13 @@ import heading.ground.forms.post.CommentForm;
 import heading.ground.forms.post.MenuForm;
 import heading.ground.repository.post.CommentRepository;
 import heading.ground.repository.post.MenuRepository;
+import heading.ground.security.user.MyUserDetails;
 import heading.ground.service.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -25,6 +27,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.Console;
 import java.io.IOException;
@@ -141,25 +144,30 @@ public class PostController {
     @PostMapping("/{id}/add-comment")
     public String addComment(@PathVariable("id") Long id,
                              @Validated @ModelAttribute("comment") CommentForm form,
-                             BindingResult bindingResult,
-                             @SessionAttribute("user") BaseUser sei) {
+                             BindingResult bindingResult, HttpServletResponse response,
+                             @AuthenticationPrincipal MyUserDetails principal) throws IOException {
         log.info("form = {}", form);
         if (bindingResult.hasErrors()) {
             log.info("result = {} ", bindingResult.toString());
             return "redirect:/menus/" + id;
         }
-        Student student = (Student) sei;
-        Comment comment = new Comment(form);
-        postService.addComment(student.getId(), comment, id);
 
-        return "redirect:/menus/" + id;
+        try{
+            Long sId = principal.getId();
+            Comment comment = new Comment(form);
+            postService.addComment(sId, comment, id);
+        }catch (Exception e){
+            response.sendError(500,"ServerError");
+        }finally {
+            return "redirect:/menus/" + id;
+        }
     }
 
     @PostMapping("/{id}/del-comment")
     public String delComment(@PathVariable("id") Long id,
-                             @SessionAttribute("user") BaseUser sei){
+                             @AuthenticationPrincipal MyUserDetails principal){
         //TODO comment - User 같이
-        Optional<Comment> comment = commentRepository.findByIdWithUser(id, sei.getId());
+        Optional<Comment> comment = commentRepository.findByIdWithUser(id, principal.getId());
         if(comment.isEmpty())
             return "/"; //TODO 잘못된 접근 처리하기
         Comment cmt = comment.get();

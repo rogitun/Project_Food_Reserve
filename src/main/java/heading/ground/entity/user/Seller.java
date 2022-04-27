@@ -49,6 +49,7 @@ public class Seller extends BaseUser{
         this.name = sf.getName();
         this.phoneNumber = sf.getPhoneNumber();
         this.companyId = sf.getCompanyId();
+        this.role = MyRole.SELLER;
     }
 
     public void updateSeller(SellerEditForm form){

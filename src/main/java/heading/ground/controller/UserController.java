@@ -37,9 +37,9 @@ public class UserController {
 
     private final UserService userService;
     private final UserRepository userRepository;
-    //private final BCryptPasswordEncoder passwordEncoder;
+    private final BCryptPasswordEncoder passwordEncoder;
 
-    @GetMapping("/login")
+    @GetMapping("/loginForm")
     public String loginForm(@ModelAttribute("user") LoginForm form,
                       HttpServletRequest request) {
         HttpSession session = request.getSession(false);
@@ -68,40 +68,39 @@ public class UserController {
 
         String x = userService.isValidated(form, bindingResult);
         if (x != null) return x;
+        form.setPassword(passwordEncoder.encode(form.getPassword()));
         if (cId != null) {
-            //form.setPassword(passwordEncoder.encode(form.getPassword()));
             userRepository.save(form.toSeller(form));
         } else {
-            //form.setPassword(passwordEncoder.encode(form.getPassword()));
             userRepository.save(form.toStudent(form));
         }
 
-        return "redirect:/login";
+        return "redirect:/loginForm";
     }
 
 
-
-    @PostMapping("/login")
-    public String login(@Validated @ModelAttribute("user") LoginForm form,
-                        BindingResult bindingResult,
-                        HttpServletRequest request) {
-        if (bindingResult.hasErrors()) {
-            log.info("field Error");
-            return "user/login";
-        }
-        //글로벌 에러처리는 아이디 혹은 비밀번호 존재하지 않음
-        BaseUser user = userService.logIn(form.getLoginId(), form.getPassword());
-        if (user != null) {
-            log.info("pass");
-            HttpSession session = request.getSession();
-            session.setAttribute("user", user);
-            return "redirect:/"; //홈화면 이동
-        }
-
-        log.info("failed");
-        bindingResult.reject("NotFound", "아이디 혹은 비밀번호 불일치");
-        return "user/login";
-    }
+//
+//    @PostMapping("/login")
+//    public String login(@Validated @ModelAttribute("user") LoginForm form,
+//                        BindingResult bindingResult,
+//                        HttpServletRequest request) {
+//        if (bindingResult.hasErrors()) {
+//            log.info("field Error");
+//            return "user/login";
+//        }
+//        //글로벌 에러처리는 아이디 혹은 비밀번호 존재하지 않음
+//        BaseUser user = userService.logIn(form.getLoginId(), form.getPassword());
+//        if (user != null) {
+//            log.info("pass");
+//            HttpSession session = request.getSession();
+//            session.setAttribute("user", user);
+//            return "redirect:/"; //홈화면 이동
+//        }
+//
+//        log.info("failed");
+//        bindingResult.reject("NotFound", "아이디 혹은 비밀번호 불일치");
+//        return "user/login";
+//    }
 
     @PostMapping("/logout")
     public String logOut(HttpServletRequest request) {

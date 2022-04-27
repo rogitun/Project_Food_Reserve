@@ -13,6 +13,7 @@ import heading.ground.file.FileStore;
 import heading.ground.forms.post.CommentForm;
 import heading.ground.repository.post.MenuRepository;
 import heading.ground.repository.user.UserRepository;
+import heading.ground.security.user.MyUserDetails;
 import heading.ground.service.PostService;
 import heading.ground.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -21,10 +22,12 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.net.MalformedURLException;
 import java.util.List;
 import java.util.Optional;
@@ -42,11 +45,14 @@ public class MainController {
     private final MenuRepository menuRepository;
 
     @GetMapping("/")
-    public String home(Model model,Pageable pageable){
+    public String home(Model model, Pageable pageable,
+                       @AuthenticationPrincipal MyUserDetails user){
         int page = (pageable.getPageNumber()==0)? 0: (pageable.getPageNumber()-1);
         Page<SellerDto> pages = userService.page(page, 6);
         Paging paging = userService.pageTemp(pages);
 
+        if(user!=null)
+            log.info("Current User is = {}, name = {}, Role = {}",user,user.getUsername(),user.getAuthorities());
 
         model.addAttribute("seller",pages);
         model.addAttribute("paging",paging);
@@ -96,11 +102,13 @@ public class MainController {
 
     @GetMapping("/menus/{id}")
     public String singleMenu(@PathVariable("id") Long id, Model model,
-                             @SessionAttribute(value = "user",required = false) BaseUser user) {
+                             @AuthenticationPrincipal MyUserDetails principal) {
 
         CommentForm commentForm = new CommentForm();
-        if (user instanceof Student)
-            commentForm.setStudent(true);
+        if(principal!=null){
+            boolean flag = principal.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("STUDENT"));
+            commentForm.setStudent(flag);
+        }
 
         Optional<Menu> optional = menuRepository.findMenuByIdWithCoSe(id);
         if(optional.isEmpty())
@@ -124,5 +132,4 @@ public class MainController {
         log.info("menu-comment-size-on-page = {}",entity.getComments().size());
         return "post/menu";
     }
-
 }

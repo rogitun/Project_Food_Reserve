@@ -54,7 +54,7 @@
                     <h5 class="project--rating" th:if="${menu.commentNumber>0}" th:text="|전체 별점 : ${menu.star / menu.commentNumber}점|"></h5>
 
                     <h3 class="singleProject__subtitle">댓글</h3>
-                    <form class="form" th:action="@{/menu/{id}/add-comment(id=${})}" method="POST" th:object="${comment}" th:if="${comment.isStudent}">
+                    <form class="form" th:action="@{/menu/{id}/add-comment(id=${menu.id})}" method="POST" th:object="${comment}" th:if="${comment.isStudent}">
                         <!-- Textarea -->
                         <div class="form__field">
                             <label for="formInput#textarea">댓글: </label>
