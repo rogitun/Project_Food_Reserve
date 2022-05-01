@@ -15,6 +15,8 @@
     <!-- Dev Search UI -->
     <link rel="stylesheet" th:href="@{/styles/app.css}"/>
 
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <title>ToyProject</title>
 </head>
 
@@ -92,5 +94,21 @@
     </div>
 </main>
 </body>
+<script th:inline="javascript">
+<!--    window.onload = function() {-->
+<!--    var token = localStorage.getItem("Authorization");-->
+<!--    $.ajax({-->
+<!--        type: "GET",-->
+<!--        url: "/api/test",-->
+<!--        beforeSend: function (xhr) {-->
+<!--&lt;!&ndash;            xhr.setRequestHeader("Content-type","application/json");//header추가&ndash;&gt;-->
+<!--            xhr.setRequestHeader("Authorization","JWT " + token);//header추가-->
+<!--        },-->
+<!--        success: function (res) {-->
+<!--            console.log(res);-->
+<!--        }-->
+<!--    });-->
+<!--}-->
+</script>
 
 </html>

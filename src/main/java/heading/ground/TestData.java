@@ -12,6 +12,7 @@ import heading.ground.repository.user.SellerRepository;
 import heading.ground.repository.user.StudentRepository;
 import heading.ground.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -24,6 +25,7 @@ public class TestData {
     private final SellerRepository seu;
     private final MenuRepository mu;
     private final UserRepository us;
+    private final BCryptPasswordEncoder passwordEncoder;
 
     @PostConstruct
     public void init(){
@@ -46,12 +48,14 @@ public class TestData {
 //            //mu.save(menu3);
 //            su.save(student);
 //        }
-        BaseSignUp b = new BaseSignUp("abc","1234","1234","abc","abc@abc.com","010-0000-0000","1234123");
-        BaseSignUp a = new BaseSignUp("abcd","1234","1234","abcd","abcd@abc.com","011-0000-0000","1234123");
+        BaseSignUp b = new BaseSignUp("abc","","","abc","abc@abc.com","010-0000-0000","1234123");
+        BaseSignUp a = new BaseSignUp("abcd","","","abcd","abcd@abc.com","011-0000-0000","1234123");
         BaseSignUp test = new BaseSignUp();
         BaseSignUp test2  = new BaseSignUp();
-        Menu menu = new MenuForm("김치전", 4500, "막걸리와 함께", "김치랑 밀가루").toEntity();
 
+        Menu menu = new MenuForm("김치전", 4500, "막걸리와 함께", "김치랑 밀가루").toEntity();
+        a.setPassword(passwordEncoder.encode("1234"));
+        b.setPassword(passwordEncoder.encode("1234"));
         Student student = test2.toStudent(a);
         Seller seller = test.toSeller(b);
         menu.addSeller(seller);

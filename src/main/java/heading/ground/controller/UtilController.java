@@ -69,7 +69,7 @@ public class UtilController {
     }
 
 
-    @GetMapping("/messages/{id}/send")
+    @GetMapping("/message/{id}/send")
     public String messageForm(@PathVariable("id") Long id,
                               Model model,
                               @SessionAttribute("user") BaseUser user) {

@@ -22,12 +22,14 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.net.MalformedURLException;
 import java.util.List;
 import java.util.Optional;
@@ -46,18 +48,20 @@ public class MainController {
 
     @GetMapping("/")
     public String home(Model model, Pageable pageable,
-                       @AuthenticationPrincipal MyUserDetails user){
+                       @AuthenticationPrincipal MyUserDetails user,
+                       HttpServletRequest request){
         int page = (pageable.getPageNumber()==0)? 0: (pageable.getPageNumber()-1);
         Page<SellerDto> pages = userService.page(page, 6);
         Paging paging = userService.pageTemp(pages);
-
         if(user!=null)
             log.info("Current User is = {}, name = {}, Role = {}",user,user.getUsername(),user.getAuthorities());
-
+        String header = request.getHeader("Authorization");
+        log.info("jwt = {} ",header);
         model.addAttribute("seller",pages);
         model.addAttribute("paging",paging);
-        log.info("number = {}",pages.getNumber());
-        log.info("total = {}",pages.getTotalPages());
+
+//        log.info("number = {}",pages.getNumber());
+//        log.info("total = {}",pages.getTotalPages());
 
         return "main/home";
     }
