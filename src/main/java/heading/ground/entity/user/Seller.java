@@ -50,6 +50,8 @@ public class Seller extends BaseUser{
         this.phoneNumber = sf.getPhoneNumber();
         this.companyId = sf.getCompanyId();
         this.role = MyRole.SELLER;
+        //TODO 추후 이메일 인증 후에 풀어주도록 로직 설정
+        this.non_locked = true;
     }
 
     public void updateSeller(SellerEditForm form){

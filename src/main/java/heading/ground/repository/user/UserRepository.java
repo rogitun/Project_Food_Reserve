@@ -15,10 +15,13 @@ import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<BaseUser,Long> {
 
+    // 공통
     Optional<BaseUser> findByLoginId(String username);
 
     long countByLoginId(@Param("loginId") String loginId);
 
+
+    //TODO 아래는 seller
     @Query("select s.name from Seller s " +
             "where s.id = :uid")
     String findSellerById(@Param("uid") Long id);

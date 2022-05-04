@@ -121,8 +121,20 @@
                 alert("댓글 삭제에 실패했습니다. 잠시 후 다시 시도해주세요.");
             }
         });
-
-
     }
+
+<!--  window.onload = function() {-->
+<!--    var token = sessionStorage.getItem("Authorization");-->
+<!--    $.ajax({-->
+<!--        type: "GET",-->
+<!--        url: "/",-->
+<!--        beforeSend: function (xhr) {-->
+<!--            xhr.setRequestHeader("Authorization","Bearer " + token);//header추가-->
+<!--        },-->
+<!--        success: function (res) {-->
+<!--            console.log(res);-->
+<!--        }-->
+<!--    });-->
+<!--}-->
 </script>
 </html>

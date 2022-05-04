@@ -13,15 +13,10 @@ import heading.ground.forms.user.LoginForm;
 import heading.ground.forms.user.SellerEditForm;
 import heading.ground.forms.user.UserEditForm;
 import heading.ground.repository.user.UserRepository;
-import heading.ground.security.jwt.JwtUtil;
-import heading.ground.security.user.MyUserDetails;
-import heading.ground.security.user.MyUserDetailsService;
+
 import heading.ground.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -30,7 +25,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -47,12 +41,13 @@ public class UserController {
     private final UserService userService;
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
-    private final AuthenticationManager authenticationManager;
-    private final MyUserDetailsService myUserDetailsService;
-    private final JwtUtil jwtUtil;
 
     @GetMapping("/loginForm")
-    public String loginForm(@ModelAttribute("user") LoginForm form) {
+    public String loginForm(@ModelAttribute("user") LoginForm form,
+                            @RequestParam(value = "auth",required = false) String err,
+                            Model model) {
+        model.addAttribute("err",err);
+        log.info("error = {}",err);
         return "user/login";
     }
 
@@ -87,58 +82,14 @@ public class UserController {
         return "redirect:/loginForm";
     }
 
+    @PostMapping("/fail-login")
+    public String failLogin(RedirectAttributes ra){
+        log.info("fail checking");
 
-    @PostMapping("/login")
-    public String login(@ModelAttribute LoginForm form,
-                        HttpServletResponse response,
-                        HttpServletRequest req) throws Exception {
-        log.info("form = {} ", form);
-        //글로벌 에러처리는 아이디 혹은 비밀번호 존재하지 않음
-        log.info("login call");
-        try {
-            authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(form.getLoginId(), form.getPassword()));
-            log.info("auth Manager");
-
-        } catch (BadCredentialsException e) {
-            log.info("BadCredential");
-            throw new Exception("BadRequest", e);
-        }
-        final MyUserDetails userDetails = (MyUserDetails) myUserDetailsService.loadUserByUsername(form.getLoginId());
-        final String jwt = jwtUtil.generateToken(userDetails);
-        response.setHeader("Authorization", jwt);
-
-        return "redirect:/";
+        ra.addAttribute("auth","인증-실패");
+        return "redirect:/loginForm";
     }
-//
-//    @PostMapping("/login")
-//    public String login(@Validated @ModelAttribute("user") LoginForm form,
-//                        BindingResult bindingResult,
-//                        HttpServletRequest request,
-//                        HttpServletResponse response) throws Exception {
-//        if (bindingResult.hasErrors()) {
-//            log.info("field Error");
-//            return "user/login";
-//        }
-//        //글로벌 에러처리는 아이디 혹은 비밀번호 존재하지 않음
-//        BaseUser user = userService.logIn(form.getLoginId(), form.getPassword());
-//        if (user == null) {
-//            bindingResult.reject("NotFound", "아이디 혹은 비밀번호 불일치");
-//            return "user/loginForm";
-//        }
-//        log.info("pass");
-//        try{
-//            authenticationManager.authenticate(
-//                    new UsernamePasswordAuthenticationToken(form.getLoginId(),form.getPassword()));
-//        }catch (BadCredentialsException e){
-//            throw new Exception("BadRequest",e);
-//        }
-//        final MyUserDetails userDetails = (MyUserDetails) myUserDetailsService.loadUserByUsername(form.getLoginId());
-//        final String jwt = jwtUtil.generateToken(userDetails);
-//        response.setHeader("Authorization",jwt);
-//
-//        return "redirect:/"; //홈화면 이동
-//    }
+
 
     @PostMapping("/logout")
     public String logOut(HttpServletRequest request) {
@@ -247,4 +198,25 @@ public class UserController {
         return "redirect:/profile";
     }
 
+
+    //    @PostMapping("/login")
+//    public String login(@Validated @ModelAttribute("user") LoginForm form,
+//                        BindingResult bindingResult,
+//                        HttpServletRequest req) throws Exception {
+//        if (bindingResult.hasErrors()) {
+//            log.info("field Error");
+//            return "user/login";
+//        }
+//        log.info("form = {}",form);
+//        //글로벌 에러처리는 아이디 혹은 비밀번호 존재하지 않음
+//        boolean flag = userService.idValidation(form.getLoginId(), form.getPassword());
+//        if (!flag) {
+//            bindingResult.reject("NotFound", "아이디 혹은 비밀번호 불일치");
+//            return "user/login";
+//        }
+//        log.info("valid pass");
+//        userService.logIn(form.getLoginId(),req);
+//
+//        return "redirect:/"; //홈화면 이동
+//    }
 }

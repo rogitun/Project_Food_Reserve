@@ -96,13 +96,12 @@
 </body>
 <script th:inline="javascript">
 <!--    window.onload = function() {-->
-<!--    var token = localStorage.getItem("Authorization");-->
+<!--    var token = sessionStorage.getItem("Authorization");-->
 <!--    $.ajax({-->
 <!--        type: "GET",-->
-<!--        url: "/api/test",-->
+<!--        url: "/",-->
 <!--        beforeSend: function (xhr) {-->
-<!--&lt;!&ndash;            xhr.setRequestHeader("Content-type","application/json");//header추가&ndash;&gt;-->
-<!--            xhr.setRequestHeader("Authorization","JWT " + token);//header추가-->
+<!--            xhr.setRequestHeader("Authorization","Bearer " + token);//header추가-->
 <!--        },-->
 <!--        success: function (res) {-->
 <!--            console.log(res);-->

@@ -3,7 +3,7 @@ package heading.ground.security.user;
 import heading.ground.entity.user.BaseUser;
 import heading.ground.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UserDetails;
+
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -17,11 +17,11 @@ public class MyUserDetailsService implements UserDetailsService {
     private final UserRepository userRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public MyUserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<BaseUser> optional = userRepository.findByLoginId(username);
-        if(optional.isEmpty())
-            return null;
 
-        return new MyUserDetails(optional.get());
+        optional.orElseThrow(()->new UsernameNotFoundException("Unknown : " + username));
+
+        return optional.map(MyUserDetails::new).get();
     }
 }

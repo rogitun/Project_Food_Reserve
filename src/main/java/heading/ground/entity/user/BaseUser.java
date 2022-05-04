@@ -11,6 +11,7 @@ import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -33,9 +34,28 @@ public class BaseUser extends Base {
    @Enumerated(EnumType.STRING)
    protected MyRole role;
 
+   @Column(columnDefinition = "boolean default true")
+   protected boolean non_locked;
+
+   @Column(columnDefinition = "tinyint default 0")
+   protected int failed_attempt;
+
+   protected Date lock_time;
+
     public void update(SellerEditForm form){
         this.name = form.getName();
         this.phoneNumber = form.getPhoneNumber();
     }
 
+    public void setNon_locked(boolean non_locked) {
+        this.non_locked = non_locked;
+    }
+
+    public void addFailed_attempt(boolean flag) {
+        failed_attempt = flag?failed_attempt+1:0;
+    }
+
+    public void setLock_time(Date lock_time) {
+        this.lock_time = lock_time;
+    }
 }

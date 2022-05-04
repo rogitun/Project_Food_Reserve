@@ -15,28 +15,29 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor
-@PrimaryKeyJoinColumn(name="user_id")
+@PrimaryKeyJoinColumn(name = "user_id")
 public class Student extends BaseUser {
 
     private String email;
 
-    @OneToMany(mappedBy = "writer",cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "writer", cascade = CascadeType.REMOVE)
     private List<Comment> comments = new ArrayList<>();
 
     @OneToMany(mappedBy = "student")
     private List<Book> books = new ArrayList<>();
 
-    //테스트 용도임
     public Student(BaseSignUp std) {
-            this.loginId = std.getLoginId();
-            this.password = std.getPassword();
-            this.name = std.getName();
-            this.email = std.getEmail();
-            this.phoneNumber = std.getPhoneNumber();
-            this.role = MyRole.STUDENT;
+        this.loginId = std.getLoginId();
+        this.password = std.getPassword();
+        this.name = std.getName();
+        this.email = std.getEmail();
+        this.phoneNumber = std.getPhoneNumber();
+        this.role = MyRole.STUDENT;
+        //TODO 추후 이메일 인증 후에 풀어주도록 로직 설정
+        this.non_locked = true;
     }
 
-    public void update(UserEditForm form){
+    public void update(UserEditForm form) {
         name = form.getName();
         email = form.getEmail();
         phoneNumber = form.getPhoneNumber();

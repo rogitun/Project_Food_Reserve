@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
@@ -19,11 +19,10 @@
             <ul class="header__menu">
                 <li class="header__menuItem" ><a href="index.html">가게정보</a></li>
                 <li class="header__menuItem" ><a th:href="@{/menus}">메뉴정보</a></li>
-                <li class="header__menuItem" th:if="${session.user != null}"><a th:href="@{/messages}">메세지</a></li>
-                <li class="header__menuItem" th:if="${session.user != null}"><a th:href="@{/profile}">내 정보</a></li>
-<!--                <li class="header__menuItem" th:if="${session.user == null}"><a th:href="@{/loginForm}" class="btn btn&#45;&#45;sub">Login/Sign Up</a></li>-->
-                <li class="header__menuItem"><a th:href="@{/loginForm}" class="btn btn--sub">Login/Sign Up</a></li>
-                <form method="post" th:action="@{/logout}"><li class="header__menuItem"><button type="submit" class="btn btn--sub">Logout</button></li></form>
+                <li class="header__menuItem" sec:authorize="isAuthenticated()"><a th:href="@{/messages}">메세지</a></li>
+                <li class="header__menuItem" sec:authorize="isAuthenticated()"><a th:href="@{/profile}">내 정보</a></li>
+                <li class="header__menuItem" sec:authorize="isAnonymous()"><a th:href="@{/loginForm}" class="btn btn--sub">Login/Sign Up</a></li>
+                <form method="post" th:action="@{/logout}" sec:authorize="isAuthenticated()"><li class="header__menuItem"><button type="submit" class="btn btn--sub">Logout</button></li></form>
             </ul>
         </nav>
     </div>

@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.net.MalformedURLException;
 import java.util.List;
 import java.util.Optional;
@@ -46,22 +47,17 @@ public class MainController {
     private final PostService postService;
     private final MenuRepository menuRepository;
 
+    //TODO Query 문제있음
     @GetMapping("/")
     public String home(Model model, Pageable pageable,
-                       @AuthenticationPrincipal MyUserDetails user,
-                       HttpServletRequest request){
+                       @AuthenticationPrincipal MyUserDetails user){
         int page = (pageable.getPageNumber()==0)? 0: (pageable.getPageNumber()-1);
         Page<SellerDto> pages = userService.page(page, 6);
         Paging paging = userService.pageTemp(pages);
         if(user!=null)
             log.info("Current User is = {}, name = {}, Role = {}",user,user.getUsername(),user.getAuthorities());
-        String header = request.getHeader("Authorization");
-        log.info("jwt = {} ",header);
         model.addAttribute("seller",pages);
         model.addAttribute("paging",paging);
-
-//        log.info("number = {}",pages.getNumber());
-//        log.info("total = {}",pages.getTotalPages());
 
         return "main/home";
     }
