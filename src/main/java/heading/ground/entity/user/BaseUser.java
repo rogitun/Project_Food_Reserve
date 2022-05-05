@@ -52,7 +52,8 @@ public class BaseUser extends Base {
     }
 
     public void addFailed_attempt(boolean flag) {
-        failed_attempt = flag?failed_attempt+1:0;
+        failed_attempt = flag?(failed_attempt+1):0;
+        System.out.println("fail attempt :" + failed_attempt);
     }
 
     public void setLock_time(Date lock_time) {

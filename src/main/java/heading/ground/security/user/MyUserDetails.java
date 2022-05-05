@@ -20,6 +20,10 @@ public class MyUserDetails implements UserDetails {
         return user.getId();
     }
 
+    public BaseUser getUser() {
+        return user;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority> roles = new ArrayList<>();

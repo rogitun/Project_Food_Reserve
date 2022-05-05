@@ -3,6 +3,7 @@ package heading.ground.service;
 import heading.ground.dto.Paging;
 import heading.ground.dto.user.SellerDto;
 import heading.ground.entity.ImageFile;
+import heading.ground.entity.user.BaseUser;
 import heading.ground.entity.user.Seller;
 import heading.ground.entity.user.Student;
 import heading.ground.file.FileRepository;
@@ -17,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,9 +35,6 @@ public class UserService {
     private final FileRepository fileRepository;
     private final FileStore fileStore;
     private final UserRepository userRepository;
-
-    private final AuthenticationManager authManager;
-    private final MyUserDetailsService myUserDetailsService;
 
 
 //    public void logIn(String loginId, HttpServletRequest req) throws Exception {
@@ -111,5 +110,11 @@ public class UserService {
             return returnUrl;
         }
         return null;
+    }
+
+    @Transactional
+    public void failedAttempt(Long id, boolean b) {
+        BaseUser user = userRepository.findById(id).get();
+        user.addFailed_attempt(b);
     }
 }
