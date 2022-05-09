@@ -51,6 +51,7 @@ public class Seller extends BaseUser{
         this.companyId = sf.getCompanyId();
         this.role = MyRole.SELLER;
         //TODO 추후 이메일 인증 후에 풀어주도록 로직 설정
+        this.email = sf.getEmail();
         this.non_locked = true;
     }
 

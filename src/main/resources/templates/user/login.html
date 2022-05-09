@@ -72,7 +72,7 @@
             <div class="auth__actions">
 <!--                <input class="btn btn&#45;&#45;sub btn&#45;&#45;lg" type="submit" value="Log In"/>-->
                 <input class="btn btn--sub btn--lg" type="button" th:onclick="login()" value="Log In" />
-                <a href="forgetpassword.html">Forget Password?</a>
+                <a th:href="@{/forget-password}">비밀번호 찾기</a>
             </div>
         </form>
         <div class="auth__alternative">
@@ -83,29 +83,5 @@
     </div>
 </div>
 </body>
-<script type="text/javascript" th:src="@{/js/login.js}">
-<!--  function login(){-->
-<!--      let id = $('#loginId').val();-->
-<!--      let pwd = $('#password').val();-->
-<!--      var logRequest = new Object();-->
-<!--      logRequest.loginId = id;-->
-<!--      logRequest.password = pwd;-->
-
-<!--      $.ajax({-->
-<!--        type: "post",-->
-<!--        url : "/login",-->
-<!--        headers: {'Content-Type': 'application/json'},-->
-<!--        data : JSON.stringify(logRequest),-->
-<!--        success : function(result){-->
-<!--          alert("성공" + result);-->
-<!--          window.sessionStorage.setItem("Authorization",result);-->
-<!--           window.location.replace("/");-->
-<!--        },-->
-<!--        error : function(error){-->
-<!--          alert("failed");-->
-<!--        }-->
-<!--      });-->
-<!--  }-->
-
-</script>
+<script type="text/javascript" th:src="@{/js/login.js}"></script>
 </html>

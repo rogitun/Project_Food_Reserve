@@ -20,6 +20,12 @@ public interface UserRepository extends JpaRepository<BaseUser,Long> {
 
     long countByLoginId(@Param("loginId") String loginId);
 
+    @Query("select u from BaseUser u " +
+            "where u.loginId = :id and " +
+            "u.email = :email")
+    Optional<BaseUser> findUserByIdEmail(@Param("id") String id, @Param("email") String email);
+
+    Optional<BaseUser> findByUuid(String uuid);
 
     //TODO 아래는 seller
     @Query("select s.name from Seller s " +

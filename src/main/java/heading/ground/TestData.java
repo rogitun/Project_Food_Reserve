@@ -49,7 +49,7 @@ public class TestData {
 //            su.save(student);
 //        }
         BaseSignUp b = new BaseSignUp("abc","","","abc","abc@abc.com","010-0000-0000","1234123");
-        BaseSignUp a = new BaseSignUp("abcd","","","abcd","abcd@abc.com","011-0000-0000","1234123");
+        BaseSignUp a = new BaseSignUp("abcd","","","abcd","kunyjf@naver.com","011-0000-0000","1234123");
         BaseSignUp test = new BaseSignUp();
         BaseSignUp test2  = new BaseSignUp();
 

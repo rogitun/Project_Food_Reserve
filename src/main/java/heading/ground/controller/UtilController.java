@@ -1,5 +1,7 @@
 package heading.ground.controller;
 
+import heading.ground.dto.util.PwdCheck;
+import heading.ground.dto.util.PwdReset;
 import heading.ground.entity.user.BaseUser;
 import heading.ground.entity.user.Student;
 import heading.ground.entity.util.Message;
@@ -15,6 +17,9 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.mail.MessagingException;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -117,4 +122,45 @@ public class UtilController {
         return "redirect:/messages";
     }
 
+    @GetMapping("/forget-password")
+    public String forgetPwd(){
+        return "util/password";
+    }
+
+    @ResponseBody
+    @PostMapping("/forget-password")
+    public String pwdCheck(@RequestBody PwdCheck data,
+                           HttpServletResponse res) throws MessagingException, IOException {
+        log.info("check data = {}",data);
+        String check = utilService.pwdCheck(data.getId(), data.getEmail());
+        if(check!=null){
+            log.info("유저 존재");
+            utilService.sendMail(data.getEmail(),check);
+            return "Ok";
+        }
+        else {
+            res.sendError(401,"notFound");
+            return "Error";
+        }
+    }
+
+    @GetMapping("/reset-password/{id}")
+    public String newPwd(@PathVariable("id") String uuid,
+                         Model model){
+        model.addAttribute("id",uuid);
+        return "util/pwdChange";
+    }
+
+    @ResponseBody
+    @PostMapping("/reset-password/{id}")
+    public String resetPwd(@PathVariable("id") String uuid,
+                           @RequestBody PwdReset reset,
+                           HttpServletResponse res) throws IOException {
+
+        String s = utilService.resetPwd(uuid, reset);
+        if(s==null)
+            res.sendError(401,"FailReset");
+
+        return s;
+    }
 }

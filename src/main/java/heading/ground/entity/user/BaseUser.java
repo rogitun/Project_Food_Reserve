@@ -31,7 +31,9 @@ public class BaseUser extends Base {
 
    protected String phoneNumber;
 
-   @Enumerated(EnumType.STRING)
+    protected String email;
+
+    @Enumerated(EnumType.STRING)
    protected MyRole role;
 
    @Column(columnDefinition = "boolean default true")
@@ -41,6 +43,8 @@ public class BaseUser extends Base {
    protected int failed_attempt;
 
    protected Date lock_time;
+
+   protected String uuid;
 
     public void update(SellerEditForm form){
         this.name = form.getName();
@@ -58,5 +62,16 @@ public class BaseUser extends Base {
 
     public void setLock_time(Date lock_time) {
         this.lock_time = lock_time;
+    }
+
+    public void setUUID(String uuid){
+        this.uuid = uuid;
+    }
+
+    public void changePassword(String encode) {
+        this.failed_attempt=0;
+        this.non_locked = true;
+        this.uuid = null;
+        this.password = encode;
     }
 }

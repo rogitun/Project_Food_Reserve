@@ -18,8 +18,6 @@ import java.util.List;
 @PrimaryKeyJoinColumn(name = "user_id")
 public class Student extends BaseUser {
 
-    private String email;
-
     @OneToMany(mappedBy = "writer", cascade = CascadeType.REMOVE)
     private List<Comment> comments = new ArrayList<>();
 

@@ -54,8 +54,12 @@ public class CustomLoginFailureHandler
         if(unlock){
             return 302;
         }
-        long l = (baseUser.getLock_time().getTime() - System.currentTimeMillis()) / 1000;
-        String lockTime = (l/3600) + ":" + (l/60) + ":" + l;
+        int l = (int) ((baseUser.getLock_time().getTime() - System.currentTimeMillis()) / 1000);
+        int hour = (l/3600);
+        int min = (l/ 60)-(hour*60);
+        int sec = (l-(hour*3600)-(min*60));
+
+        String lockTime = hour + ":" + min + ":" + sec;
         Cookie cookie = new Cookie("lockTime",lockTime);
         cookie.setPath("/loginForm");
         response.addCookie(cookie);
