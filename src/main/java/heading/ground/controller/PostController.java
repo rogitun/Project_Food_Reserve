@@ -55,8 +55,8 @@ public class PostController {
 
     @GetMapping("/add-menu")
     public String menuForm(Model model,
-                           @SessionAttribute("user") BaseUser user) { //메뉴 폼
-        if(!(user instanceof Seller))
+                           @AuthenticationPrincipal MyUserDetails principal) { //메뉴 폼
+        if (!principal.getRole().equals("SELLER"))
             return "redirect:/";
         model.addAttribute("menu", new MenuForm());
         return "post/menuForm";
@@ -64,22 +64,21 @@ public class PostController {
 
     @PostMapping("/add-menu")
     public String addMenu(@Validated @ModelAttribute("menu") MenuForm form, BindingResult bindingResult,
-                          @SessionAttribute(name = "user") BaseUser seller) throws IOException { //메뉴 폼
+                          @AuthenticationPrincipal MyUserDetails principal) throws IOException { //메뉴 폼
         if (bindingResult.hasErrors()) {
             return "post/menuForm";
         }
-        Seller se = (Seller) seller;
-        postService.addMenu(form, se);
+        postService.addMenu(form, principal.getId());
 
         return "redirect:/profile";
     }
 
     @GetMapping("/{id}/edit")
     public String editForm(@PathVariable("id") Long id, Model model,
-                           @SessionAttribute("user") BaseUser user) {
-        Optional<Menu> optionalMenu = menuRepository.findMenuByIdWithSeller(id, user.getId());
+                           @AuthenticationPrincipal MyUserDetails principal) {
+        Optional<Menu> optionalMenu = menuRepository.findMenuByIdWithSeller(id, principal.getId());
         //Menu menu = menuRepository.findById(id).get();
-        if(optionalMenu.isEmpty())
+        if (optionalMenu.isEmpty())
             return "redirect:/";
         Menu menu = optionalMenu.get();
         MenuForm form = new MenuForm(menu);
@@ -90,45 +89,41 @@ public class PostController {
 
     @PostMapping("/{id}/edit")
     public String editMenu(@Validated @ModelAttribute("menu") MenuForm form, BindingResult bindingResult,
-                           @PathVariable("id") Long id,
-                           @SessionAttribute("user") BaseUser user) throws IOException {
-        Optional<Menu> optionalMenu = menuRepository.findMenuByIdWithSeller(id, user.getId());
-        if(optionalMenu.isEmpty())
+                           @PathVariable("id") Long id, @AuthenticationPrincipal MyUserDetails principal) throws IOException {
+        Optional<Menu> optionalMenu = menuRepository.findMenuByIdWithSeller(id, principal.getId());
+        if (optionalMenu.isEmpty())
             return "redirect:/";
         Menu menu = optionalMenu.get();
-       // Menu menu = menuRepository.findById(id).get();
+        // Menu menu = menuRepository.findById(id).get();
         postService.updateMenu(menu, form);
         return "redirect:/profile";
     }
 
 
-
     @GetMapping("/manage")
-    public String managingMenus(Model model,
-                                @SessionAttribute("user") BaseUser user){
-        if(!(user instanceof Seller))
+    public String managingMenus(Model model, @AuthenticationPrincipal MyUserDetails principal) {
+        if (!principal.getRole().equals("SELLER"))
             return "redirect:/";
-        List<Menu> menus = menuRepository.findMenusBySellerId(user.getId());
+        List<Menu> menus = menuRepository.findMenusBySellerId(principal.getId());
         List<MenuManageDto> menuDtos = menus.stream().map(m -> new MenuManageDto(m)).collect(Collectors.toList());
-        model.addAttribute("menus",menuDtos);
+        model.addAttribute("menus", menuDtos);
         return "/post/manage-menu";
     }
 
     @PostMapping("/{id}/status")
     public String setStatus(@PathVariable("id") Long id,
-                            @RequestBody Map<String,String> data){
+                            @RequestBody Map<String, String> data) {
 
         log.info("controller In");
         String flag = data.get("data");
-        postService.setMenuStatus(id,flag);
+        postService.setMenuStatus(id, flag);
         return "redirect:/menu/manage";
     }
 
     @PostMapping("/{id}/del")
-    public String delMenu(@PathVariable("id") Long id,
-                          @SessionAttribute("user") BaseUser user){
-        Optional<Menu> optionalMenu = menuRepository.findMenuByIdWithSeller(id, user.getId());
-        if(optionalMenu.isEmpty()){
+    public String delMenu(@PathVariable("id") Long id, @AuthenticationPrincipal MyUserDetails principal) {
+        Optional<Menu> optionalMenu = menuRepository.findMenuByIdWithSeller(id, principal.getId());
+        if (optionalMenu.isEmpty()) {
             return null;
         }
         menuRepository.deleteById(id);
@@ -137,6 +132,7 @@ public class PostController {
 
 
     //TODO 댓글 고려사항
+
     /**
      * 1. 댓글은 메뉴와 사용자의 연관관계를 가진다.
      * 2. 댓글과 메뉴는 M:1 / 사용자도 M:1
@@ -152,23 +148,23 @@ public class PostController {
             return "redirect:/menus/" + id;
         }
 
-        try{
+        try {
             Long sId = principal.getId();
             Comment comment = new Comment(form);
             postService.addComment(sId, comment, id);
-        }catch (Exception e){
-            response.sendError(500,"ServerError");
-        }finally {
+        } catch (Exception e) {
+            response.sendError(500, "ServerError");
+        } finally {
             return "redirect:/menus/" + id;
         }
     }
 
     @PostMapping("/{id}/del-comment")
     public String delComment(@PathVariable("id") Long id,
-                             @AuthenticationPrincipal MyUserDetails principal){
+                             @AuthenticationPrincipal MyUserDetails principal) {
         //TODO comment - User 같이
         Optional<Comment> comment = commentRepository.findByIdWithUser(id, principal.getId());
-        if(comment.isEmpty())
+        if (comment.isEmpty())
             return "/"; //TODO 잘못된 접근 처리하기
         Comment cmt = comment.get();
         Long menuId = cmt.getMenu().getId();

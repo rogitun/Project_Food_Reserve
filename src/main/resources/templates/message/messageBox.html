@@ -26,26 +26,37 @@
     <div class="content-box">
       <h3 class="inbox__title">받은 메세지</h3>
       <ul class="messages">
-        <li class="message message--unread" th:each="m : ${rcv}">
+        <div th:each="m : ${rcv}">
+        <li class="message message--unread" th:unless="${m.isRead}">
           <a th:href="@{/messages/{id}(id=${m.id})}">
             <span class="message__author" th:text="|보낸이 : ${m.writer.name}|"></span>
             <span class="message__subject" th:text="|${#strings.abbreviate(m.body,20)}...|"></span>
             <span class="message__date" th:text="${m.created}"></span>
           </a>
         </li>
+          <li class="message" th:if="${m.isRead}">
+            <a th:href="@{/messages/{id}(id=${m.id})}">
+              <span class="message__author" th:text="|보낸이 : ${m.writer.name}|"></span>
+              <span class="message__subject" th:text="|${#strings.abbreviate(m.body,20)}...|"></span>
+              <span class="message__date" th:text="${m.created}"></span>
+            </a>
+          </li>
+        </div>
       </ul>
     </div>
-
+    <br>
     <div class="content-box">
       <h3 class="inbox__title">보낸 메세지</h3>
       <ul class="messages">
-        <li class="message message--unread" th:each="m : ${snt}">
+        <div th:each="m : ${snt}">
+        <li class="message">
           <a th:href="@{/messages/{id}(id=${m.id})}">
             <span class="message__author" th:text="${m.writer.name}"></span>
             <span class="message__subject" th:text="|${#strings.abbreviate(m.body,20)}...|"></span>
             <span class="message__date" th:text="${m.created}"></span>
           </a>
         </li>
+        </div>
       </ul>
     </div>
   </main>

@@ -37,8 +37,8 @@ public class PostService {
     private final StudentRepository studentRepository;
 
     @Transactional
-    public void addMenu(MenuForm form, Seller sessionSeller) throws IOException {
-        Seller seller = sellerRepository.findById(sessionSeller.getId()).get();
+    public void addMenu(MenuForm form, Long id) throws IOException {
+        Seller seller = sellerRepository.findById(id).get();
         Menu menu = form.toEntity();
 
         MultipartFile image = form.getImage();
@@ -81,9 +81,17 @@ public class PostService {
         return all.map(a -> new MenuDto(a));
     }
 
+    public Page<MenuDto> pageBySeller(int s, int n,Long id) {
+        PageRequest pageRequest = PageRequest.of(s,n);
+        Page<Menu> all = menuRepository.findBySellerPage(id, pageRequest);
+        return all.map(a -> new MenuDto(a));
+    }
+
     public Paging pageTemp(Page<MenuDto> page){
         return new Paging(page.getTotalPages(), page.getNumber());
     }
+
+
 
     @Transactional
     public void setMenuStatus(Long id, String flag) {

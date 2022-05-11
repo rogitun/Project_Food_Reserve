@@ -55,7 +55,7 @@ public class UserService {
     private String path;
 
     @Transactional
-    public Seller updateSeller(Long id, SellerEditForm form) throws IOException {
+    public void updateSeller(Long id, SellerEditForm form) throws IOException {
         Seller seller = userRepository.findSellerWithImage(id);
 
         if (form.getDesc().isBlank() && form.getImageFile() == null && form.getSellerId().isBlank())
@@ -70,14 +70,12 @@ public class UserService {
             ImageFile imageFile = fileStore.storeFile(form.getImageFile());
             seller.updateImage(imageFile);
         }
-        return seller;
     }
 
     @Transactional
-    public Student updateStudent(Long id, UserEditForm form) {
+    public void updateStudent(Long id, UserEditForm form) {
         Student student = userRepository.findStudentById(id);
         student.update(form);
-        return student;
     }
 
 

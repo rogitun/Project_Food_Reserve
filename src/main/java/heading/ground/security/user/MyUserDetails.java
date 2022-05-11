@@ -24,6 +24,10 @@ public class MyUserDetails implements UserDetails {
         return user;
     }
 
+    public String getRole(){
+        return this.user.getRole().toString();
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority> roles = new ArrayList<>();
@@ -33,6 +37,7 @@ public class MyUserDetails implements UserDetails {
                 return user.getRole().toString();
             }
         });
+        //user.getRole();
         return roles;
     }
 

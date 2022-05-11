@@ -31,7 +31,7 @@
             <p class="message__date" th:text="${msg.created}"></p>
             <div class="message__body" th:text="${msg.body}">
             </div>
-            <div th:if="${session.user.getId() == msg.receiver.id}">
+            <div th:if="${#authentication.getPrincipal().getId() == msg.receiver.id}">
                 <a th:href="@{/message/{id}/reply(id=${msg.id})}"><input class="btn btn--sub btn--lg  my-md" type="button" value="답장하기"/></a>
             </div>
         </div>

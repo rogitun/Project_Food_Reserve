@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
   <meta charset="UTF-8" />
@@ -38,10 +38,10 @@
               <h2 class="dev__name" th:text="${seller.name}">가게이름</h2>
               <p class="dev__title" th:text="${seller.phoneNumber}">전화번호</p>
               <p class="dev__location" th:text="TODO">가게위치</p>
-              <span th:if="${session.user !=null && session.user instanceof T(heading.ground.entity.user.Student)}">
-                <a th:href="@{/messages/{id}/send(id=${seller.id})}" class="btn btn--sub">문의하기</a>
-              <a th:onclick="|book('${seller.id}')|" class="btn btn--sub">예약하기</a></span>
-
+              <span sec:authorize ="hasAuthority('STUDENT')">
+                <a th:href="@{/message/{id}/send(id=${seller.id})}" class="btn btn--sub">문의하기</a>
+              <a th:onclick="|book('${seller.id}')|" class="btn btn--sub">예약하기</a>
+              </span>
             </div>
           </div>
         </div>
@@ -53,7 +53,7 @@
             </p>
           </div>
           <div class="devInfo">
-            <h3 class="devInfo__title">사장님 추천 메뉴</h3>
+            <h3 class="devInfo__title">대표 메뉴</h3>
             <div class="devInfo__skills">
               <div class="devSkill" th:each="b : ${best}">
                 <h4 class="devSkill__title" th:text="${b.name}">메뉴 제목</h4>
@@ -62,7 +62,7 @@
             </div>
           </div>
           <div class="devInfo">
-            <h3 class="devInfo__title">메뉴</h3>
+            <h3 class="devInfo__title"><a th:href="@{/seller/{id}/menus(id=${seller.id})}">전체메뉴보러가기</a></h3>
             <div class="grid grid--two">
 
               <div class="column" th:each="m : ${menus}">

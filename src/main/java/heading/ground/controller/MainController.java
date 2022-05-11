@@ -49,7 +49,7 @@ public class MainController {
         Page<SellerDto> pages = userService.page(page, 6);
         Paging paging = userService.pageTemp(pages);
         if(user!=null)
-            log.info("Current User is = {}, name = {}, Role = {}",user,user.getUsername(),user.getAuthorities());
+            log.info("Current User is = {}, name = {}, Role = {}",user,user.getUsername(),user.getRole());
         model.addAttribute("seller",pages);
         model.addAttribute("paging",paging);
 

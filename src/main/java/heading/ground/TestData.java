@@ -21,8 +21,6 @@ import javax.annotation.PostConstruct;
 @RequiredArgsConstructor
 public class TestData {
 
-    private final StudentRepository su;
-    private final SellerRepository seu;
     private final MenuRepository mu;
     private final UserRepository us;
     private final BCryptPasswordEncoder passwordEncoder;
@@ -48,19 +46,32 @@ public class TestData {
 //            //mu.save(menu3);
 //            su.save(student);
 //        }
+        BaseSignUp c = new BaseSignUp("abc2","","","abc2","abc2@abc.com","012-0000-0000","1232343");
         BaseSignUp b = new BaseSignUp("abc","","","abc","abc@abc.com","010-0000-0000","1234123");
         BaseSignUp a = new BaseSignUp("abcd","","","abcd","kunyjf@naver.com","011-0000-0000","1234123");
         BaseSignUp test = new BaseSignUp();
         BaseSignUp test2  = new BaseSignUp();
+        BaseSignUp test3  = new BaseSignUp();
 
-        Menu menu = new MenuForm("김치전", 4500, "막걸리와 함께", "김치랑 밀가루").toEntity();
+
+        Menu menu = new MenuForm("삼계탕", 5500, "막걸리와 함께", "김치랑 밀가루").toEntity();
         a.setPassword(passwordEncoder.encode("1234"));
         b.setPassword(passwordEncoder.encode("1234"));
+        c.setPassword(passwordEncoder.encode("1234"));
+
+
         Student student = test2.toStudent(a);
         Seller seller = test.toSeller(b);
-        menu.addSeller(seller);
+        Seller seller2  = test3.toSeller(c);
 
+        menu.addSeller(seller2);
         us.save(seller);
+        us.save(seller2);
+        for(int i=0;i<20;i++){
+            Menu temp = new MenuForm("김치전"+i, 4500, "막걸리와 함께", "김치랑 밀가루").toEntity();
+            temp.addSeller(seller);
+            mu.save(temp);
+        }
         mu.save(menu);
         us.save(student);
     }

@@ -1,5 +1,6 @@
 package heading.ground.controller;
 
+import heading.ground.dto.Paging;
 import heading.ground.dto.book.BookDto;
 import heading.ground.dto.book.MenuListDto;
 import heading.ground.dto.post.MenuDto;
@@ -18,9 +19,12 @@ import heading.ground.repository.post.MenuRepository;
 import heading.ground.repository.user.SellerRepository;
 import heading.ground.repository.user.UserRepository;
 import heading.ground.service.BookService;
+import heading.ground.service.PostService;
 import heading.ground.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -32,51 +36,34 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Slf4j
 @Controller
+@RequiredArgsConstructor
 @RequestMapping("/seller")
 public class SellerController {
 
-//    @GetMapping("/edit/{id}")  //정보 수정 메서드
-//    public String editAccount(@PathVariable("id") Long id,
-//                              @SessionAttribute(name = "user", required = false) BaseUser ses,
-//                              Model model) {
-//        //TODO 세션으로 접근하는 사람과 수정 대상 데이터의 주인이 일치하는지 확인
-//        Seller seller = sellerRepository.findById(id).get();
-//        SellerEditForm sellerEditForm = new SellerEditForm(seller);
-//
-//        model.addAttribute("seller", sellerEditForm);
-//
-//        return "user/edit-account";
-//    }
+    private final PostService postService;
+    @GetMapping("/{id}/menus") //해당 가게의 전체 메뉴
+    public String menus(@PathVariable("id") Long id,
+                        Pageable pageable,
+                        Model model){
+        int page = (pageable.getPageNumber()==0)?0:(pageable.getPageNumber()-1);
+        Page<MenuDto> all = postService.pageBySeller(page, 9,id);
+        Paging paging = postService.pageTemp(all);
+        Optional<MenuDto> first = all.get().findFirst();
+        if(first.isPresent())
+            model.addAttribute("seller_name",first.get().getSeller());
 
-//    @PostMapping("/edit/{id}") //수정 POST
-//    public String edit(@Validated @ModelAttribute("seller") SellerEditForm form, BindingResult bindingResult,
-//                       @SessionAttribute(name = "user", required = false) BaseUser ses,
-//                       HttpServletRequest request) throws IOException {
-//        if (bindingResult.hasErrors()) {
-//            return "user/edit-account";
-//        }
-//        //파일처리 TODO 파일 이름 UUID로 수정
-//        //TODO 사진이 다르면 기존의 사진 delete
-//
-//        //가게 데이터 변경 처리 + 파일처리
-//        Seller seller = (Seller) ses; //변경 감지로 데이터 변경
-//        Seller updatedSeller = userService.updateSeller(seller.getId(), form);
-//
-//        log.info("controller_ seller = {}", seller.getImageFile());
-//
-//        //세션 업데이트
-//        HttpSession session = request.getSession();
-//        session.removeAttribute("user");
-//        session.setAttribute("user", updatedSeller);
-//
-//        return "redirect:/seller/account";
-//    }
+        model.addAttribute("sid",id);
+        model.addAttribute("menus",all);
+        model.addAttribute("paging",paging);
 
-
+        return "post/menusBySeller";
+    }
 
 
 }

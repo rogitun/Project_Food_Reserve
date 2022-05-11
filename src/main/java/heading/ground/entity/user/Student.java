@@ -2,6 +2,8 @@ package heading.ground.entity.user;
 
 import heading.ground.entity.book.Book;
 import heading.ground.entity.post.Comment;
+import heading.ground.entity.post.Menu;
+import heading.ground.entity.util.ShopCart;
 import heading.ground.forms.user.BaseSignUp;
 import heading.ground.forms.user.StudentForm;
 import heading.ground.forms.user.UserEditForm;
@@ -10,6 +12,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 @Entity
@@ -23,6 +26,9 @@ public class Student extends BaseUser {
 
     @OneToMany(mappedBy = "student")
     private List<Book> books = new ArrayList<>();
+
+    @OneToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    private ShopCart cart = new ShopCart();
 
     public Student(BaseSignUp std) {
         this.loginId = std.getLoginId();
@@ -39,5 +45,9 @@ public class Student extends BaseUser {
         name = form.getName();
         email = form.getEmail();
         phoneNumber = form.getPhoneNumber();
+    }
+
+    public void addMenuToCart(Menu menu){
+        cart.addMenu(menu);
     }
 }

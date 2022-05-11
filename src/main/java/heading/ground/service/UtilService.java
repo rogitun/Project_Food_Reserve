@@ -1,12 +1,17 @@
 package heading.ground.service;
 
 import heading.ground.dto.util.PwdReset;
+import heading.ground.entity.post.Menu;
 import heading.ground.entity.user.BaseUser;
+import heading.ground.entity.user.Student;
 import heading.ground.entity.util.Message;
 import heading.ground.forms.util.MsgForm;
+import heading.ground.repository.post.MenuRepository;
 import heading.ground.repository.user.UserRepository;
 import heading.ground.repository.util.MessageRepository;
+import heading.ground.repository.util.ShopCartRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -24,11 +29,14 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UtilService {
 
     private final UserRepository userRepository;
     private final MessageRepository messageRepository;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final MenuRepository menuRepository;
+    private final ShopCartRepository cartRepository;
 
     @Autowired
     private JavaMailSender javaMailSender;
@@ -116,5 +124,39 @@ public class UtilService {
         BaseUser baseUser = optional.get();
         baseUser.changePassword(passwordEncoder.encode(pwds.getOne()));
         return "ok";
+    }
+
+    @Transactional
+    public void addCart(Long userId, Long menuId) {
+        //유저의 장바구니에 해당 메뉴 추가
+        //유저의 장바구니에 이미 다른 가게의 아이템이 있는 경우 초기화시키고 다시 추가.
+        Optional<Student> optional = userRepository.findByIdForCart(userId);
+        Optional<Menu> optionalMenu = menuRepository.findById(menuId);
+        if(optional.isEmpty() || optionalMenu.isEmpty()) {
+            log.info("User or Menu Not Found on Searching User with ShopCart");
+            return;
+        }
+
+        Student student = optional.get();
+        Menu menu = optionalMenu.get();
+        student.addMenuToCart(menu);
+    }
+
+    public boolean cartCheck(Student student,Long menuId) {
+        Long sellerId = student.getCart().getSellerId();
+        Optional<Menu> opt = menuRepository.findMenuByIdWithSeller(menuId, sellerId);
+        if(opt.isPresent() || student.getCart().getSellerId() == null)
+            return true;
+        else return false;
+        //True => 동일한 가게의 메뉴를 담음
+        //False => 다른 가게의 메뉴를 담음
+    }
+
+    public boolean cartDuplicate(Student student, Long menuId) {
+        Long cartId = student.getCart().getId();
+        cartRepository.findByMenuId(cartId,menuId);
+
+
+        return true;
     }
 }

@@ -3,6 +3,7 @@ package heading.ground.repository.post;
 import heading.ground.entity.post.Menu;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -12,13 +13,17 @@ import java.util.Optional;
 
 public interface MenuRepository extends JpaRepository<Menu,Long> {
 
-    List<Menu> findBySellerId(Long sellerId);
-
     @Query("select m from Menu m " +
             "where m.seller.id in :id")
     List<Menu> selectMenuBySeller(@Param("id") Long id);
 
     Menu findByName(String name);
+
+    @Query(value = "select m from Menu m " +
+            "join fetch m.seller s " +
+            "where s.id = :sid",
+    countQuery = "select count(m) from Menu m")
+    Page<Menu> findBySellerPage(@Param("sid") Long id, Pageable pageable);
 
     @Query("select m from Menu m " +
             "join fetch m.seller s " +
@@ -43,4 +48,6 @@ public interface MenuRepository extends JpaRepository<Menu,Long> {
             "where m.outOfStock = false " +
             "and m.seller.id =:sid")
     long countStock(@Param("sid") Long id);
+
+
 }

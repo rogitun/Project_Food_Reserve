@@ -11,9 +11,11 @@ import heading.ground.entity.user.Student;
 import heading.ground.forms.book.BookForm;
 import heading.ground.repository.book.BookRepository;
 import heading.ground.repository.post.MenuRepository;
+import heading.ground.security.user.MyUserDetails;
 import heading.ground.service.BookService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -46,11 +48,10 @@ public class BookController {
     //TODO 아래는 예약 처리하기
     @PostMapping("/{id}/accept") //예약 수락(seller)
     public String bookAccept(@PathVariable("id") String id,
-                             @SessionAttribute("user") BaseUser user){
+                             @AuthenticationPrincipal MyUserDetails principal){
         Long l = Long.parseLong(id);
-        if(user instanceof Seller){
-            Seller seller = (Seller)user;
-            Optional<Book> bookWithSeller = bookRepository.findBookWithSeller(seller.getId(),l);
+        if(principal.getRole().equals("SELLER")){
+            Optional<Book> bookWithSeller = bookRepository.findBookWithSeller(principal.getId(),l);
             if(bookWithSeller.isEmpty()){
                 //ㄴㄴ
                 throw new IllegalStateException();
@@ -100,13 +101,12 @@ public class BookController {
         }
     }
 
-    //@GetMapping("/{id}/book") //예약 폼(Student)  ID는 Seller
+    //예약 폼(Student)  ID는 Seller
     @GetMapping("/{id}/bookForm")
     public String bookForm(@PathVariable("id") Long id, Model model,
-                           @SessionAttribute("user") BaseUser std,
-                           HttpServletResponse response) throws IOException {
-        if (!(std instanceof Student)) {
-            return "redirect:/seller/" + id;
+                           @AuthenticationPrincipal MyUserDetails principal) throws IOException {
+        if (!principal.getRole().equals("STUDENT")) {
+            return "redirect:/sellerInfo/" + id;
         }
 
         List<Menu> menuList = menuRepository.selectMenuBySeller(id);
@@ -120,15 +120,14 @@ public class BookController {
     @PostMapping("/{id}/addBook")
     public void addBook(@PathVariable("id") Long id, @RequestBody BookForm form,
                           HttpServletResponse response,
-                          @SessionAttribute("user") BaseUser std) throws IOException {
+                          @AuthenticationPrincipal MyUserDetails principal) throws IOException {
 
         //TODO 메뉴 품절 체크
         List<BookedMenu> bookMenus = bookService.createBookMenus(form.returnArr());
         if(bookMenus == null)
             response.sendError(500,"메뉴 오류");
 
-        Student student = (Student) std;
-        bookService.createBook(bookMenus, student.getId(), id, form);
+        bookService.createBook(bookMenus, principal.getId(), id, form);
         return;
     }
 }
