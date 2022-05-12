@@ -1,5 +1,6 @@
 package heading.ground.service;
 
+import heading.ground.dto.util.CartMenuDto;
 import heading.ground.dto.util.PwdReset;
 import heading.ground.entity.post.Menu;
 import heading.ground.entity.user.BaseUser;
@@ -28,6 +29,7 @@ import javax.mail.internet.MimeMessage;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -145,23 +147,49 @@ public class UtilService {
     }
 
     public boolean cartCheck(Student student,Long menuId) {
-        Long sellerId = student.getCart().getSellerId();
-        Optional<Menu> opt = menuRepository.findMenuByIdWithSeller(menuId, sellerId);
-        if(opt.isPresent() || student.getCart().getSellerId() == null)
-            return true;
-        else return false;
+        if(student.getCart()!=null) {
+            Long sellerId = student.getCart().getSellerId();
+            Optional<Menu> opt = menuRepository.findMenuByIdWithSeller(menuId, sellerId);
+            if(opt.isPresent() || sellerId == null)
+                return true;
+            else if(opt.isEmpty())
+                return false;
+        }
         //True => 동일한 가게의 메뉴를 담음
         //False => 다른 가게의 메뉴를 담음
+        return true;
     }
 
     public boolean cartDuplicate(Student student, Long menuId) {
         ShopCart cart = student.getCart();
+        if(cart==null)return false;
+
         Optional<Menu> optionalMenu = menuRepository.findById(menuId);
         if(optionalMenu.isEmpty()){
             log.info("Error During Duplicating Check in ShopCart");
             throw new IllegalStateException();
         }
 
+        log.info("opt menu = {} ",optionalMenu.isEmpty());
+
+
         return cart.duplicateCheck(optionalMenu.get().getName());
+    }
+
+    public List<CartMenuDto> getCart(Long id) {
+        Optional<ShopCart> optional = cartRepository.findByUserIdWithAll(id);
+        log.info("optional ={}",optional.isEmpty());
+        if(optional.isEmpty()){
+            log.info("Optional Null -Service");
+            return null;
+        }
+        ShopCart shopCart = optional.get();
+
+        List<CartMenu> menuList = shopCart.getMenuList();
+        List<CartMenuDto> cartMenuDtos = menuList.stream().map(
+                        m -> new CartMenuDto(m.getMenu()))
+                .collect(Collectors.toList());
+
+        return cartMenuDtos;
     }
 }

@@ -1,5 +1,6 @@
 package heading.ground.controller;
 
+import heading.ground.dto.util.CartMenuDto;
 import heading.ground.dto.util.PwdCheck;
 import heading.ground.dto.util.PwdReset;
 import heading.ground.entity.user.BaseUser;
@@ -12,6 +13,7 @@ import heading.ground.security.user.MyUserDetails;
 import heading.ground.service.UtilService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -164,21 +166,21 @@ public class UtilController {
 
     @ResponseBody
     @PostMapping("/add-cart/{id}/check")
-    public String cartCheck(@PathVariable("id") Long menuId,@AuthenticationPrincipal MyUserDetails principal,
+    public String cartCheck(@PathVariable("id") Long menuId, @AuthenticationPrincipal MyUserDetails principal,
                             HttpServletResponse rep) throws IOException {
         Optional<Student> opt = userRepository.findByIdForCart(principal.getId());
-        if(opt.isEmpty()){
-            rep.sendError(401,"UserError");
+        if (opt.isEmpty()) {
+            rep.sendError(401, "UserError");
             return "Fail";
         }
         //이미 장바구니에 추가된 경우
         Student student = opt.get();
         boolean duplicate = utilService.cartDuplicate(student, menuId);
-        if(duplicate)
+        if (duplicate)
             return "Duplicate";
 
         boolean check = utilService.cartCheck(student, menuId);
-        if(!check){
+        if (!check) {
             //동일한 가게 X
             return "NotSame";
         }
@@ -191,12 +193,28 @@ public class UtilController {
     public String addCart(@PathVariable("id") Long id,
                           @AuthenticationPrincipal MyUserDetails principal,
                           HttpServletResponse rep) throws IOException {
-        if(!principal.getRole().equals("STUDENT"))
-            rep.sendError(403,"AuthorityError");
+        if (!principal.getRole().equals("STUDENT"))
+            rep.sendError(403, "AuthorityError");
 
-        utilService.addCart(principal.getId(),id); //유저, 메뉴id
+        utilService.addCart(principal.getId(), id); //유저, 메뉴id
         //TODO 가게 바뀐 경우 추가
 
         return "Ok";
+    }
+
+    @PreAuthorize("hasAuthority('STUDENT')")
+    @GetMapping("/cart-list")
+    public String showCart(@AuthenticationPrincipal MyUserDetails principal,
+                           Model model) {
+        List<CartMenuDto> cart = utilService.getCart(principal.getId());
+        if(cart==null || cart.size()<=0){
+            model.addAttribute("empty","empty");
+        }else{
+            CartMenuDto cartMenuDto = cart.get(0);
+            model.addAttribute("seller",cartMenuDto.getSellerName());
+            model.addAttribute("menus", cart);
+        }
+
+        return "/util/shopCart";
     }
 }

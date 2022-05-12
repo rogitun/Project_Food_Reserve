@@ -27,8 +27,9 @@ public class Student extends BaseUser {
     @OneToMany(mappedBy = "student")
     private List<Book> books = new ArrayList<>();
 
-    @OneToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
-    private ShopCart cart = new ShopCart();
+    @OneToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL
+    ,mappedBy = "student")
+    private ShopCart cart = new ShopCart(this);
 
     public Student(BaseSignUp std) {
         this.loginId = std.getLoginId();
@@ -50,4 +51,5 @@ public class Student extends BaseUser {
     public void addMenuToCart(Menu menu){
         cart.addMenu(menu);
     }
+
 }

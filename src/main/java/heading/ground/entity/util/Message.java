@@ -13,7 +13,7 @@ import javax.persistence.*;
 @Getter
 public class Message extends Base {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
