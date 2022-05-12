@@ -173,15 +173,16 @@ public class UtilController {
         }
         //이미 장바구니에 추가된 경우
         Student student = opt.get();
-        utilService.cartDuplicate(student,menuId);
-
+        boolean duplicate = utilService.cartDuplicate(student, menuId);
+        if(duplicate)
+            return "Duplicate";
 
         boolean check = utilService.cartCheck(student, menuId);
         if(!check){
             //동일한 가게 X
             return "NotSame";
         }
-        return "same";
+        return "Same";
     }
 
     //장바구니에 아이템 추가.

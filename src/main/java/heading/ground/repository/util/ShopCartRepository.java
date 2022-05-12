@@ -7,9 +7,4 @@ import org.springframework.data.repository.query.Param;
 
 public interface ShopCartRepository extends JpaRepository<ShopCart,Long> {
 
-    @Query("select c from Cart c " +
-            "left join fetch c.menulist m " +
-            "where c.id = :cid and " +
-            ":mid in (m.id)")
-    void findByMenuId(@Param("cid") Long cartId,@Param("mid") Long menuId);
 }

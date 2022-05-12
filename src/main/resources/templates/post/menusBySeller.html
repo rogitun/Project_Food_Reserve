@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Favicon -->
+  <link rel="shortcut icon" th:href="@{/images/favicon.ico}" type="image/x-icon" />
+  <!-- Icon - IconMonster -->
+  <link rel="stylesheet" href="https://cdn.iconmonstr.com/1.3.0/css/iconmonstr-iconic-font.min.css" />
+  <!-- Mumble UI -->
+  <link rel="stylesheet" th:href="@{/uikit/styles/uikit.css}" />
+  <!-- Dev Search UI -->
+  <link rel="stylesheet" th:href="@{/styles/app.css}" />
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <title>Menus</title>
+</head>
+
+<body>
+  <!-- Header Section -->
+  <div th:replace="main/nav :: header"></div>
+
+  <!-- Main Section -->
+  <main class="projects">
+    <section class="hero-section text-center">
+      <div class="container container--narrow">
+        <div class="hero-section__box">
+          <h2>메뉴 <span th:text="|By ${seller_name}">By "가게이름"</span></h2>
+        </div>
+      </div>
+    </section>
+    <!-- Search Result: DevList -->
+    <section class="projectsList">
+      <div class="container">
+        <div class="grid grid--three">
+          <div class="column" th:each="m : ${menus}">
+            <div class="card project">
+              <a th:href="@{/menus/{id}(id=${m.id})}" class="project">
+                <img class="project__thumbnail" th:if="${m.image}" th:src="|/image/${m.image}|" />
+                <img class="project__thumbnail" th:unless="${m.image}" th:src="@{/images/default_food.png}" />
+              </a>
+                <div class="card__body">
+                  <h3 class="project__title" th:text="${m.name}">메뉴이름</h3>
+                  <p class="project--rating"><span style="font-weight: bold;" th:text="|평점 : ${m.star} 점|"></span></p>
+                  <p><a class="project__author" th:unless="${m.isOut}" th:text="|가격 : ${m.price}원|">가격</a></p>
+                  <p><a class="project__author" style="color:red" th:if="${m.isOut}" th:text="품절">가격</a></p>
+                  <div class="project__tags">
+                    <span class="tag tag--pill tag--main">
+<!--                      th:href="@{/add-cart/{id}(id=${m.id})}" -->
+                      <a th:onclick="cartCheck([[${m.id}]],[[${m.name}]])">장바구니 담기</a>
+                    </span>
+                  </div>
+                </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="pagination">
+      <ul class="container"
+          th:with="start = ${paging.start}, last=${paging.last}">
+
+        <li th:style="${menus.first} ? 'display:none'">
+          <a th:href="${menus.first} ? '#' : @{/seller/{id}/menus/(page=${paging.number},id=${sid})}" class="btn">&#10094; Prev</a>
+        </li>
+        <li th:each="p : ${#numbers.sequence(start,last)}">
+          <a th:href="@{/seller/{id}/menus/(page=${p},id=${sid})}" th:text="${p}"
+             th:if="${p==paging.number+1}" class="btn btn--sub">num</a>
+          <a th:href="@{/seller/{id}/menus/(page=${p},id=${sid})}" th:text="${p}"
+             th:unless="${p==paging.number+1}" class="btn">num</a>
+        </li>
+        <!--            paging.number = 현재 페이지, start = 페이징에서 첫번째, last=페이징에서 마지막,-->
+        <li th:style="${menus.last} ? 'display:none'">
+          <a th:href="${menus.last} ? '#' : @{/seller/{id}/menus/(page=${menus.number+2},id=${sid})}" class="btn">Next &#10095;</a>
+        </li>
+      </ul>
+    </div>
+  </main>
+</body>
+<script type="text/javascript" th:src="@{/js/cart.js}"></script>
+</html>

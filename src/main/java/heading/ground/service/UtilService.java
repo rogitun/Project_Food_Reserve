@@ -4,7 +4,9 @@ import heading.ground.dto.util.PwdReset;
 import heading.ground.entity.post.Menu;
 import heading.ground.entity.user.BaseUser;
 import heading.ground.entity.user.Student;
+import heading.ground.entity.util.CartMenu;
 import heading.ground.entity.util.Message;
+import heading.ground.entity.util.ShopCart;
 import heading.ground.forms.util.MsgForm;
 import heading.ground.repository.post.MenuRepository;
 import heading.ground.repository.user.UserRepository;
@@ -153,10 +155,13 @@ public class UtilService {
     }
 
     public boolean cartDuplicate(Student student, Long menuId) {
-        Long cartId = student.getCart().getId();
-        cartRepository.findByMenuId(cartId,menuId);
+        ShopCart cart = student.getCart();
+        Optional<Menu> optionalMenu = menuRepository.findById(menuId);
+        if(optionalMenu.isEmpty()){
+            log.info("Error During Duplicating Check in ShopCart");
+            throw new IllegalStateException();
+        }
 
-
-        return true;
+        return cart.duplicateCheck(optionalMenu.get().getName());
     }
 }
