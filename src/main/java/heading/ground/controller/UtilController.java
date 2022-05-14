@@ -8,6 +8,7 @@ import heading.ground.entity.user.Student;
 import heading.ground.entity.util.Message;
 import heading.ground.forms.util.MsgForm;
 import heading.ground.repository.user.UserRepository;
+import heading.ground.repository.util.CartMenuRepository;
 import heading.ground.repository.util.MessageRepository;
 import heading.ground.security.user.MyUserDetails;
 import heading.ground.service.UtilService;
@@ -27,6 +28,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 //TODO 메세지, 이메일, 쿠폰, 장바구니 등을 관리
@@ -216,5 +218,22 @@ public class UtilController {
         }
 
         return "/util/shopCart";
+    }
+
+    @PreAuthorize("hasAuthority('STUDENT')")
+    @PostMapping("/cart-list/delete/{id}")
+    @ResponseBody
+    public String deleteCart(@PathVariable("id") Long id,
+                             @AuthenticationPrincipal MyUserDetails principal){
+
+        //해당 장바구니 메뉴가 요청을 한 유저의 장바구니인지 확인 필요함
+        Long userId = principal.getId();
+
+        long cnt = utilService.deleteCart(id,userId);
+        if(cnt<=0){
+            return "None";
+        }
+
+        return "Ok";
     }
 }

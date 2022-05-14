@@ -16,4 +16,9 @@ public interface ShopCartRepository extends JpaRepository<ShopCart,Long> {
             "join fetch sc.student st " +
             "where sc.student.id = :uid")
     Optional<ShopCart> findByUserIdWithAll(@Param("uid") Long id);
+
+    @Query("select sc from ShopCart sc " +
+            "join fetch sc.student st " +
+            "where st.id = :uid")
+    Optional<ShopCart> findByUserId(@Param("uid") Long id);
 }

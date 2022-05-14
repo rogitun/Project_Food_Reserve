@@ -11,11 +11,13 @@ import heading.ground.entity.util.ShopCart;
 import heading.ground.forms.util.MsgForm;
 import heading.ground.repository.post.MenuRepository;
 import heading.ground.repository.user.UserRepository;
+import heading.ground.repository.util.CartMenuRepository;
 import heading.ground.repository.util.MessageRepository;
 import heading.ground.repository.util.ShopCartRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
@@ -41,6 +43,8 @@ public class UtilService {
     private final BCryptPasswordEncoder passwordEncoder;
     private final MenuRepository menuRepository;
     private final ShopCartRepository cartRepository;
+    private final CartMenuRepository cartMenuRepository;
+
 
     @Autowired
     private JavaMailSender javaMailSender;
@@ -191,5 +195,18 @@ public class UtilService {
                 .collect(Collectors.toList());
 
         return cartMenuDtos;
+    }
+
+    @Transactional
+    public int deleteCart(Long id,Long userId) {
+        Optional<ShopCart> optUser = cartRepository.findByUserId(userId);
+        if(optUser.isEmpty()) {
+            log.warn("User Not Found During Deleting Cart From UtilService");
+            return 0;
+        }
+        ShopCart shopCart = optUser.get();
+
+        int cnt = cartMenuRepository.deleteByMenuId(id,shopCart.getId());
+        return cnt;
     }
 }

@@ -10,6 +10,9 @@
     <!-- Dev Search UI -->
     <link rel="stylesheet" th:href="@{/styles/app.css}" />
     <link rel="stylesheet" th:href="@{/uikit/styles/cart.css}" />
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <title>Title</title>
 </head>
 <body>
@@ -26,7 +29,7 @@
     </div>
     <div class="cart" >
 
-        <ul class="cartWrap">
+        <ul class="cartWrap" name="cartList">
             <li class="items odd" th:each="m : ${menus}">
                 <div class="infoWrap">
                     <div class="cartSection">
@@ -34,7 +37,10 @@
                         <p class="itemNumber" th:text="${m.id}">메뉴코드</p>
                         <h3 th:text="${m.name}">메뉴이름</h3>
 
-                        <span></p><input type="text"  class="qty" placeholder="1"/><p th:text="|X ${m.price}원|"></span>
+                        <span>
+                            <input type="number" th:id="|cnt${m.id}|" class="qty" value="1" th:onkeyup="plus([[${m.id}]])"/>
+                            <p th:id="|price${m.id}|" th:text="|X ${m.price}|"></p>
+                        </span>
 
                         <p class="stockStatus out" th:if="${m.isOut}">품절</p>
                         <p class="stockStatus" th:unless="${m.isOut}">재고있음</p>
@@ -42,37 +48,13 @@
 
 
                     <div class="prodTotal cartSection">
-                        <p th:text="${m.price}">총금액(곱한)</p>
+                        <p class="ePrice" th:id="|total${m.id}|" th:text="${m.price}">총금액(곱한)</p>
                     </div>
                     <div class="cartSection removeWrap">
-                        <a href="#" class="remove">x</a>
+                        <a th:onclick="remove([[${m.id}]])" class="remove">x</a>
                     </div>
                 </div>
             </li>
-<!--            <li class="items even">-->
-
-<!--                <div class="infoWrap">-->
-<!--                    <div class="cartSection">-->
-
-<!--                        <img src="" alt="" class="itemImg" />-->
-<!--                        <p class="itemNumber">#QUE-007544-002</p>-->
-<!--                        <h3>Item Name 1</h3>-->
-
-<!--                        <p> <input type="text"  class="qty" placeholder="3"/> x $5.00</p>-->
-
-<!--                        <p class="stockStatus"> In Stock</p>-->
-<!--                    </div>-->
-
-
-<!--                    <div class="prodTotal cartSection">-->
-<!--                        <p>$15.00</p>-->
-<!--                    </div>-->
-<!--                    <div class="cartSection removeWrap">-->
-<!--                        <a href="#" class="remove">x</a>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </li>-->
-            <!--<li class="items even">Item 2</li>-->
         </ul>
     </div>
 
@@ -86,10 +68,14 @@
 <!--            <li class="totalRow"><span class="label">Shipping</span><span class="value">$5.00</span></li>-->
 
 <!--            <li class="totalRow"><span class="label">Tax</span><span class="value">$4.00</span></li>-->
-            <li class="totalRow final"><span class="label">Total</span><span class="value">$44.00</span></li>
+            <li class="totalRow final">
+                <span class="label">Total</span>
+                <span class="totalValue">0</span>
+            </li>
             <li class="totalRow"><a href="#" class="btn continue">Checkout</a></li>
         </ul>
     </div>
 </div>
 </body>
+<script type="text/javascript" th:src="@{/js/cartList.js}"></script>
 </html>
