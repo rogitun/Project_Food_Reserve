@@ -24,6 +24,8 @@ public class CartMenu {
     @JoinColumn(name = "menu_id")
     private Menu menu;
 
+    private int quantity;
+
     public CartMenu(ShopCart cart, Menu menu) {
         this.cart = cart;
         this.menu = menu;

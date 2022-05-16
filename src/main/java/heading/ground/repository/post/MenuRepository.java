@@ -10,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public interface MenuRepository extends JpaRepository<Menu,Long> {
 
@@ -49,5 +50,8 @@ public interface MenuRepository extends JpaRepository<Menu,Long> {
             "and m.seller.id =:sid")
     long countStock(@Param("sid") Long id);
 
+    //TODO New version
+    @Query("select m from Menu m where m.id in (:ids)")
+    List<Menu> findByIds(@Param("ids") Set<Long> menuIds);
 
 }

@@ -15,7 +15,7 @@ import java.util.List;
 @Getter
 public class Book extends Base {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "book_id")
     private Long id;
 
@@ -25,16 +25,15 @@ public class Book extends Base {
     @Enumerated(EnumType.STRING)
     private BookType type; //방문 타입
 
-    @Enumerated(EnumType.STRING)
-    private Payment payment; //결제 타입
-
     private int totalPrice;
 
     private LocalDateTime bookTime;
 
     private int number; //사람 몇명 오는지
 
-    private String reason;
+    private String reason; //취소시 사유
+
+    private boolean isPaid;//결제가 되었는지.
 
     @ManyToOne(fetch= FetchType.LAZY)
     @JoinColumn(name = "student_id")
@@ -49,11 +48,9 @@ public class Book extends Base {
 
 
 
-    public static Book book(Seller seller, Student student, List<BookedMenu> bookedMenus,
-                            BookForm form){
+    public static Book book(Seller seller, Student student, List<BookedMenu> bookedMenus){
         Book book = new Book();
         book.setBook(seller,student,bookedMenus);
-        book.setField(form);
         return book;
     }
 
@@ -63,10 +60,6 @@ public class Book extends Base {
         }
         else type = BookType.HERE;
 
-        if(form.getPayment().equals("cash"))
-            payment = Payment.CASH;
-        else payment = Payment.CREDIT;
-
         number = form.getNumber();
     }
 
@@ -74,16 +67,17 @@ public class Book extends Base {
         for (BookedMenu bookedMenu : bookedMenus) {
             bookedMenu.addBook(this);
             this.bookedMenus.add(bookedMenu);
-            this.totalPrice += (bookedMenu.getPrice() * bookedMenu.getQuantity());
+            this.totalPrice += bookedMenu.getPrice();
         }
         this.seller = seller;
         this.student = student;
+        this.status = BookStatus.PENDING;
+        this.bookTime = LocalDateTime.now();
+
 
         student.getBooks().add(this);
         seller.getBooks().add(this);
 
-        this.status = BookStatus.PENDING;
-        this.bookTime = LocalDateTime.now();
     }
 
     public void processBook(boolean flag){

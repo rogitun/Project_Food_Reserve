@@ -1,6 +1,7 @@
 package heading.ground.controller;
 
 import heading.ground.dto.book.BookDto;
+import heading.ground.dto.book.BookedMenuDto;
 import heading.ground.dto.book.MenuListDto;
 import heading.ground.entity.book.Book;
 import heading.ground.entity.book.BookedMenu;
@@ -35,6 +36,16 @@ public class BookController {
     private final BookRepository bookRepository;
     private final BookService bookService;
     private final MenuRepository menuRepository;
+
+    @GetMapping("/{id}/un-paid")
+    public String bookForPaying(@PathVariable("id") Long id,Model model){
+        Book books = bookRepository.findByIdWithCollections(id);
+        List<BookedMenuDto> bookedMenuDtos = books.getBookedMenus().stream().map(bm -> new BookedMenuDto(bm)).collect(Collectors.toList());
+        model.addAttribute("menus",bookedMenuDtos);
+        model.addAttribute("total",books.getTotalPrice());
+
+        return "book/bookForm";
+    }
 
     @GetMapping("/{id}") //예약 세부 정보
     public String bookDetail(@PathVariable("id")Long id,Model model){
@@ -101,33 +112,19 @@ public class BookController {
         }
     }
 
-    //예약 폼(Student)  ID는 Seller
-    @GetMapping("/{id}/bookForm")
-    public String bookForm(@PathVariable("id") Long id, Model model,
-                           @AuthenticationPrincipal MyUserDetails principal) throws IOException {
-        if (!principal.getRole().equals("STUDENT")) {
-            return "redirect:/sellerInfo/" + id;
-        }
 
-        List<Menu> menuList = menuRepository.selectMenuBySeller(id);
-        List<MenuListDto> menus = menuList.stream().map(m -> new MenuListDto(m)).collect(Collectors.toList());
-        model.addAttribute("form", menus);
-        model.addAttribute("sellerId", id);
-        return "/book/bookForm";
-    }
-
-    //@PostMapping("/{id}/book") //예약 추가(Student), ID는 Seller
-    @PostMapping("/{id}/addBook")
-    public void addBook(@PathVariable("id") Long id, @RequestBody BookForm form,
-                          HttpServletResponse response,
-                          @AuthenticationPrincipal MyUserDetails principal) throws IOException {
-
-        //TODO 메뉴 품절 체크
-        List<BookedMenu> bookMenus = bookService.createBookMenus(form.returnArr());
-        if(bookMenus == null)
-            response.sendError(500,"메뉴 오류");
-
-        bookService.createBook(bookMenus, principal.getId(), id, form);
-        return;
-    }
+//    //@PostMapping("/{id}/book") //예약 추가(Student), ID는 Seller
+//    @PostMapping("/{id}/addBook")
+//    public void addBook(@PathVariable("id") Long id, @RequestBody BookForm form,
+//                          HttpServletResponse response,
+//                          @AuthenticationPrincipal MyUserDetails principal) throws IOException {
+//
+//        //TODO 메뉴 품절 체크
+//        List<BookedMenu> bookMenus = bookService.createBookMenus(form.returnArr());
+//        if(bookMenus == null)
+//            response.sendError(500,"메뉴 오류");
+//
+//        bookService.createBook(bookMenus, principal.getId(), id, form);
+//        return;
+//    }
 }

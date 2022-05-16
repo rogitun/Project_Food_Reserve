@@ -1,8 +1,5 @@
 //// Remove Items From Cart
-//function removeAction(){
-//  event.preventDefault();
-//  $( 'a.remove' ).parent().parent().hide( 400 );
-//}
+
 
 function plus(id){
     let strPrice = $('#price'+id).text();
@@ -28,7 +25,6 @@ function calc(){
         sum += parseInt($(this).text());
     });
     $('.totalValue').text(sum);
-
 }
 window.onload = calc();
 
@@ -38,20 +34,64 @@ function remove(mid){
         return;
     }
 
-
     let postUrl = "/cart-list/delete/"+mid;
 
     $.ajax({
         type: 'post',
         url : postUrl,
         success : function(result){
-           // removeAction();
+        if(result==="Ok"){
+           removeAction(mid);
             alert("삭제되었습니다.");
-           window.location.reload();
+           }
         },
         error : function(error){
             alert("에러");
         }
     });
+}
 
+function removeAction(mid){
+  event.preventDefault();
+  $('#total'+mid).text(0);
+  $('#wrap'+mid).hide( 400 );
+  calc();
+  let total = parseInt($('.totalValue').text());
+  if(total===0){
+    window.location.reload();
+  }
+}
+
+function listConfirm(){
+    //class = itemNumber, qty
+     let numbers = new Array();
+     let qtys = new Array();
+    $('.itemNumber').each(function(){
+        numbers.push($(this).text());
+    });
+
+    $('.qty').each(function(){
+        qtys.push($(this).val());
+    });
+
+    let obj = new Array();
+    for(let i =0;i<numbers.length;i++){
+        console.log(numbers[i] + " " + qtys[i]);
+        obj.push({id: parseInt(numbers[i]), quantity: parseInt(qtys[i])});
+    }
+
+    $.ajax({
+        type: 'post',
+        url: '/list-confirm',
+        headers: { "Content-Type": "application/json" },
+        data : JSON.stringify(obj),
+        success: function(result){
+            alert("장바구니 내역이 저장되었습니다. 결제 후 예약이 완료됩니다.");
+            //alert(result);
+            window.location.replace("/book/" + result + "/un-paid");
+        },
+        error : function(error){
+            alert("실패");
+        }
+    })
 }

@@ -1,128 +1,71 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-
+<html lang="en" xmlns:th="www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8"/>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-
-    <!-- Favicon -->
-    <link rel="shortcut icon" th:href="@{/images/favicon.ico}" type="image/x-icon"/>
+    <meta charset="UTF-8">
+    <link rel="shortcut icon" th:href="@{/images/favicon.ico}" type="image/x-icon" />
     <!-- Icon - IconMonster -->
-    <link rel="stylesheet" href="https://cdn.iconmonstr.com/1.3.0/css/iconmonstr-iconic-font.min.css"/>
+    <link rel="stylesheet" href="https://cdn.iconmonstr.com/1.3.0/css/iconmonstr-iconic-font.min.css" />
     <!-- Mumble UI -->
-    <link rel="stylesheet" th:href="@{/uikit/styles/uikit.css}"/>
+    <link rel="stylesheet" th:href="@{/uikit/styles/uikit.css}" />
     <!-- Dev Search UI -->
-    <link rel="stylesheet" th:href="@{/styles/app.css}"/>
+    <link rel="stylesheet" th:href="@{/styles/app.css}" />
+    <link rel="stylesheet" th:href="@{/uikit/styles/cart.css}" />
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <title>예약하기</title>
-    <style>
-      .field-error {
- border-color: #dc3545;
- color: #dc3545;
-
-    </style>
+    <title>Title</title>
 </head>
-
 <body>
-
 <div th:replace="main/nav :: header"></div>
 
+<div class="wrap cf" th:unless="${empty}">
+    <hr>
+    <div class="heading cf">
+        <h1 th:text="|예약을 완료하기 위해 결제해주세요!|"></h1>
+    </div>
+    <div class="cart" >
 
-<main class="formPage my-xl">
-    <div class="content-box">
-        <div class="formWrapper">
-            <a class="backButton" href="#"><i class="im im-angle-left"></i></a>
-            <br>
-
-            <form class="form" method="post">
-                <!-- Input:Text -->
-                <div class="form__field" th:each="m : ${form}">
+        <ul class="cartWrap" name="cartList">
+            <li class="items odd" th:each="m : ${menus}">
+                <div class="infoWrap">
+                    <div class="cartSection">
+                        <img src="" alt="" class="itemImg" />
+                        <h3 th:text="${m.menu}">메뉴이름</h3>
                         <span>
-                            <label for="formInput#text" style="color:red" th:if="${m.isOut}" th:text="|${m.name} : 품절|"> </label>
-                             <label for="formInput#text" th:unless="${m.isOut}" th:text="|${m.name} : ${m.price}원|"> </label>
-                            <input class="input input--text" th:unless="${m.isOut}" th:id="|menu${mStat.count}|" th:name="name"  type="text" th:value="${m.name}" hidden>
-                             <input class="input input--text" th:if="${m.isOut}" type="text" style="float:right; color:red" placeholder="품절입니다." readonly/>
-                            <input class="input input--text"  th:unless="${m.isOut}" th:id="|quantity${mStat.count}|" type="text" th:name="quantity"  style="float:right;" placeholder="수량을 입력해주세요." required/>
+                            <p>수량 : </p><input type="number" class="qty" th:value="${m.quantity}" readonly/>
                         </span>
-                    <br>
+                    </div>
+                    <div class="prodTotal cartSection">
+                        <p class="ePrice" th:text="${m.price}"></p>
+                    </div>
                     <hr>
                 </div>
-                <label for="formInput#text">인원 </label>
-                <input class="input input--text"  type="text" id="formInput#text" name="number" required>
-                <label for="formInput#text">결제 타입 </label><br>
-                <input type="radio" name="payment" value="cash">현금
-                <input type="radio" name="payment" value="credit">카드
-                <hr>
-                <label for="formInput#text">포장/매장 </label><br>
-                <input type="radio" name="type" value="here">매장
-                <input type="radio" name="type" value="togo">포장
-                <hr>
-
-                <input class="btn btn--sub btn--lg  my-md" type="button" onclick="data()" value="확인"/>
-            </form>
-        </div>
+            </li>
+            <li>
+                <p>방문일</p>
+                <input type="date" value="2022-01-01" min="2022-01-01" max="2030-01-01">
+            </li>
+            <li>
+                <p>방문 시간</p>
+                <input type="time" value="13:00" min="13:00" max="24:00">
+            </li>
+            <li>
+                <p>방문 인원</p>
+                <input type="number" value="1">
+            </li>
+        </ul>
     </div>
-</main>
+
+    <div class="subtotal cf">
+        <ul>
+            <li class="totalRow final">
+                <span class="label">Total</span>
+                <span class="totalValue" th:text="${total}">0</span>
+            </li>
+            <li class="totalRow"><a href="#" th:onclick="" class="btn continue">Checkout</a></li>
+        </ul>
+    </div>
+</div>
 </body>
-<script th:inline="javascript">
-    function data(){
-        let a = document.getElementsByName('name');
-        let b = document.getElementsByName('quantity');
-        let number = document.getElementsByName('number');
-        let pay = document.getElementsByName('payment');
-        let t = document.getElementsByName('type');
-
-        let bookUrl = "/book/"+ [[${sellerId}]] + "/addBook";
-        let nextUrl = "/sellerInfo/" + [[${sellerId}]];
-
-        let payment;
-        let type;
-
-        let profile = "/profile";
-
-        let arr = new Array();
-
-        for(let i=0;i<pay.length;i++){
-            if(pay[i].checked){
-                payment = pay[i].value;
-            }
-        }
-
-         for(let i=0;i<t.length;i++){
-            if(t[i].checked){
-                type = t[i].value;
-            }
-        }
-
-        for(let i = 0;i<a.length;i++){
-            arr.push({name : a[i].value, quantity:b[i].value});
-        }
-
-        let obj = {
-            "arr" : arr,
-            "type" : type,
-            "number" :  number[0].value,
-            "payment" :  payment,
-        };
-
-        $.ajax({
-            type: "post",
-            url : bookUrl,
-            traditional: true,
-            headers: {'Content-Type': 'application/json'},
-            data: JSON.stringify(obj),
-            success: function(result){
-                alert("예약 성공");
-                window.location.replace(profile);
-            },
-            error: function(error){
-                alert("예약 실패(메뉴가 품절되었을 수 도 있습니다.)");
-                window.location.replace(nextUrl);
-            }
-        });
-    }
-
-</script>
+<script type="text/javascript" th:src="@{/js/cartList.js}"></script>
 </html>

@@ -56,14 +56,14 @@
                             <td class="settings__tableInfo">
                                 <a th:href="@{/book/{id}(id=${b.id})}" th:text="${b.seller.name}">가게이름</a>
                                 <p th:text="|총 가격 : ${b.totalPrice}|">가격</p>
-                                <p th:text="|예약 일시 : ${b.bookTime}|"></p>
-                                <p th:text="|진행 상황 : ${b.status}|">처리현황</p>
-                                <p th:text="${b.type}">방문타입</p>
+                                <p th:if="${b.isPaid}" th:text="|예약 일시 : ${b.bookTime}|"></p>
+                                <p th:if="${b.isPaid}" th:text="|진행 상황 : ${b.status}|">처리현황</p>
+                                <p th:if="${b.isPaid}" th:text="${b.type}">방문타입</p>
+                                <p th:unless="${b.isPaid}">결제가 안된 예약입니다.</p>
                             </td>
                             <td class="settings__tableActions" th:unless="${b.status() == 'canceled'}">
-                                <a class="tag tag--pill tag--main settings__btn"><i class="im im-edit"></i>예약 상세</a>
-                                <a class="tag tag--pill tag--main settings__btn" th:onclick="|check('${b.id}')|">
-                                    <i class="im im-x-mark-circle-o"></i>취소 신청</a>
+                                <a class="tag tag--pill tag--main settings__btn" th:href="@{/book/{id}/un-paid(id=${b.id})}">결제</a>
+                                <a class="tag tag--pill tag--main settings__btn" th:onclick="|check('${b.id}')|">취소</a>
                             </td>
                         </div>
                     </tr>

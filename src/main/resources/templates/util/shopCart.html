@@ -31,7 +31,7 @@
 
         <ul class="cartWrap" name="cartList">
             <li class="items odd" th:each="m : ${menus}">
-                <div class="infoWrap">
+                <div class="infoWrap" th:id="|wrap${m.id}|">
                     <div class="cartSection">
                         <img src="" alt="" class="itemImg" />
                         <p class="itemNumber" th:text="${m.id}">메뉴코드</p>
@@ -72,7 +72,7 @@
                 <span class="label">Total</span>
                 <span class="totalValue">0</span>
             </li>
-            <li class="totalRow"><a href="#" class="btn continue">Checkout</a></li>
+            <li class="totalRow"><a href="#" th:onclick="listConfirm()" class="btn continue">Checkout</a></li>
         </ul>
     </div>
 </div>

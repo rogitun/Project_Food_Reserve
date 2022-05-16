@@ -12,7 +12,7 @@ import javax.persistence.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class BookedMenu {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "bookedMenu_id")
     private Long id;
 
@@ -29,7 +29,7 @@ public class BookedMenu {
 
     public BookedMenu(Menu menu, int quantity) {
         this.menu = menu;
-        this.price = menu.getPrice();
+        this.price = menu.getPrice() * quantity;
         this.quantity = quantity;
     }
 

@@ -1,24 +1,18 @@
 package heading.ground.forms.book;
 
-import heading.ground.entity.post.Menu;
 import lombok.Data;
 
-import java.util.ArrayList;
-import java.util.List;
-
-
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Data
 public class BookForm {
-    //인원, 결제타입, 방문타입
+    //방문일자, (포장or매장), 방문인원
 
-    List<MenuSet> arr = new ArrayList<>();
+    private LocalDate date;
+    private LocalTime time;
     private String type;
-    private String payment;
     private int number;
 
-
-    public List<MenuSet> returnArr(){
-        return arr;
-    }
 }
