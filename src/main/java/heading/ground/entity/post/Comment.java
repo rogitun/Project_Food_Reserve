@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 //TODO 댓글 고려사항
 /**
@@ -23,17 +24,20 @@ public class Comment extends Base {
     private Long id;
 
     @Lob
-    @Column(name="comment_desc",length = 512)
+    @Column(name="content",length = 512)
+    @NotNull
     private String desc;
 
+    @NotNull
+    @Column(columnDefinition = "TINYINT",length = 1)
     private int star;
 
     @ManyToOne(cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id",nullable = false)
     private Student writer;
 
     @ManyToOne
-    @JoinColumn(name = "menu_id")
+    @JoinColumn(name = "menu_id",nullable = false)
     private Menu menu;
 
     public Comment(CommentForm form) {

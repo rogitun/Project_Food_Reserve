@@ -6,6 +6,8 @@ import org.hibernate.annotations.GenericGenerator;
 import org.springframework.beans.factory.annotation.Value;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.File;
 
 @Entity
@@ -17,8 +19,12 @@ public class ImageFile {
     @GenericGenerator(name = "uuid2",strategy = "uuid2")
     private String id;
 
+    @NotNull
+    @Size(max = 100)
     private String originName;
 
+    @NotNull
+    @Size(max = 100)
     private String storeName;
 
     public ImageFile(String uploadName, String storeName) {

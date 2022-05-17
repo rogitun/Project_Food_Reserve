@@ -7,6 +7,7 @@ import heading.ground.forms.book.BookForm;
 import lombok.Getter;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,10 +26,13 @@ public class Book extends Base {
     @Enumerated(EnumType.STRING)
     private BookType type; //방문 타입
 
+    @NotNull
     private int totalPrice;
 
+    @NotNull
     private LocalDateTime bookTime;
 
+    @Column(columnDefinition = "TINYINT",length = 2)
     private int number; //사람 몇명 오는지
 
     private String reason; //취소시 사유
@@ -36,11 +40,11 @@ public class Book extends Base {
     private boolean isPaid;//결제가 되었는지.
 
     @ManyToOne(fetch= FetchType.LAZY)
-    @JoinColumn(name = "student_id")
+    @JoinColumn(name = "student_id",nullable = false)
     private Student student; //예약자
 
     @ManyToOne(fetch= FetchType.LAZY)
-    @JoinColumn(name = "seller_id")
+    @JoinColumn(name = "seller_id",nullable = false)
     private Seller seller;
 
     @OneToMany(mappedBy = "book",cascade = CascadeType.ALL)
@@ -52,15 +56,6 @@ public class Book extends Base {
         Book book = new Book();
         book.setBook(seller,student,bookedMenus);
         return book;
-    }
-
-    private void setField(BookForm form) {
-        if(form.getType().equals("togo")){
-            this.type = BookType.TOGO;
-        }
-        else type = BookType.HERE;
-
-        number = form.getNumber();
     }
 
     public void setBook(Seller seller,Student student,List<BookedMenu> bookedMenus) {
@@ -78,6 +73,15 @@ public class Book extends Base {
         student.getBooks().add(this);
         seller.getBooks().add(this);
 
+    }
+
+    private void setField(BookForm form) {
+        if(form.getType().equals("togo")){
+            this.type = BookType.TOGO;
+        }
+        else type = BookType.HERE;
+
+        number = form.getNumber();
     }
 
     public void processBook(boolean flag){

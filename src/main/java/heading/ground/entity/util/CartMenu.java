@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Getter
@@ -17,13 +18,15 @@ public class CartMenu {
     private Long id;
 
     @ManyToOne(fetch =  FetchType.LAZY)
-    @JoinColumn(name = "cart_id")
+    @JoinColumn(name = "cart_id",nullable = false)
     private ShopCart cart;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "menu_id")
+    @JoinColumn(name = "menu_id",nullable = false)
     private Menu menu;
 
+    @Column(columnDefinition = "TINYINT",length = 4)
+    @NotNull
     private int quantity;
 
     public CartMenu(ShopCart cart, Menu menu) {

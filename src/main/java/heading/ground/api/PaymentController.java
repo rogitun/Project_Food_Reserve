@@ -64,10 +64,6 @@ public class PaymentController {
             //menuRepository에서 id 일치하는 메뉴 모두 가져온 다음 BookedMenu로 전환
         }
         Long bookId = bookService.createBookMenus(menuSet, principal.getId());
-        //bookedMenu 만들고 => Book  생성
-//        for (BookedMenu bookMenu : bookMenus) {
-//            log.info("BookedMenus = {},{},{}",bookMenu.getQuantity(),bookMenu.getPrice(),bookMenu.getMenu().getId());
-//        }
 
         return ResponseEntity.ok(bookId);
     }

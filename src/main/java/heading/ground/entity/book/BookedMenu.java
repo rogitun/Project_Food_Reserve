@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Getter
@@ -24,7 +25,11 @@ public class BookedMenu {
     @JoinColumn(name = "menu_id")
     private Menu menu;
 
+    @NotNull
     private int price;
+
+    @NotNull
+    @Column(columnDefinition = "TINYINT",length = 4)
     private int quantity;
 
     public BookedMenu(Menu menu, int quantity) {

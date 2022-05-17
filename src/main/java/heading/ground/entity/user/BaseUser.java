@@ -10,6 +10,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.Date;
 
@@ -23,18 +25,29 @@ public class BaseUser extends Base {
     @Column(name = "user_id")
     protected Long id;
 
+    @Size(max = 10)
+    @NotNull
     protected String loginId;
 
+    @Size(max = 100)
+    @NotNull
     protected String password;
 
+    @Size(max = 16)
+    @NotNull
     protected String name; // 이름(가게이름, 학생 별명)
 
-   protected String phoneNumber;
+    @Size(max = 14)
+    @NotNull
+    protected String phoneNumber;
 
+    @Size(max = 40)
+    @NotNull
     protected String email;
 
     @Enumerated(EnumType.STRING)
-   protected MyRole role;
+    @Column(length = 10)
+    protected MyRole role;
 
    @Column(columnDefinition = "boolean default true")
    protected boolean non_locked;

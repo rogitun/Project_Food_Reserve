@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -20,6 +21,7 @@ import java.util.Set;
 @Getter
 @PrimaryKeyJoinColumn(name="user_id")
 public class Seller extends BaseUser{
+
     @Embedded
     private Address address; //주소
 
@@ -29,10 +31,11 @@ public class Seller extends BaseUser{
     //TODO 이미지 파일 추가
     
     //가게 정보
+    @Size(max = 30)
     private String companyId; //사업자 번호
 
     @Lob
-    @Column(name="seller_desc",length = 512)
+    @Column(name="intro",length = 512)
     private String desc;
 
     //가게가 가진 메뉴를 연관

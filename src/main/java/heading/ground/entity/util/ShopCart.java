@@ -23,6 +23,7 @@ public class ShopCart extends Base {
     @Column(name = "cart_id")
     private Long id;
 
+    @Column(name = "currentSeller")
     private Long sellerId;
 
     @OneToOne()

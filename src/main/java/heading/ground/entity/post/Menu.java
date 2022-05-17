@@ -9,6 +9,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,21 +22,28 @@ public class Menu extends Base {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "menu_id")
     private Long id;
-    
+
+    @Size(max = 16)
+    @NotNull
     private String name; //음식 이름
+
+    @NotNull
     private int price; //음식 가격
 
     @Lob
-    @Column(name="menu_desc",length = 512)
+    @Column(name="intro",length = 512)
     private String desc; //음식 설명
 
     @Column(columnDefinition = "TEXT")
     private String sources;//음식에 들어가는 재료, 굳이 엔티로 뽑을 필요 없음
 
+    @Column(columnDefinition = "TINYINT")
     private int commentNumber;
 
+    @Column(columnDefinition = "TINYINT",length = 1)
     private int star;
 
+    @NotNull
     private boolean outOfStock;
 
     private boolean isBest;
@@ -44,7 +53,7 @@ public class Menu extends Base {
 
     //메뉴가 소속된 가게
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "seller_id",nullable = false)
     private Seller seller;
 
     @OneToMany(mappedBy = "menu",cascade = CascadeType.REMOVE)

@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 @Entity
 @NoArgsConstructor
@@ -24,15 +26,19 @@ public class Message extends Base {
     @JoinColumn
     private BaseUser receiver;
 
-    @Column(length = 16,nullable = false)
+    @NotNull
+    @Size(max = 30)
     private String title;
 
     @Lob
     @Column(name="body",length = 512)
+    @NotNull
     private String body;
 
+    @NotNull
     private boolean isRead;
 
+    @Size(max = 30)
     private String priorTitle;
 
     public Message(BaseUser writer, BaseUser receiver, MsgForm form) {
