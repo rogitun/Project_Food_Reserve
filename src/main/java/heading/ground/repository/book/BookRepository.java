@@ -8,7 +8,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 import java.util.Optional;
 
-public interface BookRepository extends JpaRepository<Book,Long> {
+public interface BookRepository extends JpaRepository<Book,String> {
 
     @Query("select b from Book b where :id in (b.seller.id, b.student.id)")
     List<Book> findAllBooks(@Param("id") Long id);
@@ -20,8 +20,13 @@ public interface BookRepository extends JpaRepository<Book,Long> {
             "join fetch b.seller se " +
             "join fetch b.bookedMenus bm " +
             "where b.id = :bid ")
-    Book findByIdWithCollections(@Param("bid") Long id);
+    Book findByIdWithCollections(@Param("bid") String id);
 
+    @Query("select distinct b from Book b " +
+            "join fetch b.student s " +
+            "join fetch b.seller se " +
+            "where b.id = :bid ")
+    Optional<Book> findByIdWithUser(@Param("bid") String id);
 
     @Query("select distinct b from Book b " +
             "join fetch b.student s " +
@@ -38,6 +43,10 @@ public interface BookRepository extends JpaRepository<Book,Long> {
             "join fetch b.seller s " +
             "where s.id = :pid and " +
             "b.id = :bid")
-    Optional<Book> findBookWithSeller(@Param("pid") Long id,@Param("bid") Long bid);
-    
+    Optional<Book> findBookWithSeller(@Param("pid") Long id,@Param("bid") String bid);
+
+    @Query("select b from Book b " +
+            "where b.id = :bid and " +
+            "b.totalPrice = :p")
+    Optional<Book> findByIdPrice(@Param("bid") String bid, @Param("p") int amount);
 }

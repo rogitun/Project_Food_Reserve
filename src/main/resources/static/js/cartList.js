@@ -82,7 +82,7 @@ function listConfirm(){
 
     $.ajax({
         type: 'post',
-        url: '/list-confirm',
+        url: '/book/list-confirm',
         headers: { "Content-Type": "application/json" },
         data : JSON.stringify(obj),
         success: function(result){
@@ -91,7 +91,8 @@ function listConfirm(){
             window.location.replace("/book/" + result + "/un-paid");
         },
         error : function(error){
-            alert("실패");
+            alert("실패ㅠㅠ");
+            console.log(error);
         }
     })
 }

@@ -63,7 +63,7 @@
                             </td>
                             <td class="settings__tableActions" th:unless="${b.status() == 'canceled'}">
                                 <a class="tag tag--pill tag--main settings__btn" th:href="@{/book/{id}/un-paid(id=${b.id})}">결제</a>
-                                <a class="tag tag--pill tag--main settings__btn" th:onclick="|check('${b.id}')|">취소</a>
+                                <a class="tag tag--pill tag--main settings__btn" th:onclick="check([[${b.id}]])">취소</a>
                             </td>
                         </div>
                     </tr>

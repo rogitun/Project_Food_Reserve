@@ -1,14 +1,18 @@
 package heading.ground.entity.book;
 
+import heading.ground.api.vo.BookVo;
 import heading.ground.entity.Base;
 import heading.ground.entity.user.Seller;
 import heading.ground.entity.user.Student;
 import heading.ground.forms.book.BookForm;
 import lombok.Getter;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,9 +20,13 @@ import java.util.List;
 @Getter
 public class Book extends Base {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "book_id")
-    private Long id;
+    //    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    @Column(name = "book_id")
+//    private Long id;
+    @Id
+    @GeneratedValue(generator = "uuid2")
+    @GenericGenerator(name = "uuid2", strategy = "uuid2")
+    private String id;
 
     @Enumerated(EnumType.STRING)
     private BookStatus status;
@@ -29,36 +37,34 @@ public class Book extends Base {
     @NotNull
     private int totalPrice;
 
-    @NotNull
-    private LocalDateTime bookTime;
+    private LocalDateTime bookDate;
 
-    @Column(columnDefinition = "TINYINT",length = 2)
+    @Column(columnDefinition = "TINYINT", length = 2)
     private int number; //사람 몇명 오는지
 
     private String reason; //취소시 사유
 
     private boolean isPaid;//결제가 되었는지.
 
-    @ManyToOne(fetch= FetchType.LAZY)
-    @JoinColumn(name = "student_id",nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "student_id", nullable = false)
     private Student student; //예약자
 
-    @ManyToOne(fetch= FetchType.LAZY)
-    @JoinColumn(name = "seller_id",nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "seller_id", nullable = false)
     private Seller seller;
 
-    @OneToMany(mappedBy = "book",cascade = CascadeType.ALL)
-    private List<BookedMenu> bookedMenus= new ArrayList<>(); //예약된 메뉴들
+    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL)
+    private List<BookedMenu> bookedMenus = new ArrayList<>(); //예약된 메뉴들
 
 
-
-    public static Book book(Seller seller, Student student, List<BookedMenu> bookedMenus){
+    public static Book book(Seller seller, Student student, List<BookedMenu> bookedMenus) {
         Book book = new Book();
-        book.setBook(seller,student,bookedMenus);
+        book.setBook(seller, student, bookedMenus);
         return book;
     }
 
-    public void setBook(Seller seller,Student student,List<BookedMenu> bookedMenus) {
+    public void setBook(Seller seller, Student student, List<BookedMenu> bookedMenus) {
         for (BookedMenu bookedMenu : bookedMenus) {
             bookedMenu.addBook(this);
             this.bookedMenus.add(bookedMenu);
@@ -67,8 +73,6 @@ public class Book extends Base {
         this.seller = seller;
         this.student = student;
         this.status = BookStatus.PENDING;
-        this.bookTime = LocalDateTime.now();
-
 
         student.getBooks().add(this);
         seller.getBooks().add(this);
@@ -76,24 +80,37 @@ public class Book extends Base {
     }
 
     private void setField(BookForm form) {
-        if(form.getType().equals("togo")){
+        if (form.getType().equals("togo")) {
             this.type = BookType.TOGO;
-        }
-        else type = BookType.HERE;
+        } else type = BookType.HERE;
 
         number = form.getNumber();
     }
 
-    public void processBook(boolean flag){
-        if(flag)
+    public void processBook(boolean flag) {
+        if (flag)
             this.status = BookStatus.ACCEPT;
         else
             this.status = BookStatus.CANCELED;
     }
 
-    public void bookReject(String reason){
+    public void bookReject(String reason) {
         this.reason = reason;
         this.status = BookStatus.CANCELED;
     }
 
+    public void setDetail(BookVo bookVo) {
+        LocalDateTime bookDateTime = LocalDateTime.parse(bookVo.getDateVal() + "T" + bookVo.getTimeVal());
+        this.bookDate = bookDateTime;
+        this.number = bookVo.getVisitVal();
+        if (bookVo.getTypeVal().equals("togo")) {
+            this.type = BookType.TOGO;
+        } else {
+            this.type = BookType.HERE;
+        }
+    }
+
+    public void bookPaid(){
+        this.isPaid = true;
+    }
 }

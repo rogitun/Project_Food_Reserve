@@ -1,5 +1,8 @@
 package heading.ground.service;
 
+import heading.ground.api.vo.BookVo;
+import heading.ground.api.vo.PaymentDetails;
+import heading.ground.api.vo.PaymentSuccessDetails;
 import heading.ground.dto.book.BookedMenuDto;
 import heading.ground.dto.book.MenuListDto;
 import heading.ground.entity.book.Book;
@@ -21,10 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -37,7 +37,7 @@ public class BookService {
     private final BookedMenuRepository bookedMenuRepository;
 
 
-    public Long createBookMenus(HashMap<Long,Integer> menuSets,Long sid){
+    public String createBookMenus(HashMap<Long,Integer> menuSets,Long sid){
         List<Menu> menus = menuRepository.findByIds(menuSets.keySet());
         if(menus.isEmpty()){
             log.info("No Menus From Cart List");
@@ -50,35 +50,21 @@ public class BookService {
     }
 
     @Transactional
-    public Long createBook(List<BookedMenu> bookMenus, Long studentId, Seller seller) {
+    public String createBook(List<BookedMenu> bookMenus, Long studentId, Seller seller) {
         Student student = studentRepository.findById(studentId).get();
         Book book = Book.book(seller, student, bookMenus);
         Book save = bookRepository.save(book);
         return save.getId();
     }
 
-//
-//    //TODO 쿼리 최적화
-//    public List<BookedMenu> createBookMenus(List<MenuSet> form) {
-//        List<BookedMenu> bookedMenus = new ArrayList<>();
-//        for (MenuSet menuSet : form) {
-//            Menu byName = menuRepository.findByName(menuSet.getName());
-//            if(byName.isOutOfStock()) return null;
-//            bookedMenus.add(new BookedMenu(byName, menuSet.getQuantity()));
-//        }
-//        return bookedMenus;
-//    }
-
-
-
     @Transactional
-    public void process(Long id, boolean flag) {
+    public void process(String id, boolean flag) {
         Book book = bookRepository.findById(id).get();
         book.processBook(flag);
     }
 
     @Transactional
-    public void rejectBook(Long id, String reason) {
+    public void rejectBook(String id, String reason) {
         Book book = bookRepository.findByIdWithCollections(id);
         List<BookedMenu> bookedMenus = book.getBookedMenus();
         book.bookReject(reason);
@@ -91,5 +77,43 @@ public class BookService {
 
     public long findStock(Long id) {
         return menuRepository.countStock(id);
+    }
+
+    @Transactional
+    public void setDetails(String id, BookVo bookVo) {
+        Optional<Book> bookOpt = bookRepository.findById(id);
+        if(bookOpt.isPresent()){
+            Book book = bookOpt.get();
+            book.setDetail(bookVo);
+        }
+        else{
+            throw new IllegalStateException();
+        }
+    }
+
+    public PaymentDetails paymentDetails(String id) {
+        Optional<Book> bookOpt = bookRepository.findByIdWithUser(id);
+        if(bookOpt.isEmpty()){
+            return null;
+        }
+        Book book = bookOpt.get();
+        PaymentDetails paymentDetails = new PaymentDetails(book);
+
+        return paymentDetails;
+    }
+
+    public boolean checkPayment(PaymentSuccessDetails payment) {
+        String bid = payment.getMerchant_uid();
+        int amount = payment.getAmount();
+        Optional<Book> bookOpt = bookRepository.findByIdPrice(bid, amount);
+        if(bookOpt.isEmpty())return false;
+        else return true;
+    }
+
+    @Transactional
+    public void bookPaid(String bookId) {
+        Optional<Book> bookOpt = bookRepository.findById(bookId);
+        Book book = bookOpt.get();
+        book.bookPaid();
     }
 }

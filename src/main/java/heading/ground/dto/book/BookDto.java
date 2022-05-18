@@ -13,7 +13,7 @@ import java.util.List;
 @Data
 public class BookDto {
 
-    private Long id;
+    private String id;
     private BookStatus status;
 
     private BookType type; //방문 타입
@@ -39,7 +39,7 @@ public class BookDto {
         status = book.getStatus();
         type = book.getType();
         totalPrice = book.getTotalPrice();
-        bookTime = book.getBookTime();
+        bookTime = book.getBookDate();
         number = book.getNumber();
         student = new StudentDto(book.getStudent().getName());
         seller = new BookSellerDto(book.getSeller());

@@ -92,7 +92,7 @@
                             <p th:text="|처리 상태 : ${b.status}|"></p>
                         </td>
                         <td class="settings__tableActions" th:unless="${b.status() == 'canceled'}">
-                            <a class="tag tag--pill tag--main settings__btn" th:unless="${b.status() == 'accept'}" th:onclick="|javascript:accept('${b.id}')|"><i class="im im-edit"></i>Accept</a>
+                            <a class="tag tag--pill tag--main settings__btn" th:unless="${b.status() == 'accept'}" th:onclick="accept([[${b.id}]])"><i class="im im-edit"></i>Accept</a>
                             <a class="tag tag--pill tag--main settings__btn" th:href = "@{/book/{id}/reject(id=${b.id})}"><i
                                     class="im im-x-mark-circle-o"></i>Reject</a>
                         </td>

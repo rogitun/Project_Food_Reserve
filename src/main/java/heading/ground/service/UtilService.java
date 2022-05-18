@@ -209,4 +209,15 @@ public class UtilService {
         int cnt = cartMenuRepository.deleteByMenuId(id,shopCart.getId());
         return cnt;
     }
+
+    @Transactional
+    public void resetCart(Long studentId) {
+        Optional<ShopCart> optUser = cartRepository.findByUserId(studentId);
+        if(optUser.isEmpty()){
+            log.warn("User Not Found During Deleting Cart From UtilService");
+            throw new IllegalStateException();
+        }
+        ShopCart shopCart = optUser.get();
+        shopCart.resetCart();
+    }
 }

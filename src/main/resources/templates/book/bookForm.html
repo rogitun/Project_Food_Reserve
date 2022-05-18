@@ -13,6 +13,10 @@
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js" ></script>
+    <!-- iamport.payment.js -->
+    <script type="text/javascript" src="https://cdn.iamport.kr/js/iamport.payment-1.1.5.js"></script>
     <title>Title</title>
 </head>
 <body>
@@ -38,21 +42,25 @@
                     <div class="prodTotal cartSection">
                         <p class="ePrice" th:text="${m.price}"></p>
                     </div>
-                    <hr>
                 </div>
             </li>
             <li>
                 <p>방문일</p>
-                <input type="date" value="2022-01-01" min="2022-01-01" max="2030-01-01">
+                <input type="date" id="date" value="2022-05-01" min="2022-05-15" max="2030-01-01">
             </li>
             <li>
                 <p>방문 시간</p>
-                <input type="time" value="13:00" min="13:00" max="24:00">
+                <input type="time" id="time" value="13:00" min="08:00" max="23:00">
             </li>
             <li>
                 <p>방문 인원</p>
-                <input type="number" value="1">
+                <input type="number" id="visitNum" value="1" max="10">
             </li>
+            <p>포장 여부</p>
+            <select name="visit" id="visit">
+                <option value="togo">포장</option>
+                <option value="here">매장</option>
+            </select>
         </ul>
     </div>
 
@@ -62,10 +70,10 @@
                 <span class="label">Total</span>
                 <span class="totalValue" th:text="${total}">0</span>
             </li>
-            <li class="totalRow"><a href="#" th:onclick="" class="btn continue">Checkout</a></li>
+            <li class="totalRow"><a href="#" th:onclick="beforePay()" class="btn continue">Checkout</a></li>
         </ul>
     </div>
 </div>
 </body>
-<script type="text/javascript" th:src="@{/js/cartList.js}"></script>
+<script type="text/javascript" th:src="@{/js/pay.js}"></script>
 </html>

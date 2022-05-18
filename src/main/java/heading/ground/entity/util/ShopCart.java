@@ -59,4 +59,11 @@ public class ShopCart extends Base {
         Integer dup = this.duplicate.getOrDefault(menuName, 0);
         return (dup==1)?true:false;
     }
+
+    public void resetCart(){
+        sellerId = null;
+        student = null;
+        duplicate.clear();
+        menuList.clear();
+    }
 }
