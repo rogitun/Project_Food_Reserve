@@ -1,4 +1,4 @@
-package heading.ground.api.vo;
+package heading.ground.api.dto;
 
 import heading.ground.entity.book.Book;
 import lombok.Data;

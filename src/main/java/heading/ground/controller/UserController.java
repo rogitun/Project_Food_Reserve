@@ -11,6 +11,7 @@ import heading.ground.forms.user.BaseSignUp;
 import heading.ground.forms.user.LoginForm;
 import heading.ground.forms.user.SellerEditForm;
 import heading.ground.forms.user.UserEditForm;
+import heading.ground.repository.book.BookRepository;
 import heading.ground.repository.user.UserRepository;
 
 import heading.ground.security.user.MyUserDetails;
@@ -28,6 +29,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -39,6 +41,7 @@ public class UserController {
     private final UserService userService;
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final BookRepository bookRepository;
 
     @GetMapping("/loginForm")
     public String loginForm(@ModelAttribute("user") LoginForm form,
@@ -88,19 +91,22 @@ public class UserController {
         return "redirect:/loginForm";
     }
 
-    @GetMapping("/profile")     //가게 정보로 가는 메서드
+    @GetMapping("/profile") //프로필
     public String profile(Model model,
                           @AuthenticationPrincipal MyUserDetails principal) {
 
         if (principal.getRole().equals("SELLER")) {
-            //TODO Seller & Menu 한꺼번에 fetch Join으로 가져와서 DTO 전환
-            Seller seller = userRepository.findSellerByIdForAccount(principal.getId());
+            //TODO MENU는 Best 메뉴만
+            //TODO SellerWithMenu & Book 나눠서 가져오기
+            Seller seller = (Seller) userRepository.findById(principal.getId()).get();
+            List<Book> books = bookRepository.findBySellerId(principal.getId());
             SellerDto sellerDto = new SellerDto(seller);
-            List<MenuDto> menuDto = sellerDto.getMenus();
-            List<BookDto> bookDto = sellerDto.getBooks();
 
-            model.addAttribute("books", bookDto);
-            model.addAttribute("menus", menuDto);
+            if(books!=null){
+                List<BookDto> bookDtos = books.stream().map(b -> BookDto.bookDto(b)).collect(Collectors.toList());
+                model.addAttribute("books",bookDtos);
+            }
+            //model.addAttribute("menus", menuDto);
             model.addAttribute("account", sellerDto);
 
 

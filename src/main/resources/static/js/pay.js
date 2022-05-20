@@ -65,11 +65,12 @@ function requestPay(api) {
                     window.location.replace("/profile");
                 },
                 error:function(error){
-                    alert("결제 실패");
+                    alert("결제 실패2");
                 }
             });
           } else {
-            alert("결제 실패");
+            alert("결제 실패3");
+            console.log(rsp);
           }
       });
 }

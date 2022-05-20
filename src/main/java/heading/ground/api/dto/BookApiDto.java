@@ -1,9 +1,9 @@
-package heading.ground.api.vo;
+package heading.ground.api.dto;
 
 import lombok.Data;
 
 @Data
-public class BookVo {
+public class BookApiDto {
     private String typeVal;
     private int visitVal;
     private String dateVal;

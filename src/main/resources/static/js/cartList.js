@@ -88,11 +88,11 @@ function listConfirm(){
         success: function(result){
             alert("장바구니 내역이 저장되었습니다. 결제 후 예약이 완료됩니다.");
             //alert(result);
-            window.location.replace("/book/" + result + "/un-paid");
+            console.log(result);
+            window.location.replace("/book/" + result.message + "/un-paid");
         },
         error : function(error){
-            alert("실패ㅠㅠ");
-            console.log(error);
+            alert(error.responseJSON.message);
         }
     })
 }

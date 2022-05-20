@@ -37,12 +37,6 @@ public interface UserRepository extends JpaRepository<BaseUser,Long> {
             "where s.id = :uid")
     String findSellerById(@Param("uid") Long id);
 
-    @Query("select distinct s from Seller s " +
-            "left join fetch s.menus m " +
-            "left join fetch s.books b " +
-            "where s.id = :uid")
-    Seller findSellerByIdForAccount(@Param("uid") Long id);
-
     @Query(value = "select distinct s from Seller s " +
             "left join fetch s.menus m",
     countQuery = "select count(s) from Seller s")

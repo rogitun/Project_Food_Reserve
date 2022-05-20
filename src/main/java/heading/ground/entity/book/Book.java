@@ -1,6 +1,6 @@
 package heading.ground.entity.book;
 
-import heading.ground.api.vo.BookVo;
+import heading.ground.api.dto.BookApiDto;
 import heading.ground.entity.Base;
 import heading.ground.entity.user.Seller;
 import heading.ground.entity.user.Student;
@@ -10,9 +10,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -79,14 +77,6 @@ public class Book extends Base {
 
     }
 
-    private void setField(BookForm form) {
-        if (form.getType().equals("togo")) {
-            this.type = BookType.TOGO;
-        } else type = BookType.HERE;
-
-        number = form.getNumber();
-    }
-
     public void processBook(boolean flag) {
         if (flag)
             this.status = BookStatus.ACCEPT;
@@ -99,11 +89,11 @@ public class Book extends Base {
         this.status = BookStatus.CANCELED;
     }
 
-    public void setDetail(BookVo bookVo) {
-        LocalDateTime bookDateTime = LocalDateTime.parse(bookVo.getDateVal() + "T" + bookVo.getTimeVal());
+    public void setDetail(BookApiDto bookApiDto) {
+        LocalDateTime bookDateTime = LocalDateTime.parse(bookApiDto.getDateVal() + "T" + bookApiDto.getTimeVal());
         this.bookDate = bookDateTime;
-        this.number = bookVo.getVisitVal();
-        if (bookVo.getTypeVal().equals("togo")) {
+        this.number = bookApiDto.getVisitVal();
+        if (bookApiDto.getTypeVal().equals("togo")) {
             this.type = BookType.TOGO;
         } else {
             this.type = BookType.HERE;

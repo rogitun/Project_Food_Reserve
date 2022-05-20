@@ -46,7 +46,7 @@
 
                 <table class="settings__table">
                     <tr th:each="b : ${books}">
-                        <div th:if="${b.status()=='pending'}">
+                        <div th:if="|${b.status()=='승인 대기중' or b.status()=='미결제'}|">
                             <td class="settings__thumbnail">
                                 <a th:href="@{/seller/{id}(id=${b.seller.id})}">
                                     <img th:if="${b.seller.photo}" th:src="|/image/${b.seller.photo}|"/>
@@ -75,7 +75,7 @@
 
                 <table class="settings__table">
                     <tr th:each="b : ${books}">
-                        <div th:unless="${b.status() == 'pending'}">
+                        <div th:unless="|${b.status()=='승인 대기중' or b.status()=='미결제'}|">
                             <td class="settings__thumbnail">
                                 <a th:href="@{/seller/{id}(id=${b.seller.id})}">
                                     <img th:if="${b.seller.photo}" th:src="|/image/${b.seller.photo}|"/>

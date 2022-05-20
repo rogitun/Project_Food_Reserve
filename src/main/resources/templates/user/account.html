@@ -80,7 +80,7 @@
                 </div>
 
                 <table class="settings__table">
-                    <tr th:each="b : ${books}">
+                    <tr th:if="${books}" th:each="b : ${books}">
 <!--                        <td class="settings__thumbnail">-->
 <!--                            <a href="single-project.html"><img src="" alt="Project Thumbnail"/></a>-->
 <!--                        </td>-->
@@ -95,6 +95,11 @@
                             <a class="tag tag--pill tag--main settings__btn" th:unless="${b.status() == 'accept'}" th:onclick="accept([[${b.id}]])"><i class="im im-edit"></i>Accept</a>
                             <a class="tag tag--pill tag--main settings__btn" th:href = "@{/book/{id}/reject(id=${b.id})}"><i
                                     class="im im-x-mark-circle-o"></i>Reject</a>
+                        </td>
+                    </tr>
+                    <tr th:unless="${books}">
+                        <td>
+                            <h2>예약없음</h2>
                         </td>
                     </tr>
                 </table>

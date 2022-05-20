@@ -3,6 +3,7 @@ package heading.ground.dto.user;
 import heading.ground.dto.book.BookDto;
 import heading.ground.dto.post.MenuDto;
 import heading.ground.entity.ImageFile;
+import heading.ground.entity.book.Book;
 import heading.ground.entity.user.Address;
 import heading.ground.entity.user.Seller;
 import lombok.AccessLevel;
@@ -55,7 +56,7 @@ public class SellerDto {
                     .collect(Collectors.toList());
         }
         if(!seller.getBooks().isEmpty()){
-            books = seller.getBooks().stream().map(b-> new BookDto(b)).collect(Collectors.toList());
+            this.books = seller.getBooks().stream().map(b-> new BookDto(b)).collect(Collectors.toList());
         }
     }
 

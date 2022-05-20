@@ -62,7 +62,6 @@ public class ShopCart extends Base {
 
     public void resetCart(){
         sellerId = null;
-        student = null;
         duplicate.clear();
         menuList.clear();
     }

@@ -1,19 +1,14 @@
 package heading.ground.controller;
 
 import heading.ground.api.ShopMenuDto;
-import heading.ground.api.vo.BookVo;
-import heading.ground.api.vo.PaymentDetails;
-import heading.ground.api.vo.PaymentResponse;
+import heading.ground.api.dto.BookApiDto;
+import heading.ground.api.dto.PaymentDetails;
+import heading.ground.api.dto.PaymentResponse;
+import heading.ground.controller.controllerDto.CartListSuccessResponse;
 import heading.ground.dto.book.BookDto;
 import heading.ground.dto.book.BookedMenuDto;
-import heading.ground.dto.book.MenuListDto;
 import heading.ground.entity.book.Book;
-import heading.ground.entity.book.BookedMenu;
 import heading.ground.entity.post.Menu;
-import heading.ground.entity.user.BaseUser;
-import heading.ground.entity.user.Seller;
-import heading.ground.entity.user.Student;
-import heading.ground.forms.book.BookForm;
 import heading.ground.repository.book.BookRepository;
 import heading.ground.repository.post.MenuRepository;
 import heading.ground.security.user.MyUserDetails;
@@ -29,7 +24,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.HashMap;
@@ -45,37 +39,61 @@ public class BookController {
     private final BookRepository bookRepository;
     private final BookService bookService;
     private final UtilService utilService;
+    private final MenuRepository menuRepository;
 
     @GetMapping("/test-book")
-    public String testbook(){
+    public String testbook() {
         return "/book/bookDetailDemo";
     }
 
     @PostMapping("/list-confirm")
     @ResponseBody
-    public ResponseEntity listConfirm(@RequestBody List<ShopMenuDto> data,
-                                      @AuthenticationPrincipal MyUserDetails principal){
+    public ResponseEntity<CartListSuccessResponse> listConfirm(@RequestBody List<ShopMenuDto> data,
+                                                               @AuthenticationPrincipal MyUserDetails principal) {
         //데이터 가공해서 Book 생성
-        HashMap<Long,Integer> menuSet = new HashMap<>();
+        HashMap<Long, Integer> menuSet = new HashMap<>();
         for (ShopMenuDto s : data) {
-            log.info("data = {} ",s);
-            menuSet.put(s.getId(),s.getQuantity());
-            //menuRepository에서 id 일치하는 메뉴 모두 가져온 다음 BookedMenu로 전환
+            menuSet.put(s.getId(), s.getQuantity());
         }
         Long studentId = principal.getId();
-        String bookId = bookService.createBookMenus(menuSet, studentId);
-        utilService.resetCart(studentId);
+        List<Menu> menus = menuRepository.findByIds(menuSet.keySet());
 
-        return ResponseEntity.ok(bookId);
+        CartListSuccessResponse response;
+        if (menus == null) { //null
+            log.info("BookController-listConfirm, Menu is Empty = {}", data);
+            response = CartListSuccessResponse.builder()
+                    .code(400)
+                    .httpStatus(HttpStatus.BAD_REQUEST)
+                    .message("수량 및 메뉴 오류")
+                    .build();
+        } else if (bookService.isOutOfStock(menus)) {
+            //품절인 메뉴가 존재한다면
+            response = CartListSuccessResponse.builder()
+                    .code(400)
+                    .httpStatus(HttpStatus.BAD_REQUEST)
+                    .message("품절인 메뉴 포함")
+                    .build();
+        }
+        else{
+            String bookId = bookService.createBookMenus(menus, studentId,menuSet);
+            utilService.resetCart(studentId);
+            response = CartListSuccessResponse.builder()
+                    .code(200)
+                    .httpStatus(HttpStatus.OK)
+                    .message(bookId)
+                    .build();
+        }
+        //아무 문제 없으면 진행
+        return new ResponseEntity<>(response,response.getHttpStatus());
     }
 
     @PreAuthorize("hasAuthority('STUDENT')")
-    @GetMapping("/{id}/un-paid")
-    public String bookForPaying(@PathVariable("id") String id,Model model){
+    @GetMapping("/{id}/un-paid") //결제 이전화면
+    public String bookForPaying(@PathVariable("id") String id, Model model) {
         Book books = bookRepository.findByIdWithCollections(id);
         List<BookedMenuDto> bookedMenuDtos = books.getBookedMenus().stream().map(bm -> new BookedMenuDto(bm)).collect(Collectors.toList());
-        model.addAttribute("menus",bookedMenuDtos);
-        model.addAttribute("total",books.getTotalPrice());
+        model.addAttribute("menus", bookedMenuDtos);
+        model.addAttribute("total", books.getTotalPrice());
 
         return "book/bookForm";
     }
@@ -84,22 +102,21 @@ public class BookController {
     @PostMapping("/{id}/un-paid")
     @ResponseBody
     public ResponseEntity<PaymentResponse> bookVo(@PathVariable("id") String id,
-                                                  @RequestBody BookVo bookVo,
-                                                  @AuthenticationPrincipal MyUserDetails principal){
-        log.info("data ={}",bookVo);
-        bookService.setDetails(id,bookVo);
+                                                  @RequestBody BookApiDto bookApiDto,
+                                                  @AuthenticationPrincipal MyUserDetails principal) {
+        log.info("data ={}", bookApiDto);
+        bookService.setDetails(id, bookApiDto);
         PaymentDetails paymentDetails = bookService.paymentDetails(id);
 
         PaymentResponse paymentResponse;
-        if(paymentDetails==null){
+        if (paymentDetails == null) {
             paymentResponse = PaymentResponse.builder()
                     .code(HttpStatus.NOT_FOUND.value())
                     .httpStatus(HttpStatus.NOT_FOUND)
                     .message("데이터 에러")
                     .paymentDetails(null)
                     .count(0).build();
-        }
-        else{
+        } else {
             paymentResponse = PaymentResponse.builder()
                     .code(HttpStatus.OK.value())
                     .httpStatus(HttpStatus.OK)
@@ -108,14 +125,14 @@ public class BookController {
                     .count(1).build();
         }
 
-        return new ResponseEntity<>(paymentResponse,paymentResponse.getHttpStatus());
+        return new ResponseEntity<>(paymentResponse, paymentResponse.getHttpStatus());
     }
 
     @GetMapping("/{id}") //예약 세부 정보
-    public String bookDetail(@PathVariable("id")String id,Model model){
+    public String bookDetail(@PathVariable("id") String id, Model model) {
         Book books = bookRepository.findByIdWithCollections(id);
         BookDto book = new BookDto(books);
-        model.addAttribute("book",book);
+        model.addAttribute("book", book);
 
         return "book/bookDetail";
     }
@@ -123,27 +140,27 @@ public class BookController {
     //TODO 아래는 예약 처리하기
     @PostMapping("/{id}/accept") //예약 수락(seller)
     public String bookAccept(@PathVariable("id") String id,
-                             @AuthenticationPrincipal MyUserDetails principal){
-        if(principal.getRole().equals("SELLER")){
-            Optional<Book> bookWithSeller = bookRepository.findBookWithSeller(principal.getId(),id);
-            if(bookWithSeller.isEmpty()){
+                             @AuthenticationPrincipal MyUserDetails principal) {
+        if (principal.getRole().equals("SELLER")) {
+            Optional<Book> bookWithSeller = bookRepository.findBookWithSeller(principal.getId(), id);
+            if (bookWithSeller.isEmpty()) {
                 //ㄴㄴ
                 throw new IllegalStateException();
             }
         }
-        log.info("id = {} ",id);
-        bookService.process(id,true);
+        log.info("id = {} ", id);
+        bookService.process(id, true);
 
         return "redirect:/profile";
     }
 
 
     @GetMapping("/{id}/reject") //예약 거절(seller)
-    public String bookReject(@PathVariable("id") String id, Model model){
+    public String bookReject(@PathVariable("id") String id, Model model) {
         //TODO 예약 내용 + 거절 사유 input
         Book book = bookRepository.findByIdWithCollections(id);
         BookDto bookDto = new BookDto(book);
-        model.addAttribute("book",bookDto);
+        model.addAttribute("book", bookDto);
 
         return "book/bookReject";
     }
@@ -151,16 +168,16 @@ public class BookController {
 
     @PostMapping("/{id}/reject") //예약 거절(seller)
     public String bookRejected(@PathVariable("id") String id,
-                               @RequestParam("reason") String reason){
+                               @RequestParam("reason") String reason) {
         //TODO book에 거절 사유 update + 연관된 bookedMenus 삭제 + book.status = Canceled
-        bookService.rejectBook(id,reason);
+        bookService.rejectBook(id, reason);
 
         return "redirect:/profile";
     }
 
     @PostMapping("/{id}/cancel") //예약 거절(Student)
-    public String bookCancel(@PathVariable("id") String id){
-        bookService.rejectBook(id,"사용자가 예약 취소");
+    public String bookCancel(@PathVariable("id") String id) {
+        bookService.rejectBook(id, "사용자가 예약 취소");
         return "redirect:/profile";
     }
 
@@ -169,25 +186,9 @@ public class BookController {
     public void bookRequest(@PathVariable("id") Long id,
                             HttpServletResponse response) throws IOException {
         long l = bookService.findStock(id);
-        log.info("size =  {}",l);
+        log.info("size =  {}", l);
         if (l <= 0) {
-            response.sendError(500,"데이터 없음");
+            response.sendError(500, "데이터 없음");
         }
     }
-
-
-//    //@PostMapping("/{id}/book") //예약 추가(Student), ID는 Seller
-//    @PostMapping("/{id}/addBook")
-//    public void addBook(@PathVariable("id") Long id, @RequestBody BookForm form,
-//                          HttpServletResponse response,
-//                          @AuthenticationPrincipal MyUserDetails principal) throws IOException {
-//
-//        //TODO 메뉴 품절 체크
-//        List<BookedMenu> bookMenus = bookService.createBookMenus(form.returnArr());
-//        if(bookMenus == null)
-//            response.sendError(500,"메뉴 오류");
-//
-//        bookService.createBook(bookMenus, principal.getId(), id, form);
-//        return;
-//    }
 }

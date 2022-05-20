@@ -35,7 +35,9 @@
             <br>
             <h2 th:text="|가게 이름 : ${book.seller.name}|"></h2>
             <h2 th:text="|예약자 성함 : ${book.student.name}|"></h2>
-            <h3 th:text="|예약 날짜 : ${book.bookTime}|"></h3>
+            <h3 th:if="${book.bookTime}"  th:text="|예약 날짜 : ${book.bookTime}|"></h3>
+            <h3 th:unless="${book.bookTime}"  th:text="|예약 날짜 : 미정|"></h3>
+
             <div class="form" th:object = "${book}">
                 <div class="form__field" th:each="m : ${book.bookedMenus}" >
                         <span>
@@ -53,9 +55,11 @@
                 <input class="input input--text"  type="text" id="formInput#text" name="number" th:value="${book.number}" readonly>
                 <br>
                 <label for="formInput#text">포장/매장 </label><br>
-                <p name="type" th:if="${book.type() == 'here'}" th:text="매장" checked readonly>매장</p>
-                <p name="type" th:unless="${book.type() == 'here'}" th:text="포장" checked readonly>포장</p>
-                <br> <br> <br>
+                <p name="type" th:text="${book.type()}"></p>
+                <br>
+                <label for="formInput#text">예약 상황 </label><br>
+                <p name="type" th:text="${book.status()}"></p>
+                <br>
             </div>
         </div>
     </div>

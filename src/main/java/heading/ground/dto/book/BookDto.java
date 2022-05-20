@@ -5,12 +5,14 @@ import heading.ground.entity.book.Book;
 import heading.ground.entity.book.BookStatus;
 import heading.ground.entity.book.BookType;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Data
+@NoArgsConstructor
 public class BookDto {
 
     private String id;
@@ -51,12 +53,36 @@ public class BookDto {
                 .forEach(s -> bookedMenus.add(s));
     }
 
+    public static BookDto bookDto(Book book){
+        BookDto bookDto = new BookDto();
+        bookDto.setNumber(book.getNumber());
+        bookDto.setBookTime(book.getBookDate());
+        bookDto.setStatus(book.getStatus());
+        bookDto.setStudent(new StudentDto(book.getStudent().getName()));
+        bookDto.setSeller(new BookSellerDto(book.getSeller()));
+
+        return bookDto;
+    }
+
     public String type(){
-        return type.toString().toLowerCase();
+        String typeIs = (type==null)?"미정":type.toString().toLowerCase();
+        return typeIs;
     }
 
     public String status(){
-        return status.toString().toLowerCase();
+        if(isPaid == false){
+            return "미결제";
+        }
+
+        String statusIs;
+        if(status==BookStatus.PENDING)
+            statusIs = "승인 대기중";
+        else if(status==BookStatus.ACCEPT)
+            statusIs ="예약 승인";
+        else
+            statusIs = "예약 취소";
+
+        return statusIs;
     }
 
 }
