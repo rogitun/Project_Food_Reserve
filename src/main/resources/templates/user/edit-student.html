@@ -34,7 +34,7 @@
         <div class="formWrapper">
             <a class="backButton" href="#"><i class="im im-angle-left"></i></a>
             <br>
-            <form class="form" method="post" th:object="${user}" th:action="@{/edit-student/{id}(id=${user.id})}">
+            <form class="form" method="post" th:object="${user}" th:action="@{/edit-student}">
                 <!-- Input:Text -->
                 <input th:field="*{id}" th:value="*{id}" readonly hidden>
                 <div class="form__field">

@@ -37,17 +37,19 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Slf4j
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/seller")
 public class SellerController {
 
     private final PostService postService;
-    @GetMapping("/{id}/menus") //해당 가게의 전체 메뉴
+    private final UserRepository userRepository;
+
+    @GetMapping("/seller/{id}/menus") //해당 가게의 전체 메뉴
     public String menus(@PathVariable("id") Long id,
                         Pageable pageable,
                         Model model){
@@ -65,5 +67,20 @@ public class SellerController {
         return "post/menusBySeller";
     }
 
+    @GetMapping("/sellerInfo/{id}")
+    public String sellerInfo(@PathVariable("id") Long id, Model model) {
+        //TODO Seller + Menu
+        Seller seller = userRepository.findByIdWithMenu(id);
+        SellerDto sellerDto = new SellerDto(seller);
+        
+        //대표메뉴 3가지
+        Set<Menu> menus = seller.getMenus();
+        List<Menu> collect = menus.stream().filter(m -> m.isBest()).collect(Collectors.toList());
+        List<MenuDto> menuDtos = collect.stream().map(m -> new MenuDto(m)).collect(Collectors.toList());
 
+        model.addAttribute("seller", sellerDto);
+        model.addAttribute("best", menuDtos);
+
+        return "user/seller";
+    }
 }

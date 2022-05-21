@@ -63,25 +63,6 @@ public class MainController {
         return new UrlResource("file:"+fileStore.getFullPath(image));
     }
 
-    @RequestMapping(value = "/sellerInfo/{id}",method = RequestMethod.GET)
-    public String sellerInfo(@PathVariable("id") Long id, Model model) {
-        //Seller seller = sellerRepository.findById(id).get();
-        //TODO Seller + Menu + Comment
-        Seller seller = userRepository.findByIdWithMenuComment(id);
-        SellerDto sellerDto = new SellerDto();
-        sellerDto.setSellerWithMenus(seller);
-        //SellerDto sellerDto = new SellerDto(seller);
-        List<MenuDto> menus = sellerDto.getMenus();
-        List<MenuDto> best = menus.stream().filter(m -> m.isBest()).collect(Collectors.toList());
-
-        model.addAttribute("seller", sellerDto);
-        model.addAttribute("menus", menus);
-        model.addAttribute("best", best);
-        //TODO 메뉴도 같이 보여줘야 합니다.
-
-        return "user/seller";
-    }
-
     @GetMapping("/menus")
     public String menuList(Model model, Pageable pageable) {
         int page = (pageable.getPageNumber()==0)? 0: (pageable.getPageNumber()-1);

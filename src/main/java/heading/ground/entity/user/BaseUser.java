@@ -59,10 +59,6 @@ public class BaseUser extends Base {
 
    protected String uuid;
 
-    public void update(SellerEditForm form){
-        this.name = form.getName();
-        this.phoneNumber = form.getPhoneNumber();
-    }
 
     public void setNon_locked(boolean non_locked) {
         this.non_locked = non_locked;
@@ -86,5 +82,10 @@ public class BaseUser extends Base {
         this.non_locked = true;
         this.uuid = null;
         this.password = encode;
+    }
+
+    //TODO 임시
+    public void setRole(){
+        this.role = MyRole.ADMIN;
     }
 }

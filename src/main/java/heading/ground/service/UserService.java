@@ -6,12 +6,14 @@ import heading.ground.entity.ImageFile;
 import heading.ground.entity.user.BaseUser;
 import heading.ground.entity.user.Seller;
 import heading.ground.entity.user.Student;
+import heading.ground.entity.util.Category;
 import heading.ground.file.FileRepository;
 import heading.ground.file.FileStore;
 import heading.ground.forms.user.BaseSignUp;
 import heading.ground.forms.user.SellerEditForm;
 import heading.ground.forms.user.UserEditForm;
 import heading.ground.repository.user.UserRepository;
+import heading.ground.repository.util.CategoryRepository;
 import heading.ground.security.user.MyUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 
 import java.io.IOException;
+import java.util.Optional;
 
 
 @Slf4j
@@ -35,42 +38,27 @@ public class UserService {
     private final FileRepository fileRepository;
     private final FileStore fileStore;
     private final UserRepository userRepository;
-
-
-//    public void logIn(String loginId, HttpServletRequest req) throws Exception {
-//        log.info("login process");
-//        MyUserDetails userDetails = myUserDetailsService.loadUserByUsername(loginId);
-//        log.info("login fianally");
-//
-//        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-//        authManager.authenticate(token);
-//        SecurityContextHolder.getContext().setAuthentication(token);
-//
-//        HttpSession session = req.getSession(true);
-//        session.setAttribute("Security",token);
-//        log.info("pass");
-//    }
+    private final CategoryRepository categoryRepository;
 
     @Value("${file.dir}")
     private String path;
 
     @Transactional
     public void updateSeller(Long id, SellerEditForm form) throws IOException {
-        Seller seller = userRepository.findSellerWithImage(id);
+        Seller seller = (Seller) userRepository.findById(id).get();
+        Optional<Category> optCategory = categoryRepository.findByName(form.getCategory());
+        //가게 데이터 변경 처리 + 파일처리
+        //기본 필드, 사진, 카테고리
 
-        if (form.getDesc().isBlank() && form.getImageFile() == null && form.getSellerId().isBlank())
-            seller.update(form);
-
-        else {
-            seller.updateSeller(form);
-            if (seller.getImageFile() != null) { //이미 가진 사진이 있다면? -> 해당 사진 엔티티 찾고 파일 삭제 후 엔티티 삭제
-                String storeName = seller.getImageFile().getStoreName();
-                fileRepository.deleteByStoreName(storeName);
-            }
-            ImageFile imageFile = fileStore.storeFile(form.getImageFile());
-            seller.updateImage(imageFile);
+        seller.updateSeller(form,optCategory.orElseGet(null)); //필드 및 카테고리 변경
+        if (seller.getImageFile() != null) { //이미 가진 사진이 있다면? -> 해당 사진 엔티티 찾고 파일 삭제 후 엔티티 삭제
+            String storeName = seller.getImageFile().getStoreName();
+            fileRepository.deleteByStoreName(storeName);
         }
+        ImageFile imageFile = fileStore.storeFile(form.getImageFile());
+        seller.updateImage(imageFile);
     }
+
 
     @Transactional
     public void updateStudent(Long id, UserEditForm form) {

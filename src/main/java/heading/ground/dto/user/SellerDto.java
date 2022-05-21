@@ -34,11 +34,9 @@ public class SellerDto {
 
     private String desc;
 
-    private List<MenuDto> menus = new ArrayList<>();
-
-    private List<BookDto> books = new ArrayList<>();
-
     private String photo;
+
+    private String category;
 
     public SellerDto(Seller seller) {
         this.id = seller.getId();
@@ -48,33 +46,8 @@ public class SellerDto {
         this.sellerId = seller.getCompanyId();
         this.desc = seller.getDesc();
         photoCheck(seller.getImageFile());
-        log.info("query tRack = {} ",seller.getMenus().size());
-        if(!seller.getMenus().isEmpty()) {
-            menus = seller.getMenus()
-                    .stream()
-                    .map(m -> new MenuDto(m))
-                    .collect(Collectors.toList());
-        }
-        if(!seller.getBooks().isEmpty()){
-            this.books = seller.getBooks().stream().map(b-> new BookDto(b)).collect(Collectors.toList());
-        }
-    }
-
-    public void setSellerWithMenus(Seller seller){
-        this.id = seller.getId();
-        this.name = seller.getName();
-        this.phoneNumber = seller.getPhoneNumber();
-       // this.address = seller.getAddress();
-        this.sellerId = seller.getCompanyId();
-        this.desc = seller.getDesc();
-        photoCheck(seller.getImageFile());
-        log.info("query tRack = {} ",seller.getMenus().size());
-        if(!seller.getMenus().isEmpty()) {
-            menus = seller.getMenus()
-                    .stream()
-                    .map(m -> new MenuDto(m))
-                    .collect(Collectors.toList());
-        }
+        if(seller.getCategory()!=null)
+            this.category = seller.getCategory().getName();
     }
 
     public void photoCheck(ImageFile temp){

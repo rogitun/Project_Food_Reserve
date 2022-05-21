@@ -64,6 +64,13 @@
                         <div class="field-error" th:errors="*{desc}"></div>
                     </div>
                     <div class="form__field">
+                        <label for="formInput#text">카테고리 선택 </label>
+                        <select class="form-select" th:field="*{category}" aria-label="Default select example">
+                            <option value="">가게 분류</option>
+                            <option th:each="c : ${categories}" th:value="${c.name}" th:text="${c.name}"></option>
+                        </select>
+                    </div>
+                    <div class="form__field">
                         <label for="formInput#text">가게 소개 </label>
                         <input class="input input--text" type="file" name="image" th:field="*{imageFile}"
                                   style="resize: none;"

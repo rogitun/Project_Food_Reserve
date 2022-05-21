@@ -29,7 +29,7 @@
         <div class="container container--narrow">
             <div class="hero-section__box">
                 <h2>Find Restaurants <span>By SYU</span></h2>
-                <h2>삼육대 근처 음식 예약 서비스</h2>
+                <h2>@@대 근처 음식 예약 서비스</h2>
             </div>
 
             <div class="hero-section__search">
@@ -60,11 +60,11 @@
                                     <h5 th:text="${s.phoneNumber}">가게 번호</h5>
                                 </div>
                             </div>
-                            <p class="dev__info" th:text="${s.desc}">가게 설명</p>
+                            <p class="dev__info" th:if=${s.desc} th:text="|${#strings.abbreviate(s.desc,10)}...|">가게 설명</p>
                             <div class="dev__skills">
-                  <span class="tag tag--pill tag--main" th:each="m : ${s.menus}">
-                    <small th:text="${m.name}">메뉴이름</small>
-                  </span>
+                              <span class="tag tag--pill tag--main" th:if="${s.category}">
+                                <small th:text="${s.category}">카테고리</small>
+                              </span>
                             </div>
                         </a>
                     </div>

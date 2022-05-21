@@ -3,11 +3,13 @@ package heading.ground.entity.user;
 import heading.ground.entity.ImageFile;
 import heading.ground.entity.book.Book;
 import heading.ground.entity.post.Menu;
+import heading.ground.entity.util.Category;
 import heading.ground.forms.user.BaseSignUp;
 import heading.ground.forms.user.SellerEditForm;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.BatchSize;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
@@ -46,6 +48,10 @@ public class Seller extends BaseUser{
     @OneToMany(mappedBy = "seller")
     private List<Book> books = new ArrayList<>();
 
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private Category category;
+
     public Seller(BaseSignUp sf) {
         this.loginId = sf.getLoginId();
         this.password = sf.getPassword();
@@ -58,16 +64,20 @@ public class Seller extends BaseUser{
         this.non_locked = true;
     }
 
-    public void updateSeller(SellerEditForm form){
+    public void updateSeller(SellerEditForm form,Category category){
         this.name = form.getName();
         this.phoneNumber = form.getPhoneNumber();
         this.desc = form.getDesc();
         this.companyId = form.getSellerId();
+        this.category = category;
     }
 
     public void updateImage(ImageFile image){
         this.imageFile = image;
     }
 
-
+    public void updateCategory(Category category){
+        this.category = category;
+        category.getSeller().add(this);
+    }
 }
