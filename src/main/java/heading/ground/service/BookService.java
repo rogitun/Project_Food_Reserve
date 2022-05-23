@@ -1,8 +1,8 @@
 package heading.ground.service;
 
 import heading.ground.api.dto.BookApiDto;
-import heading.ground.api.dto.PaymentDetails;
-import heading.ground.api.dto.PaymentSuccessDetails;
+import heading.ground.api.dto.Payment.PaymentDetails;
+import heading.ground.api.dto.Payment.PaymentSuccessDetails;
 import heading.ground.dto.book.MenuListDto;
 import heading.ground.entity.book.Book;
 import heading.ground.entity.book.BookedMenu;

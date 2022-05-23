@@ -37,40 +37,36 @@
             <p>Hello Developer, Welcome Back!</p>
         </div>
 
-        <form th:action="@{/login}" class="form auth__form" method="post" th:object="${user}">
+        <form th:action="@{/login}" class="form auth__form" method="post">
             <!-- Input:Email -->
             <div class="error">
                 <p class="field-error" id="err"></p>
             </div>
             <div class="form__field">
                 <label for="loginId">아이디: </label>
-                <input th:field="*{loginId}"
-                       class="input input--text"
+                <input class="input input--text"
                        id="loginId"
                        type="text"
                        name="loginId"
                        placeholder="Enter your username..."
                 />
             </div>
-            <div class="field-error" th:errors="*{loginId}"></div>
+<!--            <div class="field-error" th:errors="*{loginId}"></div>-->
 
 
             <!-- Input:Password -->
             <div class="form__field">
                 <label for="password">비밀번호: </label>
-                <input th:field="*{password}"
-                       class="input input--password"
+                <input class="input input--password"
                        id="password"
                        type="password"
                        name="password"
                        placeholder="••••••••"
                 />
             </div>
-            <div class="field-error" th:errors="*{password}"></div>
-
+<!--            <div class="field-error" th:errors="*{password}"></div>-->
 
             <div class="auth__actions">
-<!--                <input class="btn btn&#45;&#45;sub btn&#45;&#45;lg" type="submit" value="Log In"/>-->
                 <input class="btn btn--sub btn--lg" type="button" th:onclick="login()" value="Log In" />
                 <a th:href="@{/forget-password}">비밀번호 찾기</a>
             </div>

@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Date;
+import java.util.Optional;
 
 @Slf4j
 @Component
@@ -36,8 +37,13 @@ public class CustomLoginFailureHandler
         String username = request.getParameter("loginId");
         String password = request.getParameter("password");
         String error = exception.getMessage();
-        log.info("values = {} ,{} ,{}, {} ", username, password, error, exception.getClass());
-        BaseUser baseUser = userRepository.findByLoginId(username).get();
+
+        Optional<BaseUser> reqUser = userRepository.findByLoginId(username);
+        if(reqUser.isEmpty()){
+            response.sendError(403,"NotFound");
+            return;
+        }
+        BaseUser baseUser = reqUser.get();
         if (exception.getClass() == BadCredentialsException.class) { //비밀번호 불일치
             int errorCode = badCredential(baseUser);
             response.sendError(errorCode,"BadCredential");

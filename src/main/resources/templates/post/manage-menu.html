@@ -35,80 +35,22 @@
 
 <!-- Main Section -->
 <main class="singleProject my-md">
+    <a class="tag tag--pill tag--sub settings__btn tag--lg" th:href="@{/menu/add-menu}" style="display:flex"><i
+            class="im im-plus"></i>메뉴 추가</a>
     <div th:each="m : ${menus}">
         <div class="card">
             <h5 class="card-header" th:text="${m.name}">메뉴이름</h5>
             <div class="card-body">
                 <h5 class="card-title" th:text="${m.price}">가격</h5>
                 <p class="card-text" th:text="${m.getStatus()}">메뉴상태 (품절, 대표)</p>
-                <a th:onclick="|stock('${m.id}')|" class="btn btn-primary">품절 처리/복구</a>
-                <a th:onclick="|best('${m.id}')|" class="btn btn-primary">대표메뉴 등록/취소</a>
-                <a th:href="@{/menu/{id}/edit(id=${m.id})}" class="btn btn-primary">메뉴 수정</a>
-                <a th:onclick="|delMenu('${m.id}')|" class="btn btn-primary">메뉴 삭제</a>
+                <a th:onclick="|stock('${m.id}')|" class="btn btn--sub btn--lg">품절 처리</a>
+                <a th:onclick="|best('${m.id}')|" class="btn btn--sub btn--lg">대표 메뉴</a>
+                <a th:href="@{/menu/{id}/edit(id=${m.id})}" class="btn btn--sub btn--lg">메뉴 수정</a>
+                <a th:onclick="|delMenu('${m.id}')|" class="btn btn--sub btn--lg">메뉴 삭제</a>
             </div>
         </div>
     </div>
-
 </main>
 </body>
-<script th:inline="javascript">
-    function best(mid){
-        if(!confirm("대표 상태를 변경하시겠습니까?")){
-            return;
-        }
-        let postUrl = "/menu/" + mid + "/status";
-
-        $.ajax({
-            type: "post",
-            url : postUrl,
-            headers: {'Content-Type': 'application/json'},
-            data : JSON.stringify({ data : 'best'}),
-            success : function(result){
-                alert("대표 메뉴 설정 변경");
-                window.location.reload();
-            },
-            error : function(error){
-                alert("잠시 후 다시 시도해주세요.");
-            }
-        });
-    }
-        function stock(mid){
-        if(!confirm("품절 상태를 변경하시겠습니까?")){
-            return;
-        }
-        let postUrl = "/menu/" + mid + "/status";
-
-        $.ajax({
-            type: "post",
-            url : postUrl,
-            headers: {'Content-Type': 'application/json'},
-            data : JSON.stringify({ data : 'stock'}),
-            success : function(result){
-                alert("품절 상태 변경");
-                window.location.reload();
-            },
-            error : function(error){
-                alert("잠시 후 다시 시도해주세요.");
-            }
-        });
-    }
-     function delMenu(mid){
-        let postUrl = "/menu/" + mid + "/del";
-        if(!confirm("해당 메뉴를 삭제하시겠습니까?")){
-            return;
-        }
-        $.ajax({
-            type : 'post',
-            url : postUrl,
-            success : function(result){
-                alert("삭제 되었습니다.");
-                window.location.reload();
-            },
-            error : function(error){
-                alert("예기치 못한 에러, 잠시 후 다시 시도해주세요");
-            }
-        });
-    }
-
-</script>
+<script th:src="@{/js/menuManage.js}"></script>
 </html>

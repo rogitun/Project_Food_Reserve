@@ -19,9 +19,11 @@ function login(){
           window.location.replace("/");
         },
         error : function(request,status,error){
-         //alert(status + ' ' + request.status);
          if(request.status === 403) {
            element.innerText = "아이디 혹은 비밀번호가 일치하지 않습니다.";
+           console.log(request);
+           console.log(status);
+           console.log(error);
          }
          else if(request.status === 402){
            alert("잦은 로그인 시도로 계정이 잠금되었습니다. 비밀번호 찾기를 이용해주세요");

@@ -2,8 +2,8 @@ package heading.ground.controller;
 
 import heading.ground.api.ShopMenuDto;
 import heading.ground.api.dto.BookApiDto;
-import heading.ground.api.dto.PaymentDetails;
-import heading.ground.api.dto.PaymentResponse;
+import heading.ground.api.dto.Payment.PaymentDetails;
+import heading.ground.api.dto.Payment.PaymentResponse;
 import heading.ground.controller.controllerDto.CartListSuccessResponse;
 import heading.ground.dto.book.BookDto;
 import heading.ground.dto.book.BookedMenuDto;

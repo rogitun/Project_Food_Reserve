@@ -2,7 +2,11 @@ package heading.ground.entity.user;
 
 import heading.ground.entity.Base;
 import heading.ground.forms.user.SellerEditForm;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -19,6 +23,7 @@ import java.util.Date;
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn
 @Getter
+@NoArgsConstructor
 public class BaseUser extends Base {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -58,7 +63,6 @@ public class BaseUser extends Base {
    protected Date lock_time;
 
    protected String uuid;
-
 
     public void setNon_locked(boolean non_locked) {
         this.non_locked = non_locked;

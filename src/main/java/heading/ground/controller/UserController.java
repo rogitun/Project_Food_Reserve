@@ -8,10 +8,7 @@ import heading.ground.entity.book.Book;
 import heading.ground.entity.user.Seller;
 import heading.ground.entity.user.Student;
 import heading.ground.entity.util.Category;
-import heading.ground.forms.user.BaseSignUp;
-import heading.ground.forms.user.LoginForm;
-import heading.ground.forms.user.SellerEditForm;
-import heading.ground.forms.user.UserEditForm;
+import heading.ground.forms.user.*;
 import heading.ground.repository.book.BookRepository;
 import heading.ground.repository.user.UserRepository;
 
@@ -42,57 +39,31 @@ public class UserController {
 
     private final UserService userService;
     private final UserRepository userRepository;
-    private final BCryptPasswordEncoder passwordEncoder;
     private final BookRepository bookRepository;
     private final CategoryRepository categoryRepository;
 
     @GetMapping("/loginForm")
-    public String loginForm(@ModelAttribute("user") LoginForm form,
-                            @RequestParam(value = "auth", required = false) String err,
-                            Model model) {
-        model.addAttribute("err", err);
-        log.info("error = {}", err);
+    public String loginForm() {
         return "user/login";
     }
 
     @GetMapping("/signup")
-    public String signUpForm(Model model) {
-        model.addAttribute("user", new BaseSignUp());
+    public String signUpForm() {
         return "user/signup";
     }
 
     @GetMapping("/signup-seller")
-    public String sellerSignUpForm(Model model) {
-        model.addAttribute("user", new BaseSignUp());
+    public String sellerSignUpForm() {
         return "/user/seller-signup";
     }
 
-    //TODO 폼 구분
-    @PostMapping("/signup")
-    public String signUp(@Validated @ModelAttribute("user") BaseSignUp form,
-                         BindingResult bindingResult,
-                         @RequestParam(value = "companyId", required = false) String cId) {
-        log.info("cid = {} ", cId);
-
-        String x = userService.isValidated(form, bindingResult);
-        if (x != null) return x;
-        form.setPassword(passwordEncoder.encode(form.getPassword()));
-        if (cId != null) {
-            userRepository.save(form.toSeller(form));
-        } else {
-            userRepository.save(form.toStudent(form));
-        }
-
-        return "redirect:/loginForm";
-    }
-
-    @PostMapping("/fail-login")
-    public String failLogin(RedirectAttributes ra) {
-        log.info("fail checking");
-
-        ra.addAttribute("auth", "인증-실패");
-        return "redirect:/loginForm";
-    }
+//    @PostMapping("/fail-login")
+//    public String failLogin(RedirectAttributes ra) {
+//        log.info("fail checking");
+//
+//        ra.addAttribute("auth", "인증-실패");
+//        return "redirect:/loginForm";
+//    }
 
     @GetMapping("/profile") //프로필
     public String profile(Model model,

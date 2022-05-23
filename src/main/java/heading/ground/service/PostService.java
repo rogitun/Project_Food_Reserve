@@ -14,6 +14,7 @@ import heading.ground.repository.post.CommentRepository;
 import heading.ground.repository.post.MenuRepository;
 import heading.ground.repository.user.SellerRepository;
 import heading.ground.repository.user.StudentRepository;
+import heading.ground.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -29,16 +30,16 @@ import java.io.IOException;
 @Service
 @RequiredArgsConstructor
 public class PostService {
-    private final SellerRepository sellerRepository;
     private final MenuRepository menuRepository;
     private final FileRepository fileRepository;
     private final FileStore fileStore;
     private final CommentRepository commentRepository;
-    private final StudentRepository studentRepository;
+    private final UserRepository userRepository;
 
     @Transactional
     public void addMenu(MenuForm form, Long id) throws IOException {
-        Seller seller = sellerRepository.findById(id).get();
+        //Seller seller = sellerRepository.findById(id).get();
+        Seller seller = (Seller) userRepository.findById(id).get();
         Menu menu = form.toEntity();
 
         MultipartFile image = form.getImage();
@@ -70,7 +71,8 @@ public class PostService {
     @Transactional //메뉴, 학생, 댓글 연관관계 세팅
     public void addComment(Long studentId, Comment comment, Long id) {
         Menu menu = menuRepository.findById(id).get();
-        Student student = studentRepository.findById(studentId).get();
+       // Student student = studentRepository.findById(studentId).get();
+        Student student = (Student) userRepository.findById(studentId).get();
         comment.setRelations(student,menu);
         commentRepository.save(comment);
     }

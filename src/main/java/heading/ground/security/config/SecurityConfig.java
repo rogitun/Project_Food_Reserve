@@ -58,11 +58,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable();
         http.authorizeRequests()
-                .antMatchers("/book").authenticated()
-                .antMatchers("/profile").authenticated()
-                .antMatchers("/messages").authenticated()
-                .antMatchers("/menu").hasAnyRole("ADMIN", "SELLER")
-                .antMatchers("/comment").hasAnyRole("ADMIN", "STUDENT")
+                .antMatchers("/book/**").authenticated()
+                .antMatchers("/profile/**").authenticated()
+                .antMatchers("/messages/**").authenticated()
+                .antMatchers("/menu/**").hasAnyAuthority("ADMIN", "SELLER")
+                .antMatchers("/comment/**").hasAnyAuthority("ADMIN", "STUDENT")
                 .anyRequest().permitAll()
                 .and()
                 .formLogin()
@@ -74,19 +74,4 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .failureHandler(customLoginFailureHandler);
     }
 
-//    @Autowired
-//    private SimpleUrlAuthenticationFailureHandler authenticationFailureHandler;
-//    @Bean
-//    public CorsFilter corsFilter(){
-//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-//        CorsConfiguration config = new CorsConfiguration();
-//        config.setAllowCredentials(true); //내 서버가 응답할때 json을 자바스크립트에서 처리할 수 있게 설정하는것
-//        config.addAllowedOrigin("*"); //모든 ip에 응답 허용
-//        config.addAllowedHeader("*"); //모든 헤더에 응답 허용
-//        config.addAllowedMethod("*"); //모든 post,get,put,delete 요청을 허용하겠다.
-//
-//
-//        source.registerCorsConfiguration("/**",config);
-//        return new CorsFilter(source);
-//    }
 }

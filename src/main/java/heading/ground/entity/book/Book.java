@@ -6,6 +6,8 @@ import heading.ground.entity.user.Seller;
 import heading.ground.entity.user.Student;
 import heading.ground.forms.book.BookForm;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;

@@ -1,7 +1,7 @@
 package heading.ground.api;
 
-import heading.ground.api.dto.PaymentSuccessDetails;
-import heading.ground.api.dto.PaymentSuccessResponse;
+import heading.ground.api.dto.Payment.PaymentSuccessDetails;
+import heading.ground.api.dto.Payment.PaymentSuccessResponse;
 import heading.ground.service.BookService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

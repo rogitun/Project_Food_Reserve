@@ -13,6 +13,9 @@
     <link rel="stylesheet" th:href="@{/uikit/styles/uikit.css}" />
     <!-- Dev Search UI -->
     <link rel="stylesheet" th:href="@{/styles/app.css}" />
+    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <style>
       .field-error {
  border-color: #dc3545;
@@ -20,8 +23,6 @@
     </style>
     <title>사업자 회원가입</title>
   </head>
-
-  <div th:replace="main/nav :: header"></div>
   <body>
     <div class="auth">
       <div class="card">
@@ -29,65 +30,63 @@
           <a th:href="@{/}">
             <img th:src="@{/images/icon.svg}" alt="icon" />
           </a>
-          <h3>사업자 회원가입</h3>
-          <p>아래 정보를 기입해주세요.</p>
-        </div>
+          <h5>사업자 회원가입</h5>
+          <p id="basicErr" class="field-error"></p>
+          <p id="addrErr" class="field-error"></p>
+          <p id="pwdErr" class="field-error"></p>
 
-        <form th:action="@{/signup}" class="form auth__form" th:object="${user}" method="post">
-          <!-- Input:Text -->
+        </div>
           <div class="form__field">
-            <label for="formInput#text"  th:text="아이디">Full Name: </label>
-            <span th:errors="*{loginId}">오류</span>
-            <input th:field="*{loginId}"
+            <label for="formInput#text"  th:text="아이디"></label>
+            <input
               class="input input--text"
-              id="formInput#text"
+              id="id"
               type="text"
               name="text"
-              placeholder="아이디를 입력해주세요."
             />
+            <input type="button" class="btn btn--sub" th:onclick="validateId()" value="아이디 확인">
           </div>
 
-          <!-- Input:Email -->
           <div class="form__field">
-            <label for="formInput#email" th:text="이메일">Email Address: </label>
-            <span th:errors="*{email}">오류</span>
-            <input th:field="*{email}"
+            <label for="email" th:text="이메일"></label>
+            <input
               class="input input--email"
-              id="formInput#email"
+              id="email"
               type="email"
               name="email"
-              placeholder="user@domain.com"
             />
+            <input type="button" class="btn btn--sub" th:onclick="validateEmail()" value="이메일 확인">
           </div>
           <div class="form__field">
-            <label for="formInput#text"  th:text="|가게 상호명|">Full Name: </label>
-            <span th:errors="*{name}">오류</span>
-            <input th:field="*{name}"
-                    class="input input--text"
-                    id="formInput#text"
+            <label for="formInput#text"  th:text="|가게 상호명|"></label>
+            <input class="input input--text"
+                    id="name"
                     type="text"
                     name="text"
                     placeholder="@@식당"
             />
           </div>
-
           <div class="form__field">
-            <label for="formInput#text"  th:text="|가게 전화번호|">Full Name: </label>
-            <span th:errors="*{phoneNumber}">오류</span>
-            <input th:field="*{phoneNumber}"
-                   class="input input--text"
-                   id="formInput#text"
+            <label for="formInput#text"  th:text="|가게 전화번호|"></label>
+            <input class="input input--text"
+                   id="phone"
                    type="text"
                    name="text"
                    placeholder="전화번호를 입력해주세요."
             />
           </div>
-          <!-- Input:Password -->
+
+          <input type="button" class="btn btn--sub" th:onclick="execDaumPostcode()" value="우편번호 찾기">
+        <input type="text" class="input input--text" id="postcode" placeholder="우편번호">
+          <br>
+          <span>
+          <input type="text" class="input input--text" id="address" placeholder="주소"><br>
+          <input type="text" class="input input--text" id="detailAddress" placeholder="상세주소" required>
+          </span>
           <div class="form__field" >
-            <label for="formInput#password"th:text="비밀번호">Password: </label>
-            <input  th:field="*{password}"
-                    class="input input--password"
-              id="formInput#passowrd"
+            <label for="pwd"th:text="비밀번호"></label>
+            <input class="input input--password"
+              id="pwd"
               type="password"
               name="password"
               placeholder="••••••••"
@@ -95,39 +94,32 @@
           </div>
           <!-- Input:Password -->
           <div class="form__field" >
-            <label for="formInput#confirm-password"  th:text="|비밀번호 확인|">Confirm Password: </label>
-            <input th:field="*{password2}"
-              class="input input--password"
-              id="formInput#confirm-passowrd"
+            <label for="confirmPwd"  th:text="|비밀번호 확인|"></label>
+            <input class="input input--password"
+              id="confirmPwd"
               type="password"
               name="confirm-password"
               placeholder="••••••••"
             />
           </div>
           <div class="form__field">
-            <label for="formInput#text"  th:text="|사업자 등록번호|">Full Name: </label>
-            <span th:errors="*{companyId}">오류</span>
-            <input th:field="*{companyId}"
-                   class="input input--text"
-                   id="formInput#text"
+            <label for="companyId"  th:text="|사업자 등록번호|"></label>
+            <input class="input input--text"
+                   id="companyId"
                    type="text"
                    name="text"
                    placeholder="전화번호를 입력해주세요."
             />
           </div>
-
-          <div th:if="${#fields.hasGlobalErrors()}">
-            <p class="field-error" th:each="err : ${#fields.globalErrors()}" th:text="${err}"></p>
-          </div>
           <div class="auth__actions">
-            <input class="btn btn--sub btn--lg" type="submit" value="Sign  In" />
+            <input class="btn btn--sub btn--lg" type="button" th:onclick="signIn()" value="Sign  In" />
           </div>
-        </form>
         <div class="auth__alternative">
-          <p>Already have an Account?</p>
-          <a href="login.html">Log In</a>
+          <p>이미 가입하셨나요?</p>
+          <a th:href="@{/login}">Log In</a>
         </div>
       </div>
     </div>
   </body>
+<script th:src="@{/js/signUp.js}"></script>
 </html>

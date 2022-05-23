@@ -4,12 +4,11 @@ import heading.ground.entity.ImageFile;
 import heading.ground.entity.book.Book;
 import heading.ground.entity.post.Menu;
 import heading.ground.entity.util.Category;
-import heading.ground.forms.user.BaseSignUp;
 import heading.ground.forms.user.SellerEditForm;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.BatchSize;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
@@ -52,15 +51,18 @@ public class Seller extends BaseUser{
     @JoinColumn(name = "category_id")
     private Category category;
 
-    public Seller(BaseSignUp sf) {
-        this.loginId = sf.getLoginId();
-        this.password = sf.getPassword();
-        this.name = sf.getName();
-        this.phoneNumber = sf.getPhoneNumber();
-        this.companyId = sf.getCompanyId();
-        this.role = MyRole.SELLER;
-        //TODO 추후 이메일 인증 후에 풀어주도록 로직 설정
-        this.email = sf.getEmail();
+
+    @Builder
+    public Seller(String loginId, String password, String name, String phoneNumber, String email, MyRole role,
+                  String doro, String doroSpce, String zipCode, String companyId) {
+        this.loginId = loginId;
+        this.password = password;
+        this.name = name;
+        this.phoneNumber = phoneNumber;
+        this.email = email;
+        this.role = role;
+        this.address = new Address(doro,doroSpce,zipCode);
+        this.companyId = companyId;
         this.non_locked = true;
     }
 

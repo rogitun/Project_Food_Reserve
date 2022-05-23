@@ -13,6 +13,8 @@
     <link rel="stylesheet" href="uikit/styles/uikit.css" />
     <!-- Dev Search UI -->
     <link rel="stylesheet" href="styles/app.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <style>
       .field-error {
  border-color: #dc3545;
@@ -28,52 +30,44 @@
           <a th:href="@{/}">
             <img src="images/icon.svg" alt="icon" />
           </a>
-          <h3>회원 가입</h3>
+          <h5>회원 가입</h5>
+          <p id="basicErr" class="field-error"></p>
+          <p id="pwdErr" class="field-error"></p>
         </div>
 
-        <form th:action class="form auth__form" th:object="${user}" method="post">
-          <!-- Input:Text -->
+        <form th:action class="form auth__form">
           <div class="form__field">
             <label for="formInput#text"  th:text="아이디">Full Name: </label>
-            <span th:errors="*{loginId}">오류</span>
-            <input th:field="*{loginId}"
-              class="input input--text"
-              id="formInput#text"
+            <input class="input input--text"
+              id="id"
               type="text"
               name="text"
-              placeholder="e.g. Dennis Ivanov"
             />
+            <input type="button" class="btn btn--sub" th:onclick="validateId()" value="아이디 확인">
           </div>
 
           <!-- Input:Email -->
           <div class="form__field">
             <label for="formInput#email" th:text="이메일">Email Address: </label>
-            <span th:errors="*{email}" th:class="field-error">오류</span>
-            <input th:field="*{email}"
-              class="input input--email"
-              id="formInput#email"
+            <input class="input input--email"
+              id="email"
               type="email"
               name="email"
-              placeholder="e.g. user@domain.com"
             />
+            <input type="button" class="btn btn--sub" th:onclick="validateEmail()" value="이메일 확인">
           </div>
           <div class="form__field">
             <label for="formInput#text"  th:text="닉네임">Full Name: </label>
-            <span th:errors="*{name}" th:class="field-error">오류</span>
-            <input th:field="*{name}"
-                    class="input input--text"
-                    id="formInput#text"
+            <input class="input input--text"
+                    id="name"
                     type="text"
                     name="text"
-                    placeholder="e.g. Dennis Ivanov"
             />
           </div>
           <div class="form__field">
-            <label for="formInput#text"  th:text="|전화번호|">Full Name: </label>
-            <span th:errors="*{phoneNumber}" th:class="field-error">오류</span>
-            <input th:field="*{phoneNumber}"
-                   class="input input--text"
-                   id="formInput#text"
+            <label for="formInput#text"  th:text="전화번호">Full Name: </label>
+            <input class="input input--text"
+                   id="phone"
                    type="text"
                    name="text"
                    placeholder="전화번호를 입력해주세요."
@@ -81,10 +75,9 @@
           </div>
           <!-- Input:Password -->
           <div class="form__field" >
-            <label for="formInput#password"th:text="비밀번호">Password: </label>
-            <input  th:field="*{password}"
-                    class="input input--password"
-              id="formInput#passowrd"
+            <label for="formInput#password"th:text="비밀번호"></label>
+            <input class="input input--password"
+              id="pwd"
               type="password"
               name="password"
               placeholder="••••••••"
@@ -92,27 +85,24 @@
           </div>
           <!-- Input:Password -->
           <div class="form__field" >
-            <label for="formInput#confirm-password"  th:text="|비밀번호 확인|">Confirm Password: </label>
-            <input th:field="*{password2}"
-              class="input input--password"
-              id="formInput#confirm-passowrd"
+            <label for="formInput#confirm-password"  th:text="|비밀번호 확인|"></label>
+            <input class="input input--password"
+              id="cpwd"
               type="password"
               name="confirm-password"
               placeholder="••••••••"
             />
           </div>
-          <div th:if="${#fields.hasGlobalErrors()}">
-            <p class="field-error" th:each="err : ${#fields.globalErrors()}" th:text="${err}"></p>
-          </div>
           <div class="auth__actions">
-            <input class="btn btn--sub btn--lg" type="submit" value="Sign  In" />
+            <input class="btn btn--sub btn--lg" type="button" onclick="student()" value="Sign  In" />
           </div>
         </form>
         <div class="auth__alternative">
-          <p>Already have an Account?</p>
-          <a href="login.html">Log In</a>
+          <p>이미 가입하셨나요?</p>
+          <a th:href="@{/login}">로그인</a>
         </div>
       </div>
     </div>
   </body>
+  <script th:src="@{/js/signUp.js}"></script>
 </html>

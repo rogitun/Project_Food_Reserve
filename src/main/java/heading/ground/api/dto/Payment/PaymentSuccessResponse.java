@@ -1,4 +1,4 @@
-package heading.ground.api.dto;
+package heading.ground.api.dto.Payment;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
