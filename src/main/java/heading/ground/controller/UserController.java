@@ -5,11 +5,13 @@ import heading.ground.dto.post.MenuDto;
 import heading.ground.dto.user.SellerDto;
 import heading.ground.dto.user.StudentDto;
 import heading.ground.entity.book.Book;
+import heading.ground.entity.post.Menu;
 import heading.ground.entity.user.Seller;
 import heading.ground.entity.user.Student;
 import heading.ground.entity.util.Category;
 import heading.ground.forms.user.*;
 import heading.ground.repository.book.BookRepository;
+import heading.ground.repository.post.MenuRepository;
 import heading.ground.repository.user.UserRepository;
 
 import heading.ground.repository.util.CategoryRepository;
@@ -41,6 +43,7 @@ public class UserController {
     private final UserRepository userRepository;
     private final BookRepository bookRepository;
     private final CategoryRepository categoryRepository;
+    private final MenuRepository menuRepository;
 
     @GetMapping("/loginForm")
     public String loginForm() {
@@ -57,14 +60,6 @@ public class UserController {
         return "/user/seller-signup";
     }
 
-//    @PostMapping("/fail-login")
-//    public String failLogin(RedirectAttributes ra) {
-//        log.info("fail checking");
-//
-//        ra.addAttribute("auth", "인증-실패");
-//        return "redirect:/loginForm";
-//    }
-
     @GetMapping("/profile") //프로필
     public String profile(Model model,
                           @AuthenticationPrincipal MyUserDetails principal) {
@@ -73,6 +68,7 @@ public class UserController {
             //TODO MENU는 Best 메뉴만
             //TODO SellerWithMenu & Book 나눠서 가져오기
             Seller seller = (Seller) userRepository.findById(principal.getId()).get();
+            List<Menu> bestMenus = menuRepository.findBestMenusBySellerId(seller.getId());
             List<Book> books = bookRepository.findBySellerId(principal.getId());
             SellerDto sellerDto = new SellerDto(seller);
 
@@ -80,8 +76,11 @@ public class UserController {
                 List<BookDto> bookDtos = books.stream().map(b -> BookDto.bookDto(b)).collect(Collectors.toList());
                 model.addAttribute("books",bookDtos);
             }
+            if(bestMenus!=null){
+                List<MenuDto> menuDtos = bestMenus.stream().map(m -> new MenuDto(m)).collect(Collectors.toList());
+                model.addAttribute("menus",menuDtos);
+            }
             model.addAttribute("account", sellerDto);
-
 
             return "/user/account";
         } else if (principal.getRole().equals("STUDENT")) {

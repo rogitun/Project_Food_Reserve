@@ -44,6 +44,8 @@
         let name = $('#name').val();
         let pwd = $('#pwd').val();
         let cpwd = $('#cpwd').val();
+        let phone = $('#phone').val();
+
         if(email=='' || id == '' || name == '' || phone == '' ||
              pwd == '' || cpwd == ''){
              $('#basicErr').text("모든 항목을 입력해주세요.");
@@ -70,7 +72,7 @@
             data : JSON.stringify(user),
             success : function(result){
                 alert(result);
-                window.location.replace("/login");
+                window.location.replace("/loginForm");
             },
             error : function(error){
                 alert(error.responseText);
@@ -132,7 +134,7 @@
                     data : JSON.stringify(user),
                     success : function(result){
                         alert(result);
-                        window.location.replace("/login");
+                        window.location.replace("/loginForm");
                     },
                     error : function(error){
                         alert(error.responseText);

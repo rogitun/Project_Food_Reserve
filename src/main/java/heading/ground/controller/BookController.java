@@ -138,8 +138,9 @@ public class BookController {
     }
 
     //TODO 아래는 예약 처리하기
+    @ResponseBody
     @PostMapping("/{id}/accept") //예약 수락(seller)
-    public String bookAccept(@PathVariable("id") String id,
+    public ResponseEntity<String> bookAccept(@PathVariable("id") String id,
                              @AuthenticationPrincipal MyUserDetails principal) {
         if (principal.getRole().equals("SELLER")) {
             Optional<Book> bookWithSeller = bookRepository.findBookWithSeller(principal.getId(), id);
@@ -147,11 +148,13 @@ public class BookController {
                 //ㄴㄴ
                 throw new IllegalStateException();
             }
+            log.info("id = {} ", id);
+            bookService.process(id, true);
+            return new ResponseEntity<String>("예약이 수락되었습니다.",HttpStatus.OK);
         }
-        log.info("id = {} ", id);
-        bookService.process(id, true);
-
-        return "redirect:/profile";
+        else{
+            return new ResponseEntity<String>("예약 처리 불가",HttpStatus.FORBIDDEN);
+        }
     }
 
 

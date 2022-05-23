@@ -47,8 +47,10 @@
                 <a th:href="@{/sellerInfo/{id}(id=${sellerId})}" class="singleProject__developer" th:text="${menu.seller}">가게
                     이름</a>
                 <h2 class="singleProject__title" th:text="${menu.name}">메뉴이름</h2>
-                <h3 class="singleProject__subtitle">메뉴 설명</h3>
+                <h3 class="singleProject__subtitle">메뉴 소개</h3>
                 <div class="singleProject__info" th:text="${menu.desc}">설명</div>
+                <h3 class="singleProject__subtitle">가격</h3>
+                <div class="singleProject__info" th:text="|${menu.price}원|"></div>
 
                 <div class="comments">
                     <h5 class="project--rating" th:if="${menu.commentNumber>0}" th:text="|전체 별점 : ${menu.star / menu.commentNumber}점|"></h5>
@@ -87,8 +89,7 @@
                                 <a class="comment__author" th:text="${c.writer}">이름</a>
                                 <p class="comment__info" th:text="${c.desc}"></p>
                                 <p class="tag tag--pill tag--main settings__btn" th:text="|${c.star}점|"></p>
-                                <a class="tag tag--pill tag--main settings__btn" href=""><i class="im im-edit"></i>Reply</a>
-                                <a class="tag tag--pill tag--main settings__btn" th:if="${session.user != null && session.user.getId() == c.writerId}" th:onclick="|delComment('${c.id}','${menu.id}')|"><i class="im im-x-mark-circle-o"></i>DelAjax</a>
+                                <a class="tag tag--pill tag--main settings__btn" th:if="${#authentication.getPrincipal().getUser().getLoginId()==c.writerId}" th:onclick="|delComment('${c.id}','${menu.id}')|"><i class="im im-x-mark-circle-o"></i>삭제</a>
                             </div>
                         </div>
                     </div>
@@ -104,11 +105,8 @@
         if(!confirm("정말 삭제하시겠습니까?")){
             return;
         }
-        let backUrl = "/menu/" + bid;
-        let postUrl = "/menu/del-comment/" + cid;
-
-        console.log(backUrl);
-        console.log(postUrl);
+        let backUrl = "/menus/" + bid;
+        let postUrl = "/menu/" + cid + "/del-comment";
 
         $.ajax({
             type : "post",
@@ -123,18 +121,5 @@
         });
     }
 
-<!--  window.onload = function() {-->
-<!--    var token = sessionStorage.getItem("Authorization");-->
-<!--    $.ajax({-->
-<!--        type: "GET",-->
-<!--        url: "/",-->
-<!--        beforeSend: function (xhr) {-->
-<!--            xhr.setRequestHeader("Authorization","Bearer " + token);//header추가-->
-<!--        },-->
-<!--        success: function (res) {-->
-<!--            console.log(res);-->
-<!--        }-->
-<!--    });-->
-<!--}-->
 </script>
 </html>

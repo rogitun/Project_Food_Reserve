@@ -28,6 +28,8 @@ public class MyUserDetails implements UserDetails {
         return this.user.getRole().toString();
     }
 
+    public String getLoginId(){return this.user.getLoginId();}
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority> roles = new ArrayList<>();

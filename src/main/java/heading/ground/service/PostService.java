@@ -71,7 +71,6 @@ public class PostService {
     @Transactional //메뉴, 학생, 댓글 연관관계 세팅
     public void addComment(Long studentId, Comment comment, Long id) {
         Menu menu = menuRepository.findById(id).get();
-       // Student student = studentRepository.findById(studentId).get();
         Student student = (Student) userRepository.findById(studentId).get();
         comment.setRelations(student,menu);
         commentRepository.save(comment);

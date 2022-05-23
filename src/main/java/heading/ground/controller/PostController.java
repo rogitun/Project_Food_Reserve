@@ -19,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -53,6 +54,7 @@ public class PostController {
     private final PostService postService;
     private final CommentRepository commentRepository;
 
+    @PreAuthorize("hasAuthority('SELLER')")
     @GetMapping("/add-menu")
     public String menuForm(Model model,
                            @AuthenticationPrincipal MyUserDetails principal) { //메뉴 폼
@@ -62,6 +64,7 @@ public class PostController {
         return "post/menuForm";
     }
 
+    @PreAuthorize("hasAuthority('SELLER')")
     @PostMapping("/add-menu")
     public String addMenu(@Validated @ModelAttribute("menu") MenuForm form, BindingResult bindingResult,
                           @AuthenticationPrincipal MyUserDetails principal) throws IOException { //메뉴 폼
@@ -73,11 +76,11 @@ public class PostController {
         return "redirect:/profile";
     }
 
+    @PreAuthorize("hasAuthority('SELLER')")
     @GetMapping("/{id}/edit")
     public String editForm(@PathVariable("id") Long id, Model model,
                            @AuthenticationPrincipal MyUserDetails principal) {
         Optional<Menu> optionalMenu = menuRepository.findMenuByIdWithSeller(id, principal.getId());
-        //Menu menu = menuRepository.findById(id).get();
         if (optionalMenu.isEmpty())
             return "redirect:/";
         Menu menu = optionalMenu.get();
@@ -87,19 +90,24 @@ public class PostController {
         return "post/menuForm";
     }
 
+    @PreAuthorize("hasAuthority('SELLER')")
     @PostMapping("/{id}/edit")
     public String editMenu(@Validated @ModelAttribute("menu") MenuForm form, BindingResult bindingResult,
                            @PathVariable("id") Long id, @AuthenticationPrincipal MyUserDetails principal) throws IOException {
         Optional<Menu> optionalMenu = menuRepository.findMenuByIdWithSeller(id, principal.getId());
         if (optionalMenu.isEmpty())
             return "redirect:/";
+
+        if (bindingResult.hasErrors()) {
+            return "post/menuForm";
+        }
+
         Menu menu = optionalMenu.get();
-        // Menu menu = menuRepository.findById(id).get();
         postService.updateMenu(menu, form);
         return "redirect:/profile";
     }
 
-
+    @PreAuthorize("hasAuthority('SELLER')")
     @GetMapping("/manage")
     public String managingMenus(Model model, @AuthenticationPrincipal MyUserDetails principal) {
         if (!principal.getRole().equals("SELLER"))
@@ -110,6 +118,7 @@ public class PostController {
         return "/post/manage-menu";
     }
 
+    @PreAuthorize("hasAuthority('SELLER')")
     @PostMapping("/{id}/status")
     public String setStatus(@PathVariable("id") Long id,
                             @RequestBody Map<String, String> data) {
@@ -120,6 +129,7 @@ public class PostController {
         return "redirect:/menu/manage";
     }
 
+    @PreAuthorize("hasAuthority('SELLER')")
     @PostMapping("/{id}/del")
     public String delMenu(@PathVariable("id") Long id, @AuthenticationPrincipal MyUserDetails principal) {
         Optional<Menu> optionalMenu = menuRepository.findMenuByIdWithSeller(id, principal.getId());
@@ -137,6 +147,7 @@ public class PostController {
      * 1. 댓글은 메뉴와 사용자의 연관관계를 가진다.
      * 2. 댓글과 메뉴는 M:1 / 사용자도 M:1
      */
+    @PreAuthorize("hasAuthority('STUDENT')")
     @PostMapping("/{id}/add-comment")
     public String addComment(@PathVariable("id") Long id,
                              @Validated @ModelAttribute("comment") CommentForm form,
@@ -148,17 +159,14 @@ public class PostController {
             return "redirect:/menus/" + id;
         }
 
-        try {
-            Long sId = principal.getId();
-            Comment comment = new Comment(form);
-            postService.addComment(sId, comment, id);
-        } catch (Exception e) {
-            response.sendError(500, "ServerError");
-        } finally {
-            return "redirect:/menus/" + id;
-        }
+        Long sId = principal.getId();
+        Comment comment = new Comment(form);
+        postService.addComment(sId, comment, id);
+
+        return "redirect:/menus/" + id;
     }
 
+    @PreAuthorize("hasAuthority('STUDENT')")
     @PostMapping("/{id}/del-comment")
     public String delComment(@PathVariable("id") Long id,
                              @AuthenticationPrincipal MyUserDetails principal) {

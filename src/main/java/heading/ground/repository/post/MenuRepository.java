@@ -54,4 +54,9 @@ public interface MenuRepository extends JpaRepository<Menu,Long> {
     @Query("select m from Menu m where m.id in (:ids)")
     List<Menu> findByIds(@Param("ids") Set<Long> menuIds);
 
+    @Query("select m from Menu m " +
+            "join fetch m.seller s " +
+            "where s.id =:sid and " +
+            "m.isBest = true")
+    List<Menu> findBestMenusBySellerId(@Param("sid") Long id);
 }

@@ -11,7 +11,7 @@ public class CommentDto {
 
     private Long id;
     private String writer;
-    private Long writerId;
+    private String writerId;
     private String desc;
     private int star;
 
@@ -20,6 +20,6 @@ public class CommentDto {
         this.writer = c.getWriter().getName();
         this.desc = c.getDesc();
         this.star = c.getStar();
-        this.writerId = c.getWriter().getId();
+        this.writerId = c.getWriter().getLoginId();
     }
 }

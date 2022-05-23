@@ -55,12 +55,10 @@
                     <h3 class="settings__title">대표 메뉴</h3>
                     <span>
                     <a class="tag tag--pill tag--sub settings__btn tag--lg" th:href="@{/menu/manage}"><i
-                            class="im im-plus"></i> 메뉴 관리</a>
-                         <a class="tag tag--pill tag--sub settings__btn tag--lg" th:href="@{/menu/manage}"><i
-                                 class="im im-plus"></i> 메뉴 추가</a>
+                            class="im im-plus"></i> 메뉴 관리
+                    </a>
                     </span>
                 </div>
-
                 <table class="settings__table">
                     <tr th:each="m : ${menus}">
                         <td class="settings__tableInfo">
@@ -70,13 +68,12 @@
                         <td class="settings__tableActions">
                             <a class="tag tag--pill tag--main settings__btn" th:href="@{/menu/{id}/edit(id=${m.id})}"><i
                                     class="im im-edit"></i>수정</a>
-                            <a class="tag tag--pill tag--main settings__btn" href="#"><i
+                            <a class="tag tag--pill tag--main settings__btn" th:onclick="best([[${m.id}]])"><i
                                     class="im im-x-mark-circle-o"></i>
                                 삭제</a>
                         </td>
                     </tr>
                 </table>
-
                 <div class="settings">
                     <h3 class="settings__title">예약 현황</h3>
                     <a class="tag tag--pill tag--sub settings__btn tag--lg" href="#"><i class="im im-plus"></i>예약 관리</a>
@@ -84,9 +81,6 @@
 
                 <table class="settings__table">
                     <tr th:if="${books}" th:each="b : ${books}">
-                        <!--                        <td class="settings__thumbnail">-->
-                        <!--                            <a href="single-project.html"><img src="" alt="Project Thumbnail"/></a>-->
-                        <!--                        </td>-->
                         <td class="settings__tableInfo">
                             <a th:href="@{/book/{id}(id=${b.id})}" th:text="${b.student.name}">예약자 이름</a>
                             <p th:text="|예약 인원 : ${b.number}|">인원 @명 / ~~</p>
@@ -113,29 +107,6 @@
 </main>
 </body>
 
-<script th:inline="javascript">
-    function accept(bid){
-        let id = bid;
-        let acceptUrl = "/book/" + id + "/accept";
-        let seller = "/profile"
-
-        console.log(id);
-        $.ajax({
-            type: "post",
-            url : acceptUrl,
-            data: id,
-            dataType : 'text',
-            success: function(result){
-                alert("예약이 승인되었습니다.");
-                window.location.replace(seller);
-            },
-            error: function(error){
-                 alert("예약 처리 과정에 문제가 발생했습니다.");
-                window.location.replace("/");
-            }
-        });
-    }
-
-
-</script>
+<script th:src="@{/js/book.js}"></script>
+<script th:src="@{/js/menuManage.js}"></script>
 </html>
