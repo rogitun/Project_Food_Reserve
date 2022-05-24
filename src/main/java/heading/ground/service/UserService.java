@@ -70,8 +70,20 @@ public class UserService {
         return all.map(se -> new SellerDto(se));
     }
 
-    public Paging pageTemp(Page<SellerDto> page) {
-        return new Paging(page.getTotalPages(), page.getNumber());
+    public Page<SellerDto> searchPage(int s,int size, String keyWord) {
+        PageRequest pageRequest = PageRequest.of(s, size);
+        Page<Seller> all = userRepository.findAllByKeyword(keyWord,pageRequest);
+        return all.map(se -> new SellerDto(se));
+    }
+
+    public Paging pageTemp(Page<SellerDto> page,String key) {
+        //return new Paging(page.getTotalPages(), page.getNumber());
+        Paging build = Paging.builder()
+                .total(page.getTotalPages())
+                .number(page.getNumber())
+                .key(key)
+                .build();
+        return build;
     }
 
     @Transactional

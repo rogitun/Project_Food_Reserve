@@ -26,6 +26,12 @@ public interface MenuRepository extends JpaRepository<Menu,Long> {
     countQuery = "select count(m) from Menu m")
     Page<Menu> findBySellerPage(@Param("sid") Long id, Pageable pageable);
 
+    @Query(value = "select m from Menu m " +
+            "join fetch m.seller s " +
+            "where m.name like %:key%",
+    countQuery = "select count(m) from Menu m where m.name like %:key%")
+    Page<Menu> findAllByKey(Pageable pageRequest,@Param("key") String key);
+
     @Query("select m from Menu m " +
             "join fetch m.seller s " +
             "where s.id = :sid")
@@ -59,4 +65,6 @@ public interface MenuRepository extends JpaRepository<Menu,Long> {
             "where s.id =:sid and " +
             "m.isBest = true")
     List<Menu> findBestMenusBySellerId(@Param("sid") Long id);
+
+
 }

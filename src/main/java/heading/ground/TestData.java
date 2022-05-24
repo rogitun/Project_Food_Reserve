@@ -38,6 +38,37 @@ public class TestData {
         cr.save(kor);
         cr.save(jap);
         cr.save(chi);
+        for(int i=0;i<10;i++){
+            Seller seller = Seller.builder()
+                    .loginId("def" + i)
+                    .name("dec" + i)
+                    .password(passwordEncoder.encode("1234"))
+                    .phoneNumber("010-1231-12"+i)
+                    .email("abc@maf.com"+i)
+                    .role(MyRole.SELLER)
+                    .doro("불암로 112")
+                    .doroSpce("@@건물 1층")
+                    .zipCode("11643")
+                    .companyId("1234455")
+                    .build();
+            us.save(seller);
+        }
+
+        for(int i=0;i<10;i++){
+            Seller seller = Seller.builder()
+                    .loginId("abc" + i)
+                    .name("abc" + i)
+                    .password(passwordEncoder.encode("1234"))
+                    .phoneNumber("010-1231-12"+i)
+                    .email("abc@maf.com"+i)
+                    .role(MyRole.SELLER)
+                    .doro("불암로 112")
+                    .doroSpce("@@건물 1층")
+                    .zipCode("11643")
+                    .companyId("1234455")
+                    .build();
+            us.save(seller);
+        }
 
         Student student = Student.builder()
                 .id("abcd")

@@ -37,41 +37,45 @@ public class MainController {
 
     private final UserService userService;
     private final FileStore fileStore;
-    private final UserRepository userRepository;
     private final PostService postService;
     private final MenuRepository menuRepository;
 
     //TODO Query 문제있음
     @GetMapping("/")
     public String home(Model model, Pageable pageable,
-                       @AuthenticationPrincipal MyUserDetails user){
-        int page = (pageable.getPageNumber()==0)? 0: (pageable.getPageNumber()-1);
-        Page<SellerDto> pages = userService.page(page, 6);
-        Paging paging = userService.pageTemp(pages);
-        if(user!=null)
-            log.info("Current User is = {}, name = {}, Role = {}",user,user.getUsername(),user.getRole());
-        model.addAttribute("seller",pages);
-        model.addAttribute("paging",paging);
+                       @AuthenticationPrincipal MyUserDetails user,
+                       @RequestParam(required = false,name = "keyWord") String key) {
+        int page = (pageable.getPageNumber() == 0) ? 0 : (pageable.getPageNumber() - 1);
+        Page<SellerDto> pages;
+        if(key==null) pages = userService.page(page, 6);
+        else pages = userService.searchPage(page,6,key);
+
+        Paging paging = userService.pageTemp(pages,key);
+        if (user != null)
+            log.info("Current User is = {}, name = {}, Role = {}", user, user.getUsername(), user.getRole());
+        model.addAttribute("seller", pages);
+        model.addAttribute("paging", paging);
 
         return "main/home";
     }
 
-
     @ResponseBody
     @GetMapping("/image/{image}")
     public Resource showImage(@PathVariable String image) throws MalformedURLException {
-        return new UrlResource("file:"+fileStore.getFullPath(image));
+        return new UrlResource("file:" + fileStore.getFullPath(image));
     }
 
     @GetMapping("/menus")
-    public String menuList(Model model, Pageable pageable) {
-        int page = (pageable.getPageNumber()==0)? 0: (pageable.getPageNumber()-1);
-        Page<MenuDto> all = postService.page(page, 9);//현재 인덱스, 보여줄 객체 갯수
-        Paging paging = postService.pageTemp(all);
+    public String menuList(Model model, Pageable pageable,
+                           @RequestParam(required = false,name = "keyWord")String key) {
+        int page = (pageable.getPageNumber() == 0) ? 0 : (pageable.getPageNumber() - 1);
+        Page<MenuDto> all;
+        if(key==null) all = postService.page(page, 9);
+        else all = postService.searchPage(page,9,key);//현재 인덱스, 보여줄 객체 갯수
+        Paging paging = postService.pageTemp(all,key);
 
         model.addAttribute("menus", all);
-        model.addAttribute("paging",paging);
-        // model.addAttribute("paging",paging);
+        model.addAttribute("paging", paging);
         return "post/menus";
     }
 
@@ -80,31 +84,31 @@ public class MainController {
                              @AuthenticationPrincipal MyUserDetails principal) {
 
         CommentForm commentForm = new CommentForm();
-        if(principal!=null){
+        if (principal != null) {
             boolean flag = principal.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("STUDENT"));
             commentForm.setStudent(flag);
         }
 
         Optional<Menu> optional = menuRepository.findMenuByIdWithCoSe(id);
-        if(optional.isEmpty())
+        if (optional.isEmpty())
             return "redirect:/";
         Menu entity = optional.get();
         MenuDto menu = new MenuDto(entity);
 
         //댓글 목록 가져오기
         List<Comment> comments = entity.getComments();
-        if (comments !=null) {
+        if (comments != null) {
             List<CommentDto> commentDtos = comments.stream()
                     .map(c -> new CommentDto(c))
                     .collect(Collectors.toList());
-            model.addAttribute("comments",commentDtos);
+            model.addAttribute("comments", commentDtos);
         }
 
         model.addAttribute("menu", menu);
         model.addAttribute("sellerId", entity.getSeller().getId());
         model.addAttribute("comment", commentForm);
 
-        log.info("menu-comment-size-on-page = {}",entity.getComments().size());
+        log.info("menu-comment-size-on-page = {}", entity.getComments().size());
         return "post/menu";
     }
 }

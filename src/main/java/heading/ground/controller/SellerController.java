@@ -35,7 +35,7 @@ public class SellerController {
                         Model model){
         int page = (pageable.getPageNumber()==0)?0:(pageable.getPageNumber()-1);
         Page<MenuDto> all = postService.pageBySeller(page, 9,id);
-        Paging paging = postService.pageTemp(all);
+        Paging paging = postService.pageTemp(all,null);
         Optional<MenuDto> first = all.get().findFirst();
         if(first.isPresent())
             model.addAttribute("seller_name",first.get().getSeller());

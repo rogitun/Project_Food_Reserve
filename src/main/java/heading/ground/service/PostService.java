@@ -82,14 +82,27 @@ public class PostService {
         return all.map(a -> new MenuDto(a));
     }
 
+    public Page<MenuDto> searchPage(int s, int n, String key) {
+        PageRequest pageRequest = PageRequest.of(s,n);
+        Page<Menu> all = menuRepository.findAllByKey(pageRequest,key);
+        return all.map(a-> new MenuDto(a));
+    }
+
+
     public Page<MenuDto> pageBySeller(int s, int n,Long id) {
         PageRequest pageRequest = PageRequest.of(s,n);
         Page<Menu> all = menuRepository.findBySellerPage(id, pageRequest);
         return all.map(a -> new MenuDto(a));
     }
 
-    public Paging pageTemp(Page<MenuDto> page){
-        return new Paging(page.getTotalPages(), page.getNumber());
+    public Paging pageTemp(Page<MenuDto> page,String key){
+        Paging build = Paging.builder()
+                .total(page.getTotalPages())
+                .number(page.getNumber())
+                .key(key)
+                .build();
+
+        return build;
     }
 
 
@@ -105,5 +118,6 @@ public class PostService {
             menu.setStock();
         }
     }
+
 
 }

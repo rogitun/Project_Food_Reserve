@@ -6,6 +6,7 @@ import heading.ground.entity.user.Student;
 import org.apache.catalina.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -48,6 +49,14 @@ public interface UserRepository extends JpaRepository<BaseUser,Long> {
     countQuery = "select count(s) from Seller s")
     Page<Seller> findAll(PageRequest pageRequest);
 
+
+    @Query(value = "select distinct s from Seller s " +
+            "left join fetch s.category c " +
+            "where s.name like %:key%",
+    countQuery = "select count(s) from Seller s where s.name like %:key%")
+    Page<Seller> findAllByKeyword(@Param("key") String key, Pageable pageable);
+
+
     @Query("select s from Seller s " +
             "left join fetch s.menus m " +
             "where s.id = :uid")
@@ -64,5 +73,6 @@ public interface UserRepository extends JpaRepository<BaseUser,Long> {
     @Query("select s from Student s " +
             "where s.id = :uid")
     Student findStudentById(@Param("uid") Long id);
+
 
 }
