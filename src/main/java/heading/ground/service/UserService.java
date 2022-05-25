@@ -66,7 +66,7 @@ public class UserService {
 
     public Page<SellerDto> page(int s, int size) {
         PageRequest pageRequest = PageRequest.of(s, size);
-        Page<Seller> all = userRepository.findAll(pageRequest);
+        Page<Seller> all = userRepository.findAllPage(pageRequest);
         return all.map(se -> new SellerDto(se));
     }
 
@@ -76,12 +76,19 @@ public class UserService {
         return all.map(se -> new SellerDto(se));
     }
 
-    public Paging pageTemp(Page<SellerDto> page,String key) {
-        //return new Paging(page.getTotalPages(), page.getNumber());
+    public Page<SellerDto> searchCategory(int s,int size, String cat) {
+        PageRequest pageRequest = PageRequest.of(s, size);
+        Page<Seller> all = userRepository.findAllByCategory(cat,pageRequest);
+        return all.map(se -> new SellerDto(se));
+    }
+
+
+    public Paging pageTemp(Page<SellerDto> page,String key,String cat) {
         Paging build = Paging.builder()
                 .total(page.getTotalPages())
                 .number(page.getNumber())
                 .key(key)
+                .cat(cat)
                 .build();
         return build;
     }
@@ -109,4 +116,6 @@ public class UserService {
             return new ResponseEntity<String>("이미 사용중인 "+name, HttpStatus.FORBIDDEN);
         }
     }
+
+
 }

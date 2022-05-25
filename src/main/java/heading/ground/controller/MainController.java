@@ -7,10 +7,12 @@ import heading.ground.dto.user.SellerDto;
 import heading.ground.entity.post.Comment;
 import heading.ground.entity.post.Menu;
 import heading.ground.entity.user.Seller;
+import heading.ground.entity.util.Category;
 import heading.ground.file.FileStore;
 import heading.ground.forms.post.CommentForm;
 import heading.ground.repository.post.MenuRepository;
 import heading.ground.repository.user.UserRepository;
+import heading.ground.repository.util.CategoryRepository;
 import heading.ground.security.user.MyUserDetails;
 import heading.ground.service.PostService;
 import heading.ground.service.UserService;
@@ -19,7 +21,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -39,20 +43,34 @@ public class MainController {
     private final FileStore fileStore;
     private final PostService postService;
     private final MenuRepository menuRepository;
+    private final CategoryRepository categoryRepository;
 
     //TODO Query 문제있음
     @GetMapping("/")
     public String home(Model model, Pageable pageable,
                        @AuthenticationPrincipal MyUserDetails user,
-                       @RequestParam(required = false,name = "keyWord") String key) {
+                       @RequestParam(required = false, name = "keyWord") String key,
+                       @RequestParam(required = false, name = "category") String cat) {
         int page = (pageable.getPageNumber() == 0) ? 0 : (pageable.getPageNumber() - 1);
+        log.info("pageable = {}",pageable);
         Page<SellerDto> pages;
-        if(key==null) pages = userService.page(page, 6);
-        else pages = userService.searchPage(page,6,key);
 
-        Paging paging = userService.pageTemp(pages,key);
+
+        if (cat != null) {
+            pages = userService.searchCategory(page, 6, cat);
+        } else if (key != null) {
+            pages = userService.searchPage(page, 6, key);
+        } else {
+            pages = userService.page(page, 6);
+        }
+        Paging paging = userService.pageTemp(pages, key, cat);
         if (user != null)
             log.info("Current User is = {}, name = {}, Role = {}", user, user.getUsername(), user.getRole());
+        List<Category> all = categoryRepository.findAll();
+
+        log.info("pages = {}",pages);
+
+        model.addAttribute("category", all);
         model.addAttribute("seller", pages);
         model.addAttribute("paging", paging);
 
@@ -67,12 +85,12 @@ public class MainController {
 
     @GetMapping("/menus")
     public String menuList(Model model, Pageable pageable,
-                           @RequestParam(required = false,name = "keyWord")String key) {
+                           @RequestParam(required = false, name = "keyWord") String key) {
         int page = (pageable.getPageNumber() == 0) ? 0 : (pageable.getPageNumber() - 1);
         Page<MenuDto> all;
-        if(key==null) all = postService.page(page, 9);
-        else all = postService.searchPage(page,9,key);//현재 인덱스, 보여줄 객체 갯수
-        Paging paging = postService.pageTemp(all,key);
+        if (key == null) all = postService.page(page, 9);
+        else all = postService.searchPage(page, 9, key);//현재 인덱스, 보여줄 객체 갯수
+        Paging paging = postService.pageTemp(all, key);
 
         model.addAttribute("menus", all);
         model.addAttribute("paging", paging);

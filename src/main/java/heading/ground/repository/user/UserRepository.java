@@ -47,7 +47,7 @@ public interface UserRepository extends JpaRepository<BaseUser,Long> {
     @Query(value = "select distinct s from Seller s " +
             "left join fetch s.category c ",
     countQuery = "select count(s) from Seller s")
-    Page<Seller> findAll(PageRequest pageRequest);
+    Page<Seller> findAllPage(Pageable pageRequest);
 
 
     @Query(value = "select distinct s from Seller s " +
@@ -56,6 +56,12 @@ public interface UserRepository extends JpaRepository<BaseUser,Long> {
     countQuery = "select count(s) from Seller s where s.name like %:key%")
     Page<Seller> findAllByKeyword(@Param("key") String key, Pageable pageable);
 
+    @Query(value = "select distinct s from Seller s " +
+            "left join fetch s.category c " +
+            "where c.name like %:cat%",
+            countQuery = "select count(s) from Seller s " +
+                    "where s.category.name like %:cat%")
+    Page<Seller> findAllByCategory(@Param("cat") String cat, Pageable pageable);
 
     @Query("select s from Seller s " +
             "left join fetch s.menus m " +

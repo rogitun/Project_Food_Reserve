@@ -67,6 +67,7 @@ public class TestData {
                     .zipCode("11643")
                     .companyId("1234455")
                     .build();
+            seller.updateCategory(kor);
             us.save(seller);
         }
 
