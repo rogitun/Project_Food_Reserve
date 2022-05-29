@@ -26,7 +26,7 @@ public class ShopCart extends Base {
     @Column(name = "currentSeller")
     private Long sellerId;
 
-    @OneToOne()
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="user_id")
     private Student student;
 
@@ -46,7 +46,6 @@ public class ShopCart extends Base {
     public void addMenu(Menu menu) {
         Long sellerIdFromMenu = menu.getSeller().getId();
         if(sellerId != sellerIdFromMenu){
-            System.out.println("다른메뉴 in entity");
             menuList.clear();
             duplicate.clear();
         }

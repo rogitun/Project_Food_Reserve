@@ -70,7 +70,15 @@ public class UserController {
             Seller seller = (Seller) userRepository.findById(principal.getId()).get();
             List<Menu> bestMenus = menuRepository.findBestMenusBySellerId(seller.getId());
             List<Book> books = bookRepository.findBySellerId(principal.getId());
-            SellerDto sellerDto = new SellerDto(seller);
+            SellerDto sellerDto = SellerDto.builder()
+                    .id(seller.getId())
+                    .name(seller.getName())
+                    .phoneNumber(seller.getPhoneNumber())
+                    .desc(seller.getDesc())
+                    .doro(seller.getAddress().getDoro())
+                    .doro_spec(seller.getAddress().getDoro_spec())
+                    .photo((seller.getImageFile()!=null)?seller.getImageFile().getStoreName():null)
+                    .build();
 
             if(books!=null){
                 List<BookDto> bookDtos = books.stream().map(b -> BookDto.bookDto(b)).collect(Collectors.toList());

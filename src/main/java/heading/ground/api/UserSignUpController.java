@@ -5,7 +5,9 @@ import heading.ground.entity.user.MyRole;
 import heading.ground.entity.user.Seller;
 import heading.ground.api.dto.user.SellerFormJson;
 import heading.ground.entity.user.Student;
+import heading.ground.entity.util.ShopCart;
 import heading.ground.repository.user.UserRepository;
+import heading.ground.repository.util.ShopCartRepository;
 import heading.ground.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +27,7 @@ public class UserSignUpController {
 
     private final UserRepository userRepository;
     private final UserService userService;
+    private final ShopCartRepository shopCartRepository;
     private final BCryptPasswordEncoder passwordEncoder;
 
     @PostMapping("/signup-student")
@@ -40,8 +43,8 @@ public class UserSignUpController {
                     .phone(student.getPhoneNumber())
                     .pwd(passwordEncoder.encode(student.getPassword()))
                     .build();
-            userRepository.save(newStudent);
-
+            Student save = userRepository.save(newStudent);
+            shopCartRepository.save(new ShopCart(save));
             return new ResponseEntity<>("회원가입 성공",HttpStatus.OK);
         }
     }

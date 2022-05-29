@@ -14,11 +14,10 @@ import java.util.Set;
 
 public interface MenuRepository extends JpaRepository<Menu,Long> {
 
-    @Query("select m from Menu m " +
-            "where m.seller.id in :id")
-    List<Menu> selectMenuBySeller(@Param("id") Long id);
-
-    Menu findByName(String name);
+    @Query(value = "select m from Menu m " +
+            "join fetch m.seller s ",
+    countQuery = "select count(m) from Menu m")
+    Page<Menu> findMenusWithSeller(Pageable pageable);
 
     @Query(value = "select m from Menu m " +
             "join fetch m.seller s " +
@@ -65,6 +64,7 @@ public interface MenuRepository extends JpaRepository<Menu,Long> {
             "where s.id =:sid and " +
             "m.isBest = true")
     List<Menu> findBestMenusBySellerId(@Param("sid") Long id);
+
 
 
 }

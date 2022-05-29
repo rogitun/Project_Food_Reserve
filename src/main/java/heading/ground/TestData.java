@@ -5,10 +5,12 @@ import heading.ground.entity.user.MyRole;
 import heading.ground.entity.user.Seller;
 import heading.ground.entity.user.Student;
 import heading.ground.entity.util.Category;
+import heading.ground.entity.util.ShopCart;
 import heading.ground.forms.post.MenuForm;
 import heading.ground.repository.post.MenuRepository;
 import heading.ground.repository.user.UserRepository;
 import heading.ground.repository.util.CategoryRepository;
+import heading.ground.repository.util.ShopCartRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -24,6 +26,7 @@ public class TestData {
     private final UserRepository us;
     private final BCryptPasswordEncoder passwordEncoder;
     private final CategoryRepository cr;
+    private final ShopCartRepository shopCartRepository;
 
     @PostConstruct
     @Transactional
@@ -119,7 +122,8 @@ public class TestData {
 
 
         mu.save(menu);
-        us.save(student);
+        Student save = us.save(student);
+        shopCartRepository.save(new ShopCart(save));
 
     }
 }

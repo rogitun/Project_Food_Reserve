@@ -56,20 +56,15 @@
                   <h3 class="project__title" th:text="${m.name}">메뉴이름</h3>
                   <p class="project__author" th:text="${m.seller}">가게이름</p>
                   <p class="project--rating">
-                    <span style="font-weight: bold;">98%</span> Postitive
-                    Feedback (72 Votes)
+                    <span style="font-weight: bold;" th:unless="${m.star==0}" th:text="|${m.star}점|"></span>
+                    <span th:if="${m.commentNumber!=0}" th:text="|작성된 리뷰 : ${m.commentNumber}개|"></span>
+                    <span th:if="${m.commentNumber==0}" th:text="|작성된 리뷰가 없습니다.|"></span>
                   </p>
-                  <div class="project__tags">
-                    <span class="tag tag--pill tag--main">
-                      <small>NextJS</small>
-                    </span>
-                    <span class="tag tag--pill tag--main">
-                      <small>GraphQL</small>
-                    </span>
-                    <span class="tag tag--pill tag--main">
-                      <small>TypeScript</small>
-                    </span>
-                  </div>
+<!--                  <div class="project__tags">-->
+<!--                    <span class="tag tag&#45;&#45;pill tag&#45;&#45;main">-->
+<!--                      <small>NextJS</small>-->
+<!--                    </span>-->
+<!--                  </div>-->
                 </div>
               </a>
             </div>

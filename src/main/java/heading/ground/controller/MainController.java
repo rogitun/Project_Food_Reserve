@@ -108,25 +108,31 @@ public class MainController {
         }
 
         Optional<Menu> optional = menuRepository.findMenuByIdWithCoSe(id);
+        log.info("AFter Cose");
         if (optional.isEmpty())
             return "redirect:/";
         Menu entity = optional.get();
+        log.info("After get");
         MenuDto menu = new MenuDto(entity);
 
         //댓글 목록 가져오기
         List<Comment> comments = entity.getComments();
         if (comments != null) {
             List<CommentDto> commentDtos = comments.stream()
-                    .map(c -> new CommentDto(c))
+                    .map(c -> CommentDto.builder()
+                            .id(c.getId())
+                            .writer(c.getWriter().getName())
+                            .desc(c.getDesc())
+                            .star(c.getStar())
+                            .writerId(c.getWriter().getLoginId())
+                            .build())
                     .collect(Collectors.toList());
             model.addAttribute("comments", commentDtos);
         }
-
         model.addAttribute("menu", menu);
         model.addAttribute("sellerId", entity.getSeller().getId());
         model.addAttribute("comment", commentForm);
 
-        log.info("menu-comment-size-on-page = {}", entity.getComments().size());
         return "post/menu";
     }
 }

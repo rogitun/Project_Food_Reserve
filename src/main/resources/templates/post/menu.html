@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"  xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
     <meta charset="UTF-8"/>
@@ -89,7 +89,7 @@
                                 <a class="comment__author" th:text="${c.writer}">이름</a>
                                 <p class="comment__info" th:text="${c.desc}"></p>
                                 <p class="tag tag--pill tag--main settings__btn" th:text="|${c.star}점|"></p>
-                                <a class="tag tag--pill tag--main settings__btn" th:if="${#authentication.getPrincipal().getUser().getLoginId()==c.writerId}" th:onclick="|delComment('${c.id}','${menu.id}')|"><i class="im im-x-mark-circle-o"></i>삭제</a>
+                                <a class="tag tag--pill tag--main settings__btn" sec:authorize ="hasAuthority('STUDENT')" th:if="${#authentication.getPrincipal().getUser().getLoginId()==c.writerId}" th:onclick="|delComment('${c.id}','${menu.id}')|"><i class="im im-x-mark-circle-o"></i>삭제</a>
                             </div>
                         </div>
                     </div>

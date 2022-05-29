@@ -47,7 +47,7 @@ public class Seller extends BaseUser{
     @OneToMany(mappedBy = "seller")
     private List<Book> books = new ArrayList<>();
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category;
 

@@ -67,19 +67,40 @@ public class UserService {
     public Page<SellerDto> page(int s, int size) {
         PageRequest pageRequest = PageRequest.of(s, size);
         Page<Seller> all = userRepository.findAllPage(pageRequest);
-        return all.map(se -> new SellerDto(se));
+        return all.map(se -> SellerDto.
+                builder()
+                .id(se.getId())
+                .name(se.getName())
+                .phoneNumber(se.getPhoneNumber())
+                .desc(se.getDesc())
+                .category((se.getCategory()!=null)?se.getCategory().getName():null)
+                .build());
     }
 
     public Page<SellerDto> searchPage(int s,int size, String keyWord) {
         PageRequest pageRequest = PageRequest.of(s, size);
         Page<Seller> all = userRepository.findAllByKeyword(keyWord,pageRequest);
-        return all.map(se -> new SellerDto(se));
+        return all.map(se -> SellerDto.
+                builder()
+                .id(se.getId())
+                .name(se.getName())
+                .phoneNumber(se.getPhoneNumber())
+                .desc(se.getDesc())
+                .category((se.getCategory()!=null)?se.getCategory().getName():null)
+                .build());
     }
 
     public Page<SellerDto> searchCategory(int s,int size, String cat) {
         PageRequest pageRequest = PageRequest.of(s, size);
         Page<Seller> all = userRepository.findAllByCategory(cat,pageRequest);
-        return all.map(se -> new SellerDto(se));
+        return all.map(se -> SellerDto.
+                builder()
+                .id(se.getId())
+                .name(se.getName())
+                .phoneNumber(se.getPhoneNumber())
+                .desc(se.getDesc())
+                .category((se.getCategory()!=null)?se.getCategory().getName():null)
+                .build());
     }
 
 

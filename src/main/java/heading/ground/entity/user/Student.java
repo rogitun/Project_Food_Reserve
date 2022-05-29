@@ -25,10 +25,6 @@ public class Student extends BaseUser {
     @OneToMany(mappedBy = "student")
     private List<Book> books = new ArrayList<>();
 
-    @OneToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL
-    ,mappedBy = "student")
-    private ShopCart cart = new ShopCart(this);
-
     @Builder
     public Student(String id, String name, String email,String pwd, String phone){
         this.loginId = id;
@@ -44,10 +40,6 @@ public class Student extends BaseUser {
         name = form.getName();
         email = form.getEmail();
         phoneNumber = form.getPhoneNumber();
-    }
-
-    public void addMenuToCart(Menu menu){
-        cart.addMenu(menu);
     }
 
 }

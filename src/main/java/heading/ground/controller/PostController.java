@@ -151,8 +151,7 @@ public class PostController {
     @PostMapping("/{id}/add-comment")
     public String addComment(@PathVariable("id") Long id,
                              @Validated @ModelAttribute("comment") CommentForm form,
-                             BindingResult bindingResult, HttpServletResponse response,
-                             @AuthenticationPrincipal MyUserDetails principal) throws IOException {
+                             BindingResult bindingResult, @AuthenticationPrincipal MyUserDetails principal) throws IOException {
         log.info("form = {}", form);
         if (bindingResult.hasErrors()) {
             log.info("result = {} ", bindingResult.toString());

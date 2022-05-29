@@ -49,10 +49,18 @@ public class SellerController {
 
     @GetMapping("/sellerInfo/{id}")
     public String sellerInfo(@PathVariable("id") Long id, Model model) {
-        //TODO Seller + Menu
         Seller seller = userRepository.findByIdWithMenu(id);
-        SellerDto sellerDto = new SellerDto(seller);
-        
+
+        SellerDto sellerDto = SellerDto.builder()
+                .id(seller.getId())
+                .doro(seller.getAddress().getDoro())
+                .doro_spec(seller.getAddress().getDoro_spec())
+                .name(seller.getName())
+                .phoneNumber(seller.getPhoneNumber())
+                .desc(seller.getDesc())
+                .photo((seller.getImageFile()!=null)?seller.getImageFile().getStoreName():null)
+                .build();
+
         //대표메뉴 3가지
         Set<Menu> menus = seller.getMenus();
         List<Menu> collect = menus.stream().filter(m -> m.isBest()).collect(Collectors.toList());

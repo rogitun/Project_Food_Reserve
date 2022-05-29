@@ -13,7 +13,7 @@ import java.util.List;
 
 @Entity
 @Getter
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Category {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)

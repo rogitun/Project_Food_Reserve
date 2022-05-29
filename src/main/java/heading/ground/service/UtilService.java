@@ -4,7 +4,6 @@ import heading.ground.dto.util.CartMenuDto;
 import heading.ground.dto.util.PwdReset;
 import heading.ground.entity.post.Menu;
 import heading.ground.entity.user.BaseUser;
-import heading.ground.entity.user.Student;
 import heading.ground.entity.util.CartMenu;
 import heading.ground.entity.util.Message;
 import heading.ground.entity.util.ShopCart;
@@ -17,12 +16,10 @@ import heading.ground.repository.util.ShopCartRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -138,43 +135,38 @@ public class UtilService {
     public void addCart(Long userId, Long menuId) {
         //유저의 장바구니에 해당 메뉴 추가
         //유저의 장바구니에 이미 다른 가게의 아이템이 있는 경우 초기화시키고 다시 추가.
-        Optional<Student> optional = userRepository.findByIdForCart(userId);
+        Optional<ShopCart> optCart = cartRepository.findByUserId(userId);
         Optional<Menu> optionalMenu = menuRepository.findById(menuId);
-        if(optional.isEmpty() || optionalMenu.isEmpty()) {
+        if (optionalMenu.isEmpty()) {
             log.info("User or Menu Not Found on Searching User with ShopCart");
             return;
         }
 
-        Student student = optional.get();
+        ShopCart shopCart = optCart.get();
         Menu menu = optionalMenu.get();
-        student.addMenuToCart(menu);
+        shopCart.addMenu(menu);
     }
 
-    public boolean cartCheck(Student student,Long menuId) {
-        if(student.getCart()!=null) {
-            Long sellerId = student.getCart().getSellerId();
-            Optional<Menu> opt = menuRepository.findMenuByIdWithSeller(menuId, sellerId);
-            if(opt.isPresent() || sellerId == null)
-                return true;
-            else if(opt.isEmpty())
-                return false;
-        }
+    public boolean cartCheck(ShopCart cart, Long menuId) {
+        Long sellerId = cart.getSellerId();
+        Optional<Menu> opt = menuRepository.findMenuByIdWithSeller(menuId, sellerId);
+        if (opt.isPresent() || sellerId == null)
+            return true;
+        else
+            return false;
+
         //True => 동일한 가게의 메뉴를 담음
         //False => 다른 가게의 메뉴를 담음
-        return true;
     }
 
-    public boolean cartDuplicate(Student student, Long menuId) {
-        ShopCart cart = student.getCart();
-        if(cart==null)return false;
-
+    public boolean cartDuplicate(ShopCart cart, Long menuId) {
         Optional<Menu> optionalMenu = menuRepository.findById(menuId);
-        if(optionalMenu.isEmpty()){
+        if (optionalMenu.isEmpty()) {
             log.info("Error During Duplicating Check in ShopCart");
             throw new IllegalStateException();
         }
 
-        log.info("opt menu = {} ",optionalMenu.isEmpty());
+        log.info("opt menu = {} ", optionalMenu.isEmpty());
 
 
         return cart.duplicateCheck(optionalMenu.get().getName());
@@ -182,8 +174,8 @@ public class UtilService {
 
     public List<CartMenuDto> getCart(Long id) {
         Optional<ShopCart> optional = cartRepository.findByUserIdWithAll(id);
-        log.info("optional ={}",optional.isEmpty());
-        if(optional.isEmpty()){
+        log.info("optional ={}", optional.isEmpty());
+        if (optional.isEmpty()) {
             log.info("Optional Null -Service");
             return null;
         }
@@ -198,22 +190,22 @@ public class UtilService {
     }
 
     @Transactional
-    public int deleteCart(Long id,Long userId) {
+    public int deleteCart(Long id, Long userId) {
         Optional<ShopCart> optUser = cartRepository.findByUserId(userId);
-        if(optUser.isEmpty()) {
+        if (optUser.isEmpty()) {
             log.warn("User Not Found During Deleting Cart From UtilService");
             return 0;
         }
         ShopCart shopCart = optUser.get();
 
-        int cnt = cartMenuRepository.deleteByMenuId(id,shopCart.getId());
+        int cnt = cartMenuRepository.deleteByMenuId(id, shopCart.getId());
         return cnt;
     }
 
     @Transactional
     public void resetCart(Long studentId) {
         Optional<ShopCart> optUser = cartRepository.findByUserId(studentId);
-        if(optUser.isEmpty()){
+        if (optUser.isEmpty()) {
             log.warn("User Not Found During Deleting Cart From UtilService");
             throw new IllegalStateException();
         }

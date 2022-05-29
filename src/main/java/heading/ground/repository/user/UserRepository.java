@@ -34,11 +34,6 @@ public interface UserRepository extends JpaRepository<BaseUser,Long> {
 
     Optional<BaseUser> findByUuid(String uuid);
 
-    @Query("select u from Student u " +
-            "left join fetch u.cart c " +
-            "where u.id = :uid")
-    Optional<Student> findByIdForCart(@Param("uid") Long id);
-
     //TODO 아래는 seller
     @Query("select s.name from Seller s " +
             "where s.id = :uid")

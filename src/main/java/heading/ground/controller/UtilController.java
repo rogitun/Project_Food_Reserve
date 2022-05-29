@@ -6,10 +6,12 @@ import heading.ground.dto.util.PwdReset;
 import heading.ground.entity.user.BaseUser;
 import heading.ground.entity.user.Student;
 import heading.ground.entity.util.Message;
+import heading.ground.entity.util.ShopCart;
 import heading.ground.forms.util.MsgForm;
 import heading.ground.repository.user.UserRepository;
 import heading.ground.repository.util.CartMenuRepository;
 import heading.ground.repository.util.MessageRepository;
+import heading.ground.repository.util.ShopCartRepository;
 import heading.ground.security.user.MyUserDetails;
 import heading.ground.service.UtilService;
 import lombok.RequiredArgsConstructor;
@@ -41,6 +43,7 @@ public class UtilController {
     private final UtilService utilService;
     private final UserRepository userRepository;
     private final MessageRepository messageRepository;
+    private final ShopCartRepository shopCartRepository;
 
     //TODO 메세지 관련
     @GetMapping("/messages")
@@ -170,18 +173,20 @@ public class UtilController {
     @PostMapping("/add-cart/{id}/check")
     public String cartCheck(@PathVariable("id") Long menuId, @AuthenticationPrincipal MyUserDetails principal,
                             HttpServletResponse rep) throws IOException {
-        Optional<Student> opt = userRepository.findByIdForCart(principal.getId());
-        if (opt.isEmpty()) {
-            rep.sendError(401, "UserError");
+        Optional<ShopCart> optCart = shopCartRepository.findByUserId(principal.getId());
+
+        if (optCart.isEmpty()) {
+            rep.sendError(401, "CartError");
             return "Fail";
         }
         //이미 장바구니에 추가된 경우
-        Student student = opt.get();
-        boolean duplicate = utilService.cartDuplicate(student, menuId);
+//        Student student = opt.get();
+        ShopCart cart = optCart.get();
+        boolean duplicate = utilService.cartDuplicate(cart, menuId);
         if (duplicate)
             return "Duplicate";
 
-        boolean check = utilService.cartCheck(student, menuId);
+        boolean check = utilService.cartCheck(cart, menuId);
         if (!check) {
             //동일한 가게 X
             return "NotSame";

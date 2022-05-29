@@ -78,7 +78,7 @@ public class PostService {
 
     public Page<MenuDto> page(int s, int n) {
         PageRequest pageRequest = PageRequest.of(s,n);
-        Page<Menu> all = menuRepository.findAll(pageRequest);
+        Page<Menu> all = menuRepository.findMenusWithSeller(pageRequest);
         return all.map(a -> new MenuDto(a));
     }
 
