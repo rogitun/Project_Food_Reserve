@@ -81,7 +81,22 @@ public class UserController {
                     .build();
 
             if(books!=null){
-                List<BookDto> bookDtos = books.stream().map(b -> BookDto.bookDto(b)).collect(Collectors.toList());
+                List<BookDto> bookDtos = books.stream()
+                        .map(b -> BookDto.builder()
+                                .id(b.getId())
+                                .seller(SellerDto
+                                        .builder()
+                                        .id(b.getSeller().getId())
+                                        .name(b.getSeller().getName())
+                                        .build())
+                                .student(b.getStudent().getName())
+                                .bookTime(b.getBookDate())
+                                .status(b.getStatus())
+                                .type(b.getType())
+                                .isPaid(b.isPaid())
+                                .reason(b.getReason())
+                                .build())
+                        .collect(Collectors.toList());
                 model.addAttribute("books",bookDtos);
             }
             if(bestMenus!=null){
@@ -96,10 +111,24 @@ public class UserController {
             StudentDto studentDto = new StudentDto(student.getId(), student.getName(), student.getEmail());
 
             //TODO Books service에서 처리하기
-            log.info("student_id = {}", student.getId());
             List<Book> booksForStudent = student.getBooks();
             List<BookDto> bookDtos = booksForStudent.stream()
-                    .map(b -> new BookDto(b))
+                    .map(b -> BookDto.builder()
+                            .seller(SellerDto
+                                    .builder()
+                                    .id(b.getSeller().getId())
+                                    .name(b.getSeller().getName())
+                                    .photo((b.getSeller().getImageFile()==null)?
+                                            null:b.getSeller().getImageFile().getStoreName())
+                                    .build())
+                            .bookTime(b.getBookDate())
+                            .status(b.getStatus())
+                            .type(b.getType())
+                            .isPaid(b.isPaid())
+                            .totalPrice(b.getTotalPrice())
+                            .reason(b.getReason())
+                            .id(b.getId())
+                            .build())
                     .collect(Collectors.toList());
 
             model.addAttribute("student", studentDto);

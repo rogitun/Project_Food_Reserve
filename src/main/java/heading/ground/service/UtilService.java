@@ -153,30 +153,12 @@ public class UtilService {
 
     public boolean cartCheck(Long sellerId, Long menuId) {
         if(sellerId == null) return true;
-//        Optional<Menu> opt = menuRepository.findMenuByIdWithSeller(menuId, sellerId);
-//        if (opt.isPresent() || sellerId == null)
-//            return true;
-//        else
-//            return false;
+
         boolean l = menuRepository.countBySellerId(sellerId, menuId);
         return l;
-//        if(l>0) return l;
-//        else return false;
-        //True => 동일한 가게의 메뉴를 담음
-        //False => 다른 가게의 메뉴를 담음
     }
 
     public boolean cartDuplicate(ShopCart cart, Long menuId) {
-//        Optional<Menu> optionalMenu = menuRepository.findById(menuId);
-//        if (optionalMenu.isEmpty()) {
-//            log.info("Error During Duplicating Check in ShopCart");
-//            throw new IllegalStateException();
-//        }
-
-        //log.info("opt menu = {} ", optionalMenu.isEmpty());
-
-
-       // return cart.duplicateCheck(optionalMenu.get().getName());
         return cart.duplicateCheck(menuId);
     }
 
@@ -188,12 +170,18 @@ public class UtilService {
             return null;
         }
         ShopCart shopCart = optional.get();
+        String name = userRepository.findUserNameById(shopCart.getSellerId());
 
         List<CartMenu> menuList = shopCart.getMenuList();
         List<CartMenuDto> cartMenuDtos = menuList.stream().map(
-                        m -> new CartMenuDto(m.getMenu()))
+                        m -> CartMenuDto.builder()
+                                .id(m.getId())
+                                .name(m.getMenu().getName())
+                                .isOut(m.getMenu().isOutOfStock())
+                                .price(m.getMenu().getPrice())
+                                .sellerName(name)
+                                .build())
                 .collect(Collectors.toList());
-
         return cartMenuDtos;
     }
 
@@ -212,7 +200,7 @@ public class UtilService {
 
     @Transactional
     public void resetCart(Long studentId) {
-        Optional<ShopCart> optUser = cartRepository.findByUserId(studentId);
+        Optional<ShopCart> optUser = cartRepository.findByUserIdWithMenuList(studentId);
         if (optUser.isEmpty()) {
             log.warn("User Not Found During Deleting Cart From UtilService");
             throw new IllegalStateException();

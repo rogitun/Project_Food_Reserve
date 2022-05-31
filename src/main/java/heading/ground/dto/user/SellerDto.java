@@ -1,24 +1,12 @@
 package heading.ground.dto.user;
 
-import heading.ground.dto.book.BookDto;
-import heading.ground.dto.post.MenuDto;
-import heading.ground.entity.ImageFile;
-import heading.ground.entity.book.Book;
-import heading.ground.entity.user.Address;
-import heading.ground.entity.user.Seller;
-import heading.ground.entity.util.Category;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Data
 @Slf4j
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class SellerDto {
 
     private Long id;
@@ -40,5 +28,4 @@ public class SellerDto {
     private String photo;
 
     private String category;
-
 }

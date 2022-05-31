@@ -7,7 +7,9 @@ import heading.ground.api.dto.Payment.PaymentResponse;
 import heading.ground.controller.controllerDto.CartListSuccessResponse;
 import heading.ground.dto.book.BookDto;
 import heading.ground.dto.book.BookedMenuDto;
+import heading.ground.dto.user.SellerDto;
 import heading.ground.entity.book.Book;
+import heading.ground.entity.book.BookedMenu;
 import heading.ground.entity.post.Menu;
 import heading.ground.repository.book.BookRepository;
 import heading.ground.repository.post.MenuRepository;
@@ -73,9 +75,8 @@ public class BookController {
                     .httpStatus(HttpStatus.BAD_REQUEST)
                     .message("품절인 메뉴 포함")
                     .build();
-        }
-        else{
-            String bookId = bookService.createBookMenus(menus, studentId,menuSet);
+        } else {
+            String bookId = bookService.createBookMenus(menus, studentId, menuSet);
             utilService.resetCart(studentId);
             response = CartListSuccessResponse.builder()
                     .code(200)
@@ -84,14 +85,18 @@ public class BookController {
                     .build();
         }
         //아무 문제 없으면 진행
-        return new ResponseEntity<>(response,response.getHttpStatus());
+        return new ResponseEntity<>(response, response.getHttpStatus());
     }
 
     @PreAuthorize("hasAuthority('STUDENT')")
     @GetMapping("/{id}/un-paid") //결제 이전화면
     public String bookForPaying(@PathVariable("id") String id, Model model) {
-        Book books = bookRepository.findByIdWithCollections(id);
-        List<BookedMenuDto> bookedMenuDtos = books.getBookedMenus().stream().map(bm -> new BookedMenuDto(bm)).collect(Collectors.toList());
+        Book books = bookRepository.findByIdWithMenus(id);
+        List<BookedMenuDto> bookedMenuDtos =
+                books.getBookedMenus().stream()
+                        .map(bm -> new BookedMenuDto(bm.getMenu().getName(),bm.getPrice(),bm.getQuantity()))
+                        .collect(Collectors.toList());
+
         model.addAttribute("menus", bookedMenuDtos);
         model.addAttribute("total", books.getTotalPrice());
 
@@ -131,8 +136,30 @@ public class BookController {
     @GetMapping("/{id}") //예약 세부 정보
     public String bookDetail(@PathVariable("id") String id, Model model) {
         Book books = bookRepository.findByIdWithCollections(id);
-        BookDto book = new BookDto(books);
+        List<BookedMenu> bookedMenus = books.getBookedMenus();
+
+        //BookDto book = new BookDto(books);
+        BookDto book = BookDto.builder()
+                .seller(SellerDto.builder().name(books.getSeller().getName()).build())
+                .student(books.getStudent().getName())
+                .bookTime(books.getBookDate())
+                .totalPrice(books.getTotalPrice())
+                .number(books.getNumber())
+                .type(books.getType())
+                .status(books.getStatus())
+                .isPaid(books.isPaid())
+                .build();
+
+        List<BookedMenuDto> bookedMenuDtos =
+                bookedMenus.stream()
+                        .map(bm -> new BookedMenuDto(
+                                bm.getMenu().getName(),
+                                bm.getPrice(),
+                                bm.getQuantity()))
+                        .collect(Collectors.toList());
+
         model.addAttribute("book", book);
+        model.addAttribute("bookedMenus", bookedMenuDtos);
 
         return "book/bookDetail";
     }
@@ -141,7 +168,7 @@ public class BookController {
     @ResponseBody
     @PostMapping("/{id}/accept") //예약 수락(seller)
     public ResponseEntity<String> bookAccept(@PathVariable("id") String id,
-                             @AuthenticationPrincipal MyUserDetails principal) {
+                                             @AuthenticationPrincipal MyUserDetails principal) {
         if (principal.getRole().equals("SELLER")) {
             Optional<Book> bookWithSeller = bookRepository.findBookWithSeller(principal.getId(), id);
             if (bookWithSeller.isEmpty()) {
@@ -150,10 +177,9 @@ public class BookController {
             }
             log.info("id = {} ", id);
             bookService.process(id, true);
-            return new ResponseEntity<String>("예약이 수락되었습니다.",HttpStatus.OK);
-        }
-        else{
-            return new ResponseEntity<String>("예약 처리 불가",HttpStatus.FORBIDDEN);
+            return new ResponseEntity<String>("예약이 수락되었습니다.", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<String>("예약 처리 불가", HttpStatus.FORBIDDEN);
         }
     }
 
@@ -162,8 +188,25 @@ public class BookController {
     public String bookReject(@PathVariable("id") String id, Model model) {
         //TODO 예약 내용 + 거절 사유 input
         Book book = bookRepository.findByIdWithCollections(id);
-        BookDto bookDto = new BookDto(book);
+        List<BookedMenu> bms = book.getBookedMenus();
+
+        BookDto bookDto = BookDto.builder()
+                .student(book.getStudent().getName())
+                .bookTime(book.getBookDate())
+                .type(book.getType())
+                .status(book.getStatus())
+                .reason("")
+                .build();
+        List<BookedMenuDto> bookedMenuDtos = bms.stream()
+                .map(bm -> new BookedMenuDto(
+                        bm.getMenu().getName(),
+                        bm.getPrice(),
+                        bm.getQuantity()))
+                .collect(Collectors.toList());
+
+
         model.addAttribute("book", bookDto);
+        model.addAttribute("bookedMenus",bookedMenuDtos);
 
         return "book/bookReject";
     }

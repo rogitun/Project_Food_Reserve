@@ -62,8 +62,9 @@
                                 <p th:unless="${b.isPaid}">결제가 안된 예약입니다.</p>
                             </td>
                             <td class="settings__tableActions" th:unless="${b.status() == 'canceled'}">
-                                <a class="tag tag--pill tag--main settings__btn" th:href="@{/book/{id}/un-paid(id=${b.id})}">결제</a>
-                                <a class="tag tag--pill tag--main settings__btn" th:onclick="check([[${b.id}]])">취소</a>
+                                <a class="tag tag--pill tag--main settings__btn" th:if="${b.isPaid==false}" th:href="@{/book/{id}/un-paid(id=${b.id})}">결제</a>
+                                <a class="tag tag--pill tag--main settings__btn" th:if="${b.isPaid==false}" th:onclick="check([[${b.id}]])">취소</a>
+                                <a class="tag tag--pill tag--main settings__btn" th:if="${b.isPaid}">취소요청</a>
                             </td>
                         </div>
                     </tr>
@@ -86,7 +87,7 @@
                                 <a th:href="@{/book/{id}(id=${b.id})}" th:text="${b.seller.name}">가게이름</a>
                                 <p th:text="|예약 일시 : ${b.bookTime}|"></p>
                                 <p th:text="|진행 상황 : ${b.status}|"></p>
-                                <p th:text="|사유 : ${b.reason}|"></p>
+                                <p th:if="${b.reason!=null}" th:text="|사유 : ${b.reason}|"></p>
                             </td>
                         </div>
                     </tr>

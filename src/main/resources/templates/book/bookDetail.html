@@ -34,12 +34,12 @@
             <a class="backButton" href="#"><i class="im im-angle-left"></i></a>
             <br>
             <h2 th:text="|가게 이름 : ${book.seller.name}|"></h2>
-            <h2 th:text="|예약자 성함 : ${book.student.name}|"></h2>
+            <h2 th:text="|예약자 성함 : ${book.student}|"></h2>
             <h3 th:if="${book.bookTime}"  th:text="|예약 날짜 : ${book.bookTime}|"></h3>
             <h3 th:unless="${book.bookTime}"  th:text="|예약 날짜 : 미정|"></h3>
 
             <div class="form" th:object = "${book}">
-                <div class="form__field" th:each="m : ${book.bookedMenus}" >
+                <div class="form__field" th:each="m : ${bookedMenus}" >
                         <span>
                              <label for="formInput#text" th:text="|${m.menu} : ${m.price}|"> </label>
                             <input class="input input--text" type="text" th:name="quantity" th:value="|수량 : ${m.quantity}|"  readonly/>

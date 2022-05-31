@@ -11,9 +11,6 @@ import java.util.Optional;
 
 public interface BookRepository extends JpaRepository<Book,String> {
 
-    @Query("select b from Book b where :id in (b.seller.id, b.student.id)")
-    List<Book> findAllBooks(@Param("id") Long id);
-
     //TODO Book - bookedmenu - menu fetccJoin 처리
 
     @Query("select distinct b from Book b " +
@@ -22,6 +19,13 @@ public interface BookRepository extends JpaRepository<Book,String> {
             "join fetch b.bookedMenus bm " +
             "where b.id = :bid ")
     Book findByIdWithCollections(@Param("bid") String id);
+
+    @Query("select distinct b from Book b " +
+            "join b.student s " +
+            "join b.seller se " +
+            "join fetch b.bookedMenus bm " +
+            "where b.id = :bid ")
+    Book findByIdWithMenus(@Param("bid") String id);
 
     @Query("select distinct b from Book b " +
             "join fetch b.student s " +
@@ -41,7 +45,7 @@ public interface BookRepository extends JpaRepository<Book,String> {
     Optional<Book> findByIdPrice(@Param("bid") String bid, @Param("p") int amount);
 
     @Query("select b from Book b " +
-            "join fetch b.seller s " +
+            "join b.seller s " +
             "join fetch b.student st " +
             "where s.id = :sid and " +
             "b.isPaid = true")

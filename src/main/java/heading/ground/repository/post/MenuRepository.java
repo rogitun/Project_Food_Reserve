@@ -63,11 +63,13 @@ public interface MenuRepository extends JpaRepository<Menu,Long> {
     long countStock(@Param("sid") Long id);
 
     //TODO New version
-    @Query("select m from Menu m where m.id in (:ids)")
+    @Query("select m from Menu m " +
+            "join fetch m.seller s " +
+            "where m.id in (:ids)")
     List<Menu> findByIds(@Param("ids") Set<Long> menuIds);
 
     @Query("select m from Menu m " +
-            "join fetch m.seller s " +
+            "join m.seller s " +
             "where s.id =:sid and " +
             "m.isBest = true")
     List<Menu> findBestMenusBySellerId(@Param("sid") Long id);

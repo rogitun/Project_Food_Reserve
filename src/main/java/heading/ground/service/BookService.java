@@ -66,10 +66,6 @@ public class BookService {
         bookedMenuRepository.deleteAllInBatch(bookedMenus);
     }
 
-    public long checkStock(List<MenuListDto> menus) {
-        return menus.stream().filter(m -> !(m.isOut())).count();
-    }
-
     public long findStock(Long id) {
         return menuRepository.countStock(id);
     }

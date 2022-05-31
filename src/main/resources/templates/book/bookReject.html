@@ -33,11 +33,11 @@
         <div class="formWrapper">
             <a class="backButton" href="#"><i class="im im-angle-left"></i></a>
             <br>
-            <h2 th:text="|${book.student.name}님의 예약입니다.|"></h2>
+            <h2 th:text="|${book.student}님의 예약입니다.|"></h2>
             <h3 th:text="|예약 날짜 : ${book.bookTime}|"></h3>
             <form class="form" method="post" th:object = "${book}">
                 <!-- Input:Text -->
-                <div class="form__field" th:each="m : ${book.bookedMenus}" >
+                <div class="form__field" th:each="m : ${bookedMenus}" >
                         <span>
                              <label for="formInput#text" th:text="${m.menu}"> </label>
                             <input class="input input--text" type="text" th:name="quantity" th:value="${m.quantity}"  readonly/>
@@ -48,7 +48,6 @@
                 <label for="formInput#text">인원 </label>
                 <input class="input input--text"  type="text" id="formInput#text" name="number" th:value="${book.number}" readonly>
                 <label for="formInput#text">결제 타입 </label><br>
-                <p  name="payment" th:if="${book.payment() == 'cash'}" th:text="현금" checked readonly>현금</p>
                 <p  name="payment" th:unless="${book.payment() == 'cash'}" th:text="카드" readonly>카드</p>
                 <br>
                 <label for="formInput#text">포장/매장 </label><br>

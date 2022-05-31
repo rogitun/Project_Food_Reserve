@@ -12,9 +12,9 @@ public class BookedMenuDto {
 
     private int quantity;
 
-    public BookedMenuDto(BookedMenu bm) {
-        menu = bm.getMenu().getName();
-        price = bm.getPrice();
-        quantity = bm.getQuantity();
+    public BookedMenuDto(String name, int p, int q) {
+        menu = name;
+        price = p;
+        quantity = q;
     }
 }
