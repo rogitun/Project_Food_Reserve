@@ -1,6 +1,7 @@
 package heading.ground.controller;
 
 import heading.ground.dto.util.CartMenuDto;
+import heading.ground.dto.util.MsgDto;
 import heading.ground.dto.util.PwdCheck;
 import heading.ground.dto.util.PwdReset;
 import heading.ground.entity.user.BaseUser;
@@ -46,41 +47,69 @@ public class UtilController {
     private final ShopCartRepository shopCartRepository;
 
     //TODO 메세지 관련
-    @GetMapping("/messages")
+    @GetMapping("/messages-rcv")
     public String messageBox(Model model, @AuthenticationPrincipal MyUserDetails principal) {
-        List<Message> messages = utilService.getMessages(principal.getId());
+        List<Message> messages = utilService.getMessagesRcv(principal.getId());
 
-        List<Message> collect = messages.stream()
-                .filter(m -> m.getWriter().getId().equals(principal.getId())).collect(Collectors.toList());
-        List<Message> receive = messages.stream()
-                .filter(m -> m.getWriter().getId() != principal.getId()).collect(Collectors.toList());
-
-
-        model.addAttribute("snt", collect);
-        model.addAttribute("rcv", receive);
-
+        List<MsgDto> msg = messages.stream().map(m -> MsgDto.builder()
+                .id(m.getId())
+                .title(m.getTitle())
+                .body(m.getBody())
+                .sender(m.getWriter().getName())
+                .receiverId(m.getWriter().getId())
+                .senderId(m.getWriter().getId())
+                .created(m.getCreated())
+                .isRead(m.isRead())
+                .build()).collect(Collectors.toList());
+        model.addAttribute("rcv", msg);
         return "message/messageBox";
     }
 
+    @GetMapping("/messages-snd")
+    public String messageBoxSnd(Model model,
+                                @AuthenticationPrincipal MyUserDetails Principal){
+        List<Message> msg = utilService.getMessagesSnd(Principal.getId());
+
+        List<MsgDto> msgDtos = msg.stream().map(m -> MsgDto.builder()
+                .id(m.getId())
+                .receiver(m.getReceiver().getName())
+                .title(m.getTitle())
+                .body(m.getBody())
+                .created(m.getCreated())
+                .build()).collect(Collectors.toList());
+        model.addAttribute("snt",msgDtos);
+        return "message/messageBoxSnd";
+    }
+
+
+    @PreAuthorize("hasAnyAuthority('STUDENT','SELLER')")
     @GetMapping("/messages/{id}")
     public String messageDetail(@PathVariable("id") Long id,
                                 Model model,
                                 @AuthenticationPrincipal MyUserDetails principal) {
         Message message = messageRepository.findGraphById(id).get();
-        if (!message.isRead()) {
-            utilService.msgRead(message);
-
-        }
         if (principal.getId() != message.getWriter().getId() &&
                 principal.getId() != message.getReceiver().getId()) {
             return "redirect:/";
         }
+        MsgDto Dto = MsgDto.builder()
+                .receiverId(message.getReceiver().getId())
+                .title(message.getTitle())
+                .body(message.getBody())
+                .created(message.getCreated())
+                .receiver(message.getReceiver().getName())
+                .senderId(message.getWriter().getId())
+                .sender(message.getWriter().getName())
+                .build();
 
-        model.addAttribute("msg", message);
+        if (!message.isRead()) {
+            utilService.msgRead(message);
+
+        }
+        model.addAttribute("msg", Dto);
 
         return "message/message";
     }
-
 
     @GetMapping("/message/{id}/send")
     public String messageForm(@PathVariable("id") Long id,
@@ -88,13 +117,17 @@ public class UtilController {
                               @AuthenticationPrincipal MyUserDetails principal) {
         //id는 수신자, session은 송신자
         if (principal.getRole().equals("STUDENT")) { //학생이 -> 사장에게
-            String name = userRepository.findSellerById(id);
+            String name = userRepository.findUserNameById(id);
             MsgForm msgForm = new MsgForm();
             msgForm.setIds(name, principal.getId(), id);
             model.addAttribute("mid", id);
             model.addAttribute("MsgForm", msgForm);
         } else {
-            return "redirect:/";
+            String name = userRepository.findUserNameById(id);
+            MsgForm msgForm = new MsgForm();
+            msgForm.setIds(name, principal.getId(), id);
+            model.addAttribute("mid", id);
+            model.addAttribute("MsgForm", msgForm);
         }
 
         return "message/messageForm";
@@ -125,7 +158,7 @@ public class UtilController {
         }
 
         utilService.makeMsg(form);
-        return "redirect:/messages";
+        return "redirect:/messages-rcv";
     }
 
     @GetMapping("/forget-password")
@@ -186,7 +219,7 @@ public class UtilController {
         if (duplicate)
             return "Duplicate";
 
-        boolean check = utilService.cartCheck(cart, menuId);
+        boolean check = utilService.cartCheck(cart.getSellerId(), menuId);
         if (!check) {
             //동일한 가게 X
             return "NotSame";
@@ -196,13 +229,12 @@ public class UtilController {
 
     //장바구니에 아이템 추가.
     @ResponseBody
+    @PreAuthorize("hasAuthority('STUDENT')")
     @PostMapping("/add-cart/{id}")
     public String addCart(@PathVariable("id") Long id,
-                          @AuthenticationPrincipal MyUserDetails principal,
-                          HttpServletResponse rep) throws IOException {
-        if (!principal.getRole().equals("STUDENT"))
-            rep.sendError(403, "AuthorityError");
-
+                          @AuthenticationPrincipal MyUserDetails principal) {
+//        if (!principal.getRole().equals("STUDENT"))
+//            rep.sendError(403, "AuthorityError");
         utilService.addCart(principal.getId(), id); //유저, 메뉴id
         //TODO 가게 바뀐 경우 추가
 

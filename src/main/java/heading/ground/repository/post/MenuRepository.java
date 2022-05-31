@@ -42,6 +42,13 @@ public interface MenuRepository extends JpaRepository<Menu,Long> {
             "m.id = :mid")
     Optional<Menu> findMenuByIdWithSeller(@Param("mid") Long id, @Param("sid") Long sid);
 
+    @Query("select count(m) > 0 from Menu m " +
+            "left join m.seller s " +
+            "where s.id = :sid and " +
+            "m.id = :mid")
+    boolean countBySellerId(@Param("sid") Long sid, @Param("mid") Long mid);
+
+
     @Query("select m from Menu m " +
             "left join fetch m.comments c " +
             "left join fetch c.writer w " +

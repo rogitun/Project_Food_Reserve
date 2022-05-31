@@ -23,33 +23,23 @@
 
   <!-- Main Section -->
   <main class="inbox my-xl">
-
     <div class="content-box">
       <div style="margin:0 auto">
-     <button type="submit" class="btn btn--sub">받은 메세지</button>
-        <a th:href="@{/messages-snd}"><button type="submit" class="btn">보낸 메세지</button></a>
+        <a th:href="@{/messages-rcv}"><button type="submit" class="btn">받은 메세지</button></a>
+        <button type="submit" class="btn btn--sub">보낸 메세지</button>
       </div>
-      <h3 class="inbox__title">받은 메세지</h3>
       <ul class="messages">
-        <div th:each="m : ${rcv}">
-        <li class="message message--unread" th:unless="${m.isRead}">
+        <div th:each="m : ${snt}">
+        <li class="message">
           <a th:href="@{/messages/{id}(id=${m.id})}">
-            <span class="message__author" th:text="|보낸이 : ${m.sender}|"></span>
+            <span class="message__author" th:text="|수신자 : ${m.receiver}|"></span>
             <span class="message__subject" th:text="|${#strings.abbreviate(m.body,20)}...|"></span>
             <span class="message__date" th:text="${m.created}"></span>
           </a>
         </li>
-          <li class="message" th:if="${m.isRead}">
-            <a th:href="@{/messages/{id}(id=${m.id})}">
-              <span class="message__author" th:text="|보낸이 : ${m.sender}|"></span>
-              <span class="message__subject" th:text="|${#strings.abbreviate(m.body,20)}...|"></span>
-              <span class="message__date" th:text="${m.created}"></span>
-            </a>
-          </li>
         </div>
       </ul>
     </div>
-    <br>
   </main>
 </body>
 

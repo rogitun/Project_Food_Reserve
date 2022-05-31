@@ -34,10 +34,12 @@ public class ShopCart extends Base {
     List<CartMenu> menuList = new LinkedList<>();
 
     @ElementCollection
-    @MapKeyColumn(name = "menu_name")
+    @MapKeyColumn(name = "menu_id")
     @Column(name = "exist")
-    @CollectionTable(name = "CartMenuMap",joinColumns = @JoinColumn(name = "cartMenu_Id"))
-    private Map<String,Integer> duplicate= new HashMap<>();
+    @CollectionTable(name = "CartMenuMap",joinColumns = @JoinColumn(name = "cart_id"))
+    private Map<Long,Integer> duplicate= new HashMap<>();
+
+    //private Map<String,Integer> duplicate= new HashMap<>();
 
     public ShopCart(Student student) {
         this.student = student;
@@ -51,11 +53,15 @@ public class ShopCart extends Base {
         }
         this.sellerId = sellerIdFromMenu;
         menuList.add(new CartMenu(this,menu));
-        duplicate.put(menu.getName(),1);
+        duplicate.put(menu.getId(),1);
     }
 
-    public boolean duplicateCheck(String menuName){
-        Integer dup = this.duplicate.getOrDefault(menuName, 0);
+//    public boolean duplicateCheck(String menuName){
+//        Integer dup = this.duplicate.getOrDefault(menuName, 0);
+//        return (dup==1)?true:false;
+//    }
+    public boolean duplicateCheck(Long menuId){
+        Integer dup = this.duplicate.getOrDefault(menuId, 0);
         return (dup==1)?true:false;
     }
 

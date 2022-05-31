@@ -55,8 +55,12 @@ public class UtilService {
     }
 
 
-    public List<Message> getMessages(Long id) {
-        return messageRepository.findAllMessagesById(id);
+    public List<Message> getMessagesRcv(Long id) {
+        return messageRepository.findReceivedMsg(id);
+    }
+
+    public List<Message> getMessagesSnd(Long id) {
+        return messageRepository.findSentMsg(id);
     }
 
     @Transactional
@@ -135,7 +139,7 @@ public class UtilService {
     public void addCart(Long userId, Long menuId) {
         //유저의 장바구니에 해당 메뉴 추가
         //유저의 장바구니에 이미 다른 가게의 아이템이 있는 경우 초기화시키고 다시 추가.
-        Optional<ShopCart> optCart = cartRepository.findByUserId(userId);
+        Optional<ShopCart> optCart = cartRepository.findByUserIdWithMenuList(userId);
         Optional<Menu> optionalMenu = menuRepository.findById(menuId);
         if (optionalMenu.isEmpty()) {
             log.info("User or Menu Not Found on Searching User with ShopCart");
@@ -147,29 +151,33 @@ public class UtilService {
         shopCart.addMenu(menu);
     }
 
-    public boolean cartCheck(ShopCart cart, Long menuId) {
-        Long sellerId = cart.getSellerId();
-        Optional<Menu> opt = menuRepository.findMenuByIdWithSeller(menuId, sellerId);
-        if (opt.isPresent() || sellerId == null)
-            return true;
-        else
-            return false;
-
+    public boolean cartCheck(Long sellerId, Long menuId) {
+        if(sellerId == null) return true;
+//        Optional<Menu> opt = menuRepository.findMenuByIdWithSeller(menuId, sellerId);
+//        if (opt.isPresent() || sellerId == null)
+//            return true;
+//        else
+//            return false;
+        boolean l = menuRepository.countBySellerId(sellerId, menuId);
+        return l;
+//        if(l>0) return l;
+//        else return false;
         //True => 동일한 가게의 메뉴를 담음
         //False => 다른 가게의 메뉴를 담음
     }
 
     public boolean cartDuplicate(ShopCart cart, Long menuId) {
-        Optional<Menu> optionalMenu = menuRepository.findById(menuId);
-        if (optionalMenu.isEmpty()) {
-            log.info("Error During Duplicating Check in ShopCart");
-            throw new IllegalStateException();
-        }
+//        Optional<Menu> optionalMenu = menuRepository.findById(menuId);
+//        if (optionalMenu.isEmpty()) {
+//            log.info("Error During Duplicating Check in ShopCart");
+//            throw new IllegalStateException();
+//        }
 
-        log.info("opt menu = {} ", optionalMenu.isEmpty());
+        //log.info("opt menu = {} ", optionalMenu.isEmpty());
 
 
-        return cart.duplicateCheck(optionalMenu.get().getName());
+       // return cart.duplicateCheck(optionalMenu.get().getName());
+        return cart.duplicateCheck(menuId);
     }
 
     public List<CartMenuDto> getCart(Long id) {

@@ -27,8 +27,6 @@ public class MsgForm {
     @NotNull
     private String receiverName;
 
-    private String priorMsg;
-
     public void setIds(String name,Long Sid, Long Rid){
         receiverName = name;
         senderId = Sid;
@@ -39,6 +37,5 @@ public class MsgForm {
         receiverName = msg.getWriter().getName();
         senderId = msg.getReceiver().getId();
         receiverId = msg.getWriter().getId();
-        priorMsg = msg.getTitle();
     }
 }

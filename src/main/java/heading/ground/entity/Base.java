@@ -18,10 +18,10 @@ public class Base {
 
     @CreatedDate
     @Column(updatable = false)
-    private String created;
+    protected String created;
 
     @LastModifiedDate
-    private String lastModified;
+    protected String lastModified;
 
     @PrePersist
     public void onPrePersist(){

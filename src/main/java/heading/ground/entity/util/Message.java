@@ -18,11 +18,11 @@ public class Message extends Base {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn
     private BaseUser writer;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn
     private BaseUser receiver;
 
@@ -38,17 +38,12 @@ public class Message extends Base {
     @NotNull
     private boolean isRead;
 
-    @Size(max = 30)
-    private String priorTitle;
 
     public Message(BaseUser writer, BaseUser receiver, MsgForm form) {
         this.writer = writer;
         this.receiver = receiver;
         title = form.getTitle();
         body = form.getBody();
-        if(!form.getPriorMsg().isBlank()){
-            priorTitle = form.getPriorMsg();
-        }
     }
 
     public void read() {

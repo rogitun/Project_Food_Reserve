@@ -13,10 +13,17 @@ import java.util.Optional;
 public interface MessageRepository extends JpaRepository<Message,Long> {
 
     @Query("select m from Message m " +
-            "join fetch m.writer w " +
             "join fetch m.receiver r " +
-            "where :uid in (r.id, w.id)")
-    List<Message> findAllMessagesById(@Param("uid") Long id);
+            "left join m.writer w " +
+            "where w.id =:uid")
+    List<Message> findSentMsg(@Param("uid") Long id);
+
+    @Query("select m from Message m " +
+            "join fetch m.writer w " +
+            "left join m.receiver r " +
+            "where r.id = :uid")
+    List<Message> findReceivedMsg(@Param("uid") Long id);
+
 
     @EntityGraph(attributePaths = {"writer","receiver"})
     Optional<Message> findGraphById(Long id);

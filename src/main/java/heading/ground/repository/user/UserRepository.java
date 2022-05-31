@@ -35,9 +35,9 @@ public interface UserRepository extends JpaRepository<BaseUser,Long> {
     Optional<BaseUser> findByUuid(String uuid);
 
     //TODO 아래는 seller
-    @Query("select s.name from Seller s " +
-            "where s.id = :uid")
-    String findSellerById(@Param("uid") Long id);
+    @Query("select u.name from BaseUser u " +
+            "where u.id = :uid")
+    String findUserNameById(@Param("uid") Long id);
 
     @Query(value = "select distinct s from Seller s " +
             "left join fetch s.category c ",
