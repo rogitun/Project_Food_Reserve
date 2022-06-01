@@ -47,9 +47,6 @@
                 </div>
                 <label for="formInput#text">인원 </label>
                 <input class="input input--text"  type="text" id="formInput#text" name="number" th:value="${book.number}" readonly>
-                <label for="formInput#text">결제 타입 </label><br>
-                <p  name="payment" th:unless="${book.payment() == 'cash'}" th:text="카드" readonly>카드</p>
-                <br>
                 <label for="formInput#text">포장/매장 </label><br>
                 <p  name="type" th:if="${book.type() == 'here'}" th:text="매장" checked readonly>매장</p>
                 <p name="type" th:unless="${book.type() == 'here'}" th:text="포장" checked readonly>포장</p>

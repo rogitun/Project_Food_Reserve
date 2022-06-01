@@ -35,7 +35,8 @@
                    th:src="@{/images/user.png}"/>
               <h2 class="dev__name" th:text="${seller.name}">가게이름</h2>
               <p class="dev__title" th:text="${seller.phoneNumber}">전화번호</p>
-              <p class="dev__location" th:text="TODO">가게위치</p>
+              <p class="dev__location" th:text="${seller.doro}">가게위치</p>
+              <p class="dev__location" th:text="${seller.doro_spec}">가게위치</p>
               <span sec:authorize ="hasAuthority('STUDENT')">
                 <a th:href="@{/message/{id}/send(id=${seller.id})}" class="btn btn--sub">문의하기</a>
               </span>

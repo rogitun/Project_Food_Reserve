@@ -1,3 +1,10 @@
+    for(let i = 9;i < 23;i++){
+    let hm = i + ":00";
+    let hm2 = i + ":30";
+    $("#time").append("<option value=" + hm + ">" + hm + "</option>");
+    $("#time").append("<option value=" + hm2 + ">" + hm2 + "</option>");
+}
+
 var IMP = window.IMP; // 생략 가능
 
 
@@ -27,7 +34,7 @@ function beforePay(){
             requestPay(result.paymentDetails);
         },
         error: function(error){
-            alert("에러");
+            alert(error.responseJSON.message);
         }
     })
 }

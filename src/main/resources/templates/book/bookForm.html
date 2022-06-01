@@ -46,11 +46,11 @@
             </li>
             <li>
                 <p>방문일</p>
-                <input type="date" id="date" value="2022-05-01" min="2022-05-15" max="2030-01-01">
+                <input type="date" id="date" value="2022-06-01" min="2022-06-01" max="2030-01-01">
             </li>
             <li>
                 <p>방문 시간</p>
-                <input type="time" id="time" value="13:00" min="08:00" max="23:00">
+                <select name="time" id="time"></select>
             </li>
             <li>
                 <p>방문 인원</p>
@@ -70,7 +70,7 @@
                 <span class="label">Total</span>
                 <span class="totalValue" th:text="${total}">0</span>
             </li>
-            <li class="totalRow"><a href="#" th:onclick="beforePay()" class="btn continue">Checkout</a></li>
+            <li class="totalRow"><a href="#" th:onclick="beforePay()" class="btn continue">결제하기</a></li>
         </ul>
     </div>
 </div>

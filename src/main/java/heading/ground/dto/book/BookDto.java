@@ -30,15 +30,20 @@ public class BookDto {
 
     private String student; //예약자
 
+    private String studentNumber;
+
     private String reason;
 
     private boolean isPaid;
 
     private SellerDto seller;
 
+
+
     public String type(){
-        String typeIs = (type==null)?"미정":type.toString().toLowerCase();
-        return typeIs;
+        if(type==BookType.HERE) return "매장";
+        else if(type==BookType.TOGO) return "포장";
+        else return "미정";
     }
 
     public String status(){
@@ -51,10 +56,18 @@ public class BookDto {
             statusIs = "승인 대기중";
         else if(status==BookStatus.ACCEPT)
             statusIs ="예약 승인";
+        else if(status==BookStatus.WITHDRAW)
+            statusIs = "사용자로부터 취소 요청";
         else
             statusIs = "예약 취소";
 
         return statusIs;
+    }
+
+    public boolean process(){
+        if(status==BookStatus.ACCEPT || status==BookStatus.CANCELED)
+            return true;
+        else return false;
     }
 
 }

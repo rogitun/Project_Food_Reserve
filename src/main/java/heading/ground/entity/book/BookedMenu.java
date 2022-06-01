@@ -17,7 +17,7 @@ public class BookedMenu {
     @Column(name = "bookedMenu_id")
     private Long id;
 
-    @ManyToOne(cascade = CascadeType.REMOVE)
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "book_id")
     private Book book;
 

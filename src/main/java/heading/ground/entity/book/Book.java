@@ -20,9 +20,6 @@ import java.util.List;
 @Getter
 public class Book extends Base {
 
-    //    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    @Column(name = "book_id")
-//    private Long id;
     @Id
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
@@ -54,7 +51,7 @@ public class Book extends Base {
     @JoinColumn(name = "seller_id", nullable = false)
     private Seller seller;
 
-    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL,orphanRemoval = true)
     private List<BookedMenu> bookedMenus = new ArrayList<>(); //예약된 메뉴들
 
 
@@ -84,6 +81,10 @@ public class Book extends Base {
             this.status = BookStatus.ACCEPT;
         else
             this.status = BookStatus.CANCELED;
+    }
+
+    public void cancelRequest(){
+        this.status = BookStatus.WITHDRAW;
     }
 
     public void bookReject(String reason) {

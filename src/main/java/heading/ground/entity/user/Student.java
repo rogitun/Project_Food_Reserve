@@ -22,7 +22,7 @@ public class Student extends BaseUser {
     @OneToMany(mappedBy = "writer", cascade = CascadeType.REMOVE)
     private List<Comment> comments = new ArrayList<>();
 
-    @OneToMany(mappedBy = "student")
+    @OneToMany(mappedBy = "student",cascade = CascadeType.ALL)
     private List<Book> books = new ArrayList<>();
 
     @Builder

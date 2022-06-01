@@ -29,7 +29,6 @@
      <button type="submit" class="btn btn--sub">받은 메세지</button>
         <a th:href="@{/messages-snd}"><button type="submit" class="btn">보낸 메세지</button></a>
       </div>
-      <h3 class="inbox__title">받은 메세지</h3>
       <ul class="messages">
         <div th:each="m : ${rcv}">
         <li class="message message--unread" th:unless="${m.isRead}">

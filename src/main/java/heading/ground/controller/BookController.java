@@ -110,6 +110,20 @@ public class BookController {
                                                   @RequestBody BookApiDto bookApiDto,
                                                   @AuthenticationPrincipal MyUserDetails principal) {
         log.info("data ={}", bookApiDto);
+        if(bookApiDto.getTypeVal().equals("here")) {
+            boolean isDuplicate = bookService.duplicateBookTime(bookApiDto);
+            if (isDuplicate) {
+                PaymentResponse paymentResponse = PaymentResponse.builder()
+                        .code(HttpStatus.UNAUTHORIZED.value())
+                        .httpStatus(HttpStatus.UNAUTHORIZED)
+                        .message("이미 예약된 시간입니다. 다른 시간대를 선택해주세요.")
+                        .paymentDetails(null)
+                        .count(0)
+                        .build();
+                return new ResponseEntity<>(paymentResponse, paymentResponse.getHttpStatus());
+            }
+        }
+
         bookService.setDetails(id, bookApiDto);
         PaymentDetails paymentDetails = bookService.paymentDetails(id);
 
@@ -142,6 +156,7 @@ public class BookController {
         BookDto book = BookDto.builder()
                 .seller(SellerDto.builder().name(books.getSeller().getName()).build())
                 .student(books.getStudent().getName())
+                .studentNumber(books.getStudent().getPhoneNumber())
                 .bookTime(books.getBookDate())
                 .totalPrice(books.getTotalPrice())
                 .number(books.getNumber())
@@ -222,9 +237,16 @@ public class BookController {
     }
 
     @PostMapping("/{id}/cancel") //예약 거절(Student)
-    public String bookCancel(@PathVariable("id") String id) {
-        bookService.rejectBook(id, "사용자가 예약 취소");
+    public String bookCancel(@PathVariable("id") String id,@AuthenticationPrincipal MyUserDetails principal) {
+        bookService.deleteBook(id,principal.getId());
         return "redirect:/profile";
+    }
+
+    @PostMapping("/{id}/cancelRequest")
+    public ResponseEntity bookCancelRequest(@PathVariable("id") String id,@AuthenticationPrincipal MyUserDetails principal){
+        boolean flag = bookService.requestCancel(id);
+        if(flag) return new ResponseEntity(HttpStatus.OK);
+        else return new ResponseEntity(HttpStatus.BAD_REQUEST);
     }
 
     //TODO 아래는 예약하기

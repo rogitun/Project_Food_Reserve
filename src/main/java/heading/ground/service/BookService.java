@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -58,16 +59,44 @@ public class BookService {
         book.processBook(flag);
     }
 
+    public void deleteBook(String id,Long studentId) {
+        bookedMenuRepository.deleteByBookId(id);
+        bookRepository.deleteByStudentId(id,studentId);
+    }
     @Transactional
     public void rejectBook(String id, String reason) {
         Book book = bookRepository.findByIdWithCollections(id);
-        List<BookedMenu> bookedMenus = book.getBookedMenus();
         book.bookReject(reason);
-        bookedMenuRepository.deleteAllInBatch(bookedMenus);
     }
+
+    @Transactional
+    public boolean requestCancel(String bid) {
+        Optional<Book> byId = bookRepository.findById(bid);
+        if(byId.isPresent()){
+            Book book = byId.get();
+            book.cancelRequest();
+            return true;
+        }
+        else return false;
+    }
+
+//    @Transactional
+//    public void requestCancel(String id, String reason) {
+//        Book book = bookRepository.findByIdWithCollections(id);
+//        List<BookedMenu> bookedMenus = book.getBookedMenus();
+//        book.bookReject(reason);
+//        bookedMenuRepository.deleteAllInBatch(bookedMenus);
+//    }
 
     public long findStock(Long id) {
         return menuRepository.countStock(id);
+    }
+
+
+    public boolean duplicateBookTime(BookApiDto bookApiDto){
+        LocalDateTime time = LocalDateTime.parse(bookApiDto.getDateVal() + "T" + bookApiDto.getTimeVal());
+        boolean byBookDate = bookRepository.findByBookDate(time);
+        return byBookDate;
     }
 
     @Transactional
@@ -107,4 +136,6 @@ public class BookService {
         Book book = bookOpt.get();
         book.bookPaid();
     }
+
+
 }

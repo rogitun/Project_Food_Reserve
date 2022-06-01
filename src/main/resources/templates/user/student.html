@@ -57,14 +57,14 @@
                                 <a th:href="@{/book/{id}(id=${b.id})}" th:text="${b.seller.name}">가게이름</a>
                                 <p th:text="|총 가격 : ${b.totalPrice}|">가격</p>
                                 <p th:if="${b.isPaid}" th:text="|예약 일시 : ${b.bookTime}|"></p>
-                                <p th:if="${b.isPaid}" th:text="|진행 상황 : ${b.status}|">처리현황</p>
-                                <p th:if="${b.isPaid}" th:text="${b.type}">방문타입</p>
+                                <p th:if="${b.isPaid}" th:text="|진행 상황 : ${b.status()}|">처리현황</p>
+                                <p th:if="${b.isPaid}" th:text="${b.type()}">방문타입</p>
                                 <p th:unless="${b.isPaid}">결제가 안된 예약입니다.</p>
                             </td>
                             <td class="settings__tableActions" th:unless="${b.status() == 'canceled'}">
                                 <a class="tag tag--pill tag--main settings__btn" th:if="${b.isPaid==false}" th:href="@{/book/{id}/un-paid(id=${b.id})}">결제</a>
                                 <a class="tag tag--pill tag--main settings__btn" th:if="${b.isPaid==false}" th:onclick="check([[${b.id}]])">취소</a>
-                                <a class="tag tag--pill tag--main settings__btn" th:if="${b.isPaid}">취소요청</a>
+                                <a class="tag tag--pill tag--main settings__btn" th:if="${b.isPaid}" th:onclick="cancelRequest([[${b.id}]])">취소요청</a>
                             </td>
                         </div>
                     </tr>
@@ -86,7 +86,7 @@
                             <td class="settings__tableInfo">
                                 <a th:href="@{/book/{id}(id=${b.id})}" th:text="${b.seller.name}">가게이름</a>
                                 <p th:text="|예약 일시 : ${b.bookTime}|"></p>
-                                <p th:text="|진행 상황 : ${b.status}|"></p>
+                                <p th:text="|진행 상황 : ${b.status()}|"></p>
                                 <p th:if="${b.reason!=null}" th:text="|사유 : ${b.reason}|"></p>
                             </td>
                         </div>
@@ -97,27 +97,6 @@
     </div>
 </main>
 </body>
-<script th:inline="javascript">
-    function check(bid){
-        let cancelUrl = "/book/" + bid + "/cancel";
-        console.log("test1");
-        let flag = "no";
-        if(!confirm("정말 취소하시겠어요?")){
-            return;
-        }
-        $.ajax({
-           type: "post",
-           url : cancelUrl,
-           success: function(result){
-                alert("예약이 취소되었습니다."),
-                window.location.replace("/profile");
-           },
-           error : function(error){
-                alert("잠시 후에 다시 시도해주세요.");
-           }
-         });
-    }
-
-</script>
+<script th:src="@{/js/student.js}"></script>
 
 </html>
