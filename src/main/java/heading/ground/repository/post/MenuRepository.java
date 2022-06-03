@@ -72,7 +72,7 @@ public interface MenuRepository extends JpaRepository<Menu,Long> {
             "join m.seller s " +
             "where s.id =:sid and " +
             "m.isBest = true")
-    List<Menu> findBestMenusBySellerId(@Param("sid") Long id);
+    List<Menu> findBestMenusBySellerId(@Param("sid") Long id,Pageable pageable);
 
 
 

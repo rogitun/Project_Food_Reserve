@@ -6,6 +6,7 @@ import heading.ground.dto.user.SellerDto;
 import heading.ground.dto.user.StudentDto;
 import heading.ground.entity.book.Book;
 import heading.ground.entity.post.Menu;
+import heading.ground.entity.user.BaseUser;
 import heading.ground.entity.user.Seller;
 import heading.ground.entity.user.Student;
 import heading.ground.entity.util.Category;
@@ -19,6 +20,8 @@ import heading.ground.security.user.MyUserDetails;
 import heading.ground.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -63,13 +66,13 @@ public class UserController {
     @GetMapping("/profile") //프로필
     public String profile(Model model,
                           @AuthenticationPrincipal MyUserDetails principal) {
-
+        Pageable pageRequest = PageRequest.of(0,10);
         if (principal.getRole().equals("SELLER")) {
             //TODO MENU는 Best 메뉴만
             //TODO SellerWithMenu & Book 나눠서 가져오기
             Seller seller = (Seller) userRepository.findById(principal.getId()).get();
-            List<Menu> bestMenus = menuRepository.findBestMenusBySellerId(seller.getId());
-            List<Book> books = bookRepository.findBySellerId(principal.getId());
+            List<Menu> bestMenus = menuRepository.findBestMenusBySellerId(seller.getId(), PageRequest.of(0, 4));
+            List<Book> books = bookRepository.findBySellerId(principal.getId(),pageRequest);
             SellerDto sellerDto = SellerDto.builder()
                     .id(seller.getId())
                     .name(seller.getName())
@@ -107,12 +110,19 @@ public class UserController {
 
             return "/user/account";
         } else if (principal.getRole().equals("STUDENT")) {
-            Student student = userRepository.findStudentByIdForAccount(principal.getId());
+            //Student student = userRepository.findStudentByIdForAccount(principal.getId());
+            Optional<BaseUser> byId = userRepository.findById(principal.getId());
+            if(byId.isEmpty()) {
+                log.info("Not Found User in Profile");
+                throw new IllegalStateException();
+            }
+            BaseUser student = byId.get();
+            List<Book> book = bookRepository.findByStudentId(principal.getId(),pageRequest);
             StudentDto studentDto = new StudentDto(student.getId(), student.getName(), student.getEmail());
 
             //TODO Books service에서 처리하기
-            List<Book> booksForStudent = student.getBooks();
-            List<BookDto> bookDtos = booksForStudent.stream()
+           // List<Book> booksForStudent = student.getBooks();
+            List<BookDto> bookDtos = book.stream()
                     .map(b -> BookDto.builder()
                             .seller(SellerDto
                                     .builder()
