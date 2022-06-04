@@ -83,6 +83,11 @@ public class MainController {
         return new UrlResource("file:" + fileStore.getFullPath(image));
     }
 
+    @GetMapping("/notices")
+    public String notices(Model model){
+        return "main/notices";
+    }
+
     @GetMapping("/menus")
     public String menuList(Model model, Pageable pageable,
                            @RequestParam(required = false, name = "keyWord") String key) {

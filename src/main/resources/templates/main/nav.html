@@ -17,6 +17,7 @@
                 <div class="toggle-menu__lines"></div>
             </label>
             <ul class="header__menu">
+                <li class="header__menuItem" ><a th:href="@{/notices}">공지사항</a></li>
                 <li class="header__menuItem" ><a th:href="@{/menus}">메뉴정보</a></li>
                 <li class="header__menuItem" sec:authorize="isAuthenticated()"><a th:href="@{/messages-rcv}">메세지</a></li>
                 <li class="header__menuItem" sec:authorize ="hasAuthority('STUDENT')"><a th:href="@{/cart-list}">장바구니</a></li>

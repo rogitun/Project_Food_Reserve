@@ -6,12 +6,14 @@ import heading.ground.entity.post.Menu;
 import heading.ground.entity.user.BaseUser;
 import heading.ground.entity.util.CartMenu;
 import heading.ground.entity.util.Message;
+import heading.ground.entity.util.Notice;
 import heading.ground.entity.util.ShopCart;
 import heading.ground.forms.util.MsgForm;
 import heading.ground.repository.post.MenuRepository;
 import heading.ground.repository.user.UserRepository;
 import heading.ground.repository.util.CartMenuRepository;
 import heading.ground.repository.util.MessageRepository;
+import heading.ground.repository.util.NoticeRepository;
 import heading.ground.repository.util.ShopCartRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -43,10 +45,19 @@ public class UtilService {
     private final MenuRepository menuRepository;
     private final ShopCartRepository cartRepository;
     private final CartMenuRepository cartMenuRepository;
+    private final NoticeRepository noticeRepository;
 
 
     @Autowired
     private JavaMailSender javaMailSender;
+
+    @Transactional
+    public void editNotice(Long id, String title, String content) {
+        Optional<Notice> byId = noticeRepository.findById(id);
+        Notice notice = byId.orElseGet(null);
+        if(notice!=null)
+            notice.edit(title,content);
+    }
 
     @Transactional
     public void makeMsg(MsgForm form) {

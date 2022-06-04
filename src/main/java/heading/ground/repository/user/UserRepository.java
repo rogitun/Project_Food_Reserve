@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -75,5 +76,12 @@ public interface UserRepository extends JpaRepository<BaseUser,Long> {
             "where s.id = :uid")
     Student findStudentById(@Param("uid") Long id);
 
+
+    @Transactional
+    @Modifying(clearAutomatically = true)
+    @Query(value = "update Seller se " +
+            "set se.category_id = null " +
+            "where se.category_id = :cid",nativeQuery = true)
+    void deleteCategory(@Param("cid") long cid);
 
 }
