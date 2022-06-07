@@ -8,14 +8,17 @@ import heading.ground.entity.post.Comment;
 import heading.ground.entity.post.Menu;
 import heading.ground.entity.user.Seller;
 import heading.ground.entity.util.Category;
+import heading.ground.entity.util.Notice;
 import heading.ground.file.FileStore;
 import heading.ground.forms.post.CommentForm;
 import heading.ground.repository.post.MenuRepository;
 import heading.ground.repository.user.UserRepository;
 import heading.ground.repository.util.CategoryRepository;
+import heading.ground.repository.util.NoticeRepository;
 import heading.ground.security.user.MyUserDetails;
 import heading.ground.service.PostService;
 import heading.ground.service.UserService;
+import heading.ground.service.UtilService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
@@ -29,6 +32,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.List;
 import java.util.Optional;
@@ -44,6 +49,8 @@ public class MainController {
     private final PostService postService;
     private final MenuRepository menuRepository;
     private final CategoryRepository categoryRepository;
+    private final NoticeRepository noticeRepository;
+    private final UtilService utilService;
 
     //TODO Query 문제있음
     @GetMapping("/")
@@ -52,7 +59,7 @@ public class MainController {
                        @RequestParam(required = false, name = "keyWord") String key,
                        @RequestParam(required = false, name = "category") String cat) {
         int page = (pageable.getPageNumber() == 0) ? 0 : (pageable.getPageNumber() - 1);
-        log.info("pageable = {}",pageable);
+        log.info("pageable = {}", pageable);
         Page<SellerDto> pages;
 
 
@@ -68,7 +75,7 @@ public class MainController {
             log.info("Current User is = {}, name = {}, Role = {}", user, user.getUsername(), user.getRole());
         List<Category> all = categoryRepository.findAll();
 
-        log.info("pages = {}",pages);
+        log.info("pages = {}", pages);
 
         model.addAttribute("category", all);
         model.addAttribute("seller", pages);
@@ -84,8 +91,26 @@ public class MainController {
     }
 
     @GetMapping("/notices")
-    public String notices(Model model){
+    public String notices(Model model, Pageable pageable) {
+        int page = (pageable.getPageNumber() == 0) ? 0 : (pageable.getPageNumber() - 1);
+        Page<Notice> notices = utilService.pageNotice(page, 10);
+        Paging paging = utilService.pageTemp(notices);
+        log.info("size = {}",notices.getTotalElements());
+        model.addAttribute("notices", notices);
+        model.addAttribute("paging", paging);
         return "main/notices";
+    }
+
+    @GetMapping("/notices/{id}")
+    public String notice(@PathVariable("id") Long id,
+                         Model model, HttpServletResponse rsp) throws IOException {
+        Optional<Notice> byId = noticeRepository.findById(id);
+        if(byId.isEmpty()){
+            rsp.sendError(404,"NotFound");
+        }
+        Notice notice = byId.get();
+        model.addAttribute("notice",notice);
+        return "main/notice";
     }
 
     @GetMapping("/menus")

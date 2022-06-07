@@ -72,14 +72,10 @@ public class Seller extends BaseUser{
         this.desc = form.getDesc();
         this.companyId = form.getSellerId();
         this.category = category;
+        this.address.setAddress(form.getDoro(),form.getDoroSpec(),form.getZipCode());
     }
 
     public void updateImage(ImageFile image){
         this.imageFile = image;
-    }
-
-    public void updateCategory(Category category){
-        this.category = category;
-        category.getSeller().add(this);
     }
 }

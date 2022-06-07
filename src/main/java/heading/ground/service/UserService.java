@@ -22,6 +22,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -41,18 +42,34 @@ public class UserService {
     private String path;
 
     @Transactional
-    public void updateSeller(Long id, SellerEditForm form) throws IOException {
+    public void updateSeller(Long id, SellerEditForm form){
         Seller seller = (Seller) userRepository.findById(id).get();
         Optional<Category> optCategory = categoryRepository.findByName(form.getCategory());
         //가게 데이터 변경 처리 + 파일처리
         //기본 필드, 사진, 카테고리
-
-        seller.updateSeller(form,optCategory.orElseGet(null)); //필드 및 카테고리 변경
+        if(optCategory.isPresent()) {
+            Category category = optCategory.get();
+            seller.updateSeller(form,category);
+        }else
+            seller.updateSeller(form,null); //필드 및 카테고리 변경
+//        if (seller.getImageFile() != null) { //이미 가진 사진이 있다면? -> 해당 사진 엔티티 찾고 파일 삭제 후 엔티티 삭제
+//            String storeName = seller.getImageFile().getStoreName();
+//            fileRepository.deleteByStoreName(storeName);
+//        }
+//        ImageFile imageFile = fileStore.storeFile(form.getImageFile());
+//        seller.updateImage(imageFile);
+    }
+    @Transactional
+    public void updatePhoto(Long id, MultipartFile image) throws IOException {
+        Seller seller = (Seller) userRepository.findById(id).get();
+        //가게 데이터 변경 처리 + 파일처리
+        //기본 필드, 사진, 카테고리
         if (seller.getImageFile() != null) { //이미 가진 사진이 있다면? -> 해당 사진 엔티티 찾고 파일 삭제 후 엔티티 삭제
             String storeName = seller.getImageFile().getStoreName();
+            fileStore.deleteImage(seller.getImageFile().getStoreName());
             fileRepository.deleteByStoreName(storeName);
         }
-        ImageFile imageFile = fileStore.storeFile(form.getImageFile());
+        ImageFile imageFile = fileStore.storeFile(image);
         seller.updateImage(imageFile);
     }
 
@@ -74,6 +91,7 @@ public class UserService {
                 .phoneNumber(se.getPhoneNumber())
                 .desc(se.getDesc())
                 .category((se.getCategory()!=null)?se.getCategory().getName():null)
+                .photo((se.getImageFile()!=null)?se.getImageFile().getStoreName():null)
                 .build());
     }
 
@@ -87,6 +105,7 @@ public class UserService {
                 .phoneNumber(se.getPhoneNumber())
                 .desc(se.getDesc())
                 .category((se.getCategory()!=null)?se.getCategory().getName():null)
+                .photo((se.getImageFile()!=null)?se.getImageFile().getStoreName():null)
                 .build());
     }
 
@@ -100,6 +119,7 @@ public class UserService {
                 .phoneNumber(se.getPhoneNumber())
                 .desc(se.getDesc())
                 .category((se.getCategory()!=null)?se.getCategory().getName():null)
+                .photo((se.getImageFile()!=null)?se.getImageFile().getStoreName():null)
                 .build());
     }
 

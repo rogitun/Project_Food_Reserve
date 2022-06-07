@@ -33,6 +33,8 @@
                     <div class="card__body dev">
                         <a class="tag tag--pill tag--main settings__btn"
                            th:href="@{/edit}"><i class="im im-edit"></i>정보 수정</a>
+                        <a class="tag tag--pill tag--main settings__btn"
+                           th:href="@{/edit-photo}"><i class="im im-edit"></i>사진 변경</a>
                         <img class="avatar avatar--xl dev__avatar" th:if="${account.photo}"
                              th:src="|/image/${account.photo}|"/>
                         <img class="avatar avatar--xl dev__avatar" th:unless="${account.photo}"

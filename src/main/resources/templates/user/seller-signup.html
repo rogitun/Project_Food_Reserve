@@ -76,7 +76,7 @@
             />
           </div>
 
-          <input type="button" class="btn btn--sub" th:onclick="execDaumPostcode()" value="우편번호 찾기">
+        <input type="button" class="btn btn--sub" th:onclick="execDaumPostcode()" value="우편번호 찾기">
         <input type="text" class="input input--text" id="postcode" placeholder="우편번호">
           <br>
           <span>
@@ -112,11 +112,11 @@
             />
           </div>
           <div class="auth__actions">
-            <input class="btn btn--sub btn--lg" type="button" th:onclick="signIn()" value="Sign  In" />
+            <input class="btn btn--sub btn--lg" type="button" th:onclick="signIn()" value="가입하기" />
           </div>
         <div class="auth__alternative">
           <p>이미 가입하셨나요?</p>
-          <a th:href="@{/login}">Log In</a>
+          <a th:href="@{/login}">로그인</a>
         </div>
       </div>
     </div>

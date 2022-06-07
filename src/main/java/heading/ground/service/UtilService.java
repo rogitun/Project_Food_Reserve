@@ -1,5 +1,7 @@
 package heading.ground.service;
 
+import heading.ground.dto.Paging;
+import heading.ground.dto.user.SellerDto;
 import heading.ground.dto.util.CartMenuDto;
 import heading.ground.dto.util.PwdReset;
 import heading.ground.entity.post.Menu;
@@ -18,6 +20,7 @@ import heading.ground.repository.util.ShopCartRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -222,5 +225,19 @@ public class UtilService {
         }
         ShopCart shopCart = optUser.get();
         shopCart.resetCart();
+    }
+
+    public Page<Notice> pageNotice(int s, int size) {
+        PageRequest pageRequest = PageRequest.of(s,size);
+        Page<Notice> all = noticeRepository.findAllByOrder(pageRequest);
+        return all;
+    }
+
+    public Paging pageTemp(Page<Notice> page) {
+        Paging build = Paging.builder()
+                .total(page.getTotalPages())
+                .number(page.getNumber())
+                .build();
+        return build;
     }
 }

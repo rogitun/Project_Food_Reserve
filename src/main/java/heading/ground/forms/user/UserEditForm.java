@@ -27,12 +27,6 @@ public class UserEditForm {
     @Email
     String email;
 
-    public UserEditForm(String name, String phoneNumber, String email) {
-        this.name = name;
-        this.phoneNumber = phoneNumber;
-        this.email = email;
-    }
-
     public UserEditForm(Student std) {
         id = std.getId();
         this.name = std.getName();

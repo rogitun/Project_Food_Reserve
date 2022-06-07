@@ -28,4 +28,10 @@ public class Address {
         this.zipCode = zipCode;
     }
 
+    public void setAddress(String d, String ds, String z){
+        this.doro = d;
+        this.doro_spec = ds;
+        this.zipCode = z;
+    }
+
 }

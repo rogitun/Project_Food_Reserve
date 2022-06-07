@@ -31,10 +31,12 @@
     <div class="card">
         <div class="auth__header text-center">
             <a th:href="@{/}">
-                <img src="images/icon.svg" alt="icon"/>
+                <img th:src="@{/images/Logo2.png}" alt="icon"/>
+<!--                <img th:src="images/icon.svg" alt="icon"/>-->
+
             </a>
-            <h3>Account Login</h3>
-            <p>Hello Developer, Welcome Back!</p>
+            <h3>로그인</h3>
+            <p>반가워요!</p>
         </div>
 
         <form th:action="@{/login}" class="form auth__form" method="post">
@@ -67,7 +69,7 @@
 <!--            <div class="field-error" th:errors="*{password}"></div>-->
 
             <div class="auth__actions">
-                <input class="btn btn--sub btn--lg" type="button" th:onclick="login()" value="Log In" />
+                <input class="btn btn--sub btn--lg" type="button" th:onclick="login()" value="로그인" />
                 <a th:href="@{/forget-password}">비밀번호 찾기</a>
             </div>
         </form>

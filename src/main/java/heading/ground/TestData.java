@@ -32,19 +32,12 @@ public class TestData {
     @Transactional
     public void init(){
 
+        String[] stores = new String[]{"갈비탕","순대국","떡볶이","등갈비","백반집","기사식당","해장국전문","다팔아요","국수천국","코리안피자","코리안마라"};
 
-        Menu menu = new MenuForm("삼계탕", 5500, "막걸리와 함께", "김치랑 밀가루").toEntity();
-
-        Category kor = new Category("한식");
-        Category jap = new Category("일식");
-        Category chi = new Category("중식");
-        cr.save(kor);
-        cr.save(jap);
-        cr.save(chi);
-        for(int i=0;i<10;i++){
+        for(int i=0;i<11;i++){
             Seller seller = Seller.builder()
-                    .loginId("def" + i)
-                    .name("dec" + i)
+                    .loginId("abc"+i)
+                    .name(stores[i])
                     .password(passwordEncoder.encode("1234"))
                     .phoneNumber("010-1231-12"+i)
                     .email("abc@maf.com"+i)
@@ -54,23 +47,6 @@ public class TestData {
                     .zipCode("11643")
                     .companyId("1234455")
                     .build();
-            us.save(seller);
-        }
-
-        for(int i=0;i<10;i++){
-            Seller seller = Seller.builder()
-                    .loginId("abc" + i)
-                    .name("abc" + i)
-                    .password(passwordEncoder.encode("1234"))
-                    .phoneNumber("010-1231-12"+i)
-                    .email("abc@maf.com"+i)
-                    .role(MyRole.SELLER)
-                    .doro("불암로 112")
-                    .doroSpce("@@건물 1층")
-                    .zipCode("11643")
-                    .companyId("1234455")
-                    .build();
-            seller.updateCategory(kor);
             us.save(seller);
         }
 
@@ -83,47 +59,7 @@ public class TestData {
                 .build();
 
 
-        Seller seller = Seller.builder()
-                .loginId("abc")
-                .name("abc")
-                .password(passwordEncoder.encode("1234"))
-                .phoneNumber("010-1231-1232")
-                .email("abc@maf.com")
-                .role(MyRole.SELLER)
-                .doro("불암로 112")
-                .doroSpce("@@건물 1층")
-                .zipCode("11643")
-                .companyId("1234455")
-                .build();
-
-        Seller seller2 = Seller.builder()
-                .loginId("abc2")
-                .name("abc2")
-                .password(passwordEncoder.encode("1234"))
-                .phoneNumber("010-1231-1222")
-                .email("abc2@maf.com")
-                .role(MyRole.SELLER)
-                .doro("불암로 233")
-                .doroSpce("@@건물 2층")
-                .zipCode("11655")
-                .companyId("1255665")
-                .build();
-
-
-        seller.updateCategory(kor);
-        menu.addSeller(seller2);
-        us.save(seller);
-        us.save(seller2);
-        for(int i=0;i<20;i++){
-            Menu temp = new MenuForm("김치전"+i, 4500, "막걸리와 함께", "김치랑 밀가루").toEntity();
-            temp.addSeller(seller);
-            mu.save(temp);
-        }
-
-
-        mu.save(menu);
         Student save = us.save(student);
         shopCartRepository.save(new ShopCart(save));
-
     }
 }

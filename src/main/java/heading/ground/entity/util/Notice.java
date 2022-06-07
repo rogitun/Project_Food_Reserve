@@ -1,5 +1,6 @@
 package heading.ground.entity.util;
 
+import heading.ground.entity.Base;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,7 +14,7 @@ import javax.validation.constraints.Size;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Notice {
+public class Notice extends Base {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

@@ -41,19 +41,22 @@ public interface UserRepository extends JpaRepository<BaseUser,Long> {
     String findUserNameById(@Param("uid") Long id);
 
     @Query(value = "select distinct s from Seller s " +
-            "left join fetch s.category c ",
+            "left join fetch s.category c " +
+            "left join fetch s.imageFile i",
     countQuery = "select count(s) from Seller s")
     Page<Seller> findAllPage(Pageable pageRequest);
 
 
     @Query(value = "select distinct s from Seller s " +
             "left join fetch s.category c " +
+            "left join fetch s.imageFile i " +
             "where s.name like %:key%",
     countQuery = "select count(s) from Seller s where s.name like %:key%")
     Page<Seller> findAllByKeyword(@Param("key") String key, Pageable pageable);
 
     @Query(value = "select distinct s from Seller s " +
             "left join fetch s.category c " +
+            "left join fetch s.imageFile i " +
             "where c.name like %:cat%",
             countQuery = "select count(s) from Seller s " +
                     "where s.category.name like %:cat%")

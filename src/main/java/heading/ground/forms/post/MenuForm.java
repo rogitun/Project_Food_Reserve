@@ -17,7 +17,6 @@ public class MenuForm {
     @NotBlank
     private String name; //음식 이름
 
-    @NotBlank
     @Range(min = 100,max = 999999)
     private int price; //음식 가격
 

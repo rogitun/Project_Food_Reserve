@@ -2,24 +2,28 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
     <!-- Favicon -->
-    <link rel="shortcut icon" th:href="@{/images/favicon.ico}" type="image/x-icon" />
+    <link rel="shortcut icon" th:href="@{/images/favicon.ico}" type="image/x-icon"/>
     <!-- Icon - IconMonster -->
-    <link rel="stylesheet" href="https://cdn.iconmonstr.com/1.3.0/css/iconmonstr-iconic-font.min.css" />
+    <link rel="stylesheet" href="https://cdn.iconmonstr.com/1.3.0/css/iconmonstr-iconic-font.min.css"/>
     <!-- Mumble UI -->
-    <link rel="stylesheet" th:href="@{/uikit/styles/uikit.css}" />
+    <link rel="stylesheet" th:href="@{/uikit/styles/uikit.css}"/>
     <!-- Dev Search UI -->
-    <link rel="stylesheet" th:href="@{/styles/app.css}" />
+    <link rel="stylesheet" th:href="@{/styles/app.css}"/>
+    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
     <title>사업자 정보 수정</title>
     <style>
       .field-error {
  border-color: #dc3545;
  color: #dc3545;
+
     </style>
 </head>
 
@@ -29,60 +33,78 @@
 
 
 <main class="formPage my-xl">
-        <div class="content-box">
-            <div class="formWrapper">
-                <a class="backButton" href="#"><i class="im im-angle-left"></i></a>
+    <div class="content-box">
+        <div class="formWrapper">
+            <a class="backButton" th:href="@{/profile}"><i class="im im-angle-left"></i></a>
+            <br>
+
+            <form class="form" method="post" th:object="${seller}" enctype="multipart/form-data">
+                <!-- Input:Text -->
+                <input th:field="*{id}" th:value="*{id}" readonly hidden>
+                <div class="form__field">
+                    <label>가게 이름(16자 이하)</label>
+                    <p class="field-error" id="nameErr"></p>
+                    <input class="input input--text" type="text" name="text" th:field="*{name}"
+                           placeholder="Enter text" th:value="*{name}"/>
+                    <div class="field-error" th:errors="*{name}"></div>
+                </div>
+                <!-- Input:Text -->
+                <div class="form__field">
+                    <label>전화번호(000-0000-0000)</label>
+                    <p class="field-error" id="phoneErr"></p>
+                    <input class="input input--text" type="text" name="text" th:field="*{phoneNumber}"
+                           placeholder="Enter text" th:value="*{phoneNumber}"/>
+                    <div class="field-error" th:errors="*{phoneNumber}"></div>
+                </div>
+                <input type="button" class="btn btn--sub" th:onclick="execDaumPostcode()" value="우편번호 찾기">
+                <input type="text" class="input input--text" th:field="*{zipCode}" placeholder="우편번호">
                 <br>
+                <span>
+          <input type="text" class="input input--text" th:field="*{doro}" placeholder="주소"><br>
+          <input type="text" class="input input--text"  th:field="*{doroSpec}" placeholder="상세주소" required>
+          </span>
+                <div class="form__field">
+                    <label>사업자 번호 </label>
+                    <p class="field-error" id="sellerErr"></p>
+                    <input class="input input--text" type="text" name="text" th:field="*{sellerId}"
+                           placeholder="사업자 번호" th:value="*{sellerId}"/>
+                    <div class="field-error" th:errors="*{sellerId}"></div>
+                </div>
+                <div class="form__field">
+                    <label>이메일 </label>
+                    <p class="field-error" id="mailErr"></p>
+                    <input class="input input--text" type="text" name="text" th:field="*{email}"
+                           placeholder="Enter text" th:value="*{email}"/>
+                    <div class="field-error" th:errors="*{email}"></div>
+                </div>
+                <div class="form__field">
+                    <label>가게 소개 </label>
+                    <textarea class="input input--text" type="text" name="text" th:field="*{desc}"
+                              style="resize: none;"
+                              placeholder="가게에 대해 설명해주세요" th:value="*{desc}"/>
+                    <div class="field-error" th:errors="*{desc}"></div>
+                </div>
+                <div class="form__field">
+                    <label>카테고리 선택 </label>
+                    <select class="form-select" th:field="*{category}" aria-label="Default select example">
+                        <option value="">가게 분류</option>
+                        <option th:each="c : ${categories}" th:value="${c.name}" th:text="${c.name}"></option>
+                    </select>
+                </div>
+                <!--                    <div class="form__field">-->
+                <!--                        <label>가게 대표 사진</label>-->
+                <!--                        <input class="input input&#45;&#45;text" type="file" name="image" th:field="*{imageFile}"-->
+                <!--                                  style="resize: none;"-->
+                <!--                                  placeholder="가게의 대표 사진을 추가해주세요"/>-->
+                <!--                        <div class="field-error" th:if=*{image_present} th:text="|현재 사진 *{image_present}|"></div>-->
+                <!--                    </div>-->
+                <!--                    <input class="btn btn&#45;&#45;sub btn&#45;&#45;lg  my-md" type="submit" value="Submit" />-->
+                <input class="btn btn--sub btn--lg  my-md" th:onclick="sellerEdit()" type="button" value="Submit"/>
 
-                <form class="form" method="post" th:object="${seller}" enctype="multipart/form-data">
-                    <!-- Input:Text -->
-                    <input th:field="*{id}" th:value="*{id}" readonly hidden>
-                    <div class="form__field">
-                        <label for="formInput#text">가게 이름</label>
-                        <input class="input input--text" id="formInput#text" type="text" name="text" th:field="*{name}"
-                            placeholder="Enter text" th:value="*{name}"/>
-                        <div class="field-error" th:errors="*{name}"></div>
-                    </div>
-                    <!-- Input:Text -->
-                    <div class="form__field">
-                        <label for="formInput#text">전화번호 </label>
-                        <input class="input input--text" type="text" name="text" th:field="*{phoneNumber}"
-                            placeholder="Enter text" th:value="*{phoneNumber}"/>
-                        <div class="field-error" th:errors="*{phoneNumber}"></div>
-                    </div>
-                    <div class="form__field">
-                        <label for="formInput#text">사업자 번호 </label>
-                        <input class="input input--text" type="text" name="text" th:field="*{sellerId}"
-                               placeholder="사업자 번호" th:value="*{sellerId}"/>
-                        <div class="field-error" th:errors="*{sellerId}"></div>
-                    </div>
-                    <div class="form__field">
-                        <label for="formInput#text">가게 소개 </label>
-                        <textarea class="input input--text"  type="text" name="text" th:field="*{desc}"
-                                  style="resize: none;"
-                               placeholder="가게에 대해 설명해주세요" th:value="*{desc}"/>
-                        <div class="field-error" th:errors="*{desc}"></div>
-                    </div>
-                    <div class="form__field">
-                        <label for="formInput#text">카테고리 선택 </label>
-                        <select class="form-select" th:field="*{category}" aria-label="Default select example">
-                            <option value="">가게 분류</option>
-                            <option th:each="c : ${categories}" th:value="${c.name}" th:text="${c.name}"></option>
-                        </select>
-                    </div>
-                    <div class="form__field">
-                        <label for="formInput#text">가게 소개 </label>
-                        <input class="input input--text" type="file" name="image" th:field="*{imageFile}"
-                                  style="resize: none;"
-                                  placeholder="가게의 대표 사진을 추가해주세요"/>
-                        <div class="field-error" th:if=*{image_present} th:text="|현재 사진 *{image_present}|"></div>
-                    </div>
-
-                    <input class="btn btn--sub btn--lg  my-md" type="submit" value="Submit" />
-                </form>
-            </div>
+            </form>
         </div>
-    </main>
+    </div>
+</main>
 </body>
-
+<script th:src="@{/js/edit.js}"></script>
 </html>

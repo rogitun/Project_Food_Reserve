@@ -28,7 +28,8 @@
     <section class="hero-section text-center">
       <div class="container container--narrow">
         <div class="hero-section__box">
-          <h2>메뉴 <span th:text="|By ${seller_name}">By "가게이름"</span></h2>
+          <h2 th:if="${seller_name==null}"><span th:text="|등록된 메뉴가 없습니다.|">By "가게이름"</span></h2>
+          <h2 th:if="${seller_name!=null}">메뉴 <span  th:text="|By ${seller_name}">By "가게이름"</span></h2>
         </div>
       </div>
     </section>
@@ -60,7 +61,7 @@
       </div>
     </section>
 
-    <div class="pagination">
+    <div class="pagination" th:if="${seller_name!=null}">
       <ul class="container"
           th:with="start = ${paging.start}, last=${paging.last}">
 

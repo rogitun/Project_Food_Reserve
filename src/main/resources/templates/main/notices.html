@@ -14,7 +14,7 @@
     <link rel="stylesheet" th:href="@{/uikit/styles/uikit.css}"/>
     <!-- Dev Search UI -->
     <link rel="stylesheet" th:href="@{/styles/app.css}"/>
-    <title>ToyProject</title>
+    <title>Hansel</title>
 
 </head>
 
@@ -25,47 +25,51 @@
 <main class="home">
     <section class="devlist">
         <div class="container">
-            <div class="grid grid--three">
-                <div class="column card">
+            <div th:if="${notices.getTotalElements()==0}">
+                <h3 style="text-align:center;">작성된 공지사항이 없습니다.</h3>
+            </div>
+            <div class="grid grid--three" th:if="${notices.getTotalElements()!=0}">
+                <div class="column card" th:each="n : ${notices}">
                     <div class="dev">
-                        <a class="card__body">
+                        <a class="card__body" th:href="@{/notices/{id}(id=${n.id})}">
                             <div class="dev__profile">
                                 <div class="dev__meta">
-                                    <h3>제목</h3>
-                                    <h5>생성일자</h5>
+                                    <h3 th:text="${n.title}"></h3>
+                                    <h5 th:text="${n.created}">생성일자</h5>
                                 </div>
                             </div>
-                            <p class="dev__info">내용 짧게</p>
+                            <p class="dev__info" th:text="|${#strings.abbreviate(n.content,10)}...|">내용 짧게</p>
                         </a>
                     </div>
+
                 </div>
             </div>
         </div>
     </section>
 
-<!--    <div class="pagination">-->
-<!--        <ul class="container"-->
-<!--            th:with="start = ${paging.start}, last=${paging.last}">-->
-<!--            <li th:style="${seller.first} ? 'display:none'">-->
-<!--                <a th:if="${paging.keyWord!=null}" th:href="${seller.first} ? '#' : @{/?keyWord={key}(page=${paging.number},key=${paging.keyWord})}" class="btn">&#10094; Prev</a>-->
-<!--            </li>-->
-<!--            <li th:each="p : ${#numbers.sequence(start,last)}">-->
-<!--                <a th:if="${paging.keyWord!=null && p==paging.number+1 }"-->
-<!--                   th:href="@{/?keyWord={key}(page=${p},key=${paging.keyWord})}"-->
-<!--                   th:text="${p}"-->
-<!--                   class="btn btn&#45;&#45;sub">num</a>-->
+    <div class="pagination" th:if="${notices.getTotalElements()!=0}">
+        <ul class="container"
+            th:with="start = ${paging.start}, last=${paging.last}">
+            <li th:style="${notices.first} ? 'display:none'">
+                <a th:href="${notices.first} ? '#' : @{/notices/(page=${paging.number})}" class="btn">&#10094; Prev</a>
+            </li>
+            <li th:each="p : ${#numbers.sequence(start,last)}">
+                <a th:if="${p==paging.number+1 }"
+                   th:href="@{/notices/(page=${p})}"
+                   th:text="${p}"
+                   class="btn btn--sub">num</a>
 
-<!--                <a th:if="${p!=paging.number+1 && paging.keyWord!=null}"-->
-<!--                   th:href="@{/?keyWord={key}(page=${p},key=${paging.keyWord})}"-->
-<!--                   th:text="${p}"-->
-<!--                    class="btn">num</a>-->
-<!--            </li>-->
-<!--&lt;!&ndash;            paging.number = 현재 페이지, start = 페이징에서 첫번째, last=페이징에서 마지막,&ndash;&gt;-->
-<!--            <li th:style="${seller.last} ? 'display:none'">-->
-<!--                <a th:if="${paging.keyWord!=null}" th:href="${seller.last} ? '#' : @{/?keyWord={key}(page=${seller.number+2},key=${paging.keyWord})}" class="btn">Next &#10095;</a>-->
-<!--            </li>-->
-<!--        </ul>-->
-<!--    </div>-->
+                <a th:if="${p!=paging.number+1}"
+                   th:href="@{/notices/(page=${p})}"
+                   th:text="${p}"
+                    class="btn">num</a>
+            </li>
+<!--            paging.number = 현재 페이지, start = 페이징에서 첫번째, last=페이징에서 마지막,-->
+            <li th:style="${notices.last} ? 'display:none'">
+                <a th:href="${notices.last} ? '#' : @{/notices/(page=${notices.number+2})}" class="btn">Next &#10095;</a>
+            </li>
+        </ul>
+    </div>
 </main>
 </body>
 </html>

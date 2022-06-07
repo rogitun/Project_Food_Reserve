@@ -17,22 +17,20 @@ import javax.validation.constraints.Pattern;
 public class SellerEditForm {
 
     private Long id;
-    @NotBlank
-    @Length(max = 16)
+
     private String name; //가게 이름
 
-    @NotBlank
-    @Pattern(regexp = "^\\d{2,4}-\\d{3,4}-\\d{4}$",message = "00/000-0000-0000 형태로 입력해주세요")
     private String phoneNumber; //가게 전화번호
 
     private String desc;
 
-    private MultipartFile imageFile;
+    private String email;
 
-    private String image_present;
-
-    @NotBlank
     private String sellerId;
+
+    private String zipCode;
+    private String doro;
+    private String doroSpec;
 
     private String category;
 
@@ -42,11 +40,13 @@ public class SellerEditForm {
         this.phoneNumber = seller.getPhoneNumber();
         this.desc = seller.getDesc();
         this.sellerId = seller.getCompanyId();
-        if(seller.getImageFile()!=null)
-            this.image_present = seller.getImageFile().getOriginName();
+        this.email = seller.getEmail();
+        this.doro = seller.getAddress().getDoro();
+        this.doroSpec = seller.getAddress().getDoro_spec();
+        this.zipCode = seller.getAddress().getZipCode();
+
         if(seller.getCategory()!=null){
             this.category = seller.getCategory().getName();
         }
-
     }
 }
