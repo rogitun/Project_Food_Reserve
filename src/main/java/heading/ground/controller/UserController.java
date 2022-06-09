@@ -101,6 +101,7 @@ public class UserController {
                                 .type(b.getType())
                                 .isPaid(b.isPaid())
                                 .reason(b.getReason())
+                                .number(b.getNumber())
                                 .build())
                         .collect(Collectors.toList());
                 model.addAttribute("books", bookDtos);

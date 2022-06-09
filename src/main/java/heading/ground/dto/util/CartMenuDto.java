@@ -12,6 +12,7 @@ public class CartMenuDto {
 //    맨 위에 가게이름
 //    메뉴 => ID, 이름, 가격
     private Long id;
+    private Long menuId;
     private String name;
     private int price;
     private String sellerName;

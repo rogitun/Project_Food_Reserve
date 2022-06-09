@@ -53,12 +53,14 @@ public class BookController {
     public ResponseEntity<CartListSuccessResponse> listConfirm(@RequestBody List<ShopMenuDto> data,
                                                                @AuthenticationPrincipal MyUserDetails principal) {
         //데이터 가공해서 Book 생성
+        log.info("data = {} ",data);
         HashMap<Long, Integer> menuSet = new HashMap<>();
         for (ShopMenuDto s : data) {
             menuSet.put(s.getId(), s.getQuantity());
         }
         Long studentId = principal.getId();
         List<Menu> menus = menuRepository.findByIds(menuSet.keySet());
+        log.info("menusId = {} ",menus);
 
         CartListSuccessResponse response;
         if (menus == null) { //null

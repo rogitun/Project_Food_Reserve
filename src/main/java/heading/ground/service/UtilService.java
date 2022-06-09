@@ -198,6 +198,7 @@ public class UtilService {
                                 .isOut(m.getMenu().isOutOfStock())
                                 .price(m.getMenu().getPrice())
                                 .sellerName(name)
+                                .menuId(m.getMenu().getId())
                                 .build())
                 .collect(Collectors.toList());
         return cartMenuDtos;
