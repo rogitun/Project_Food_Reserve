@@ -1,6 +1,12 @@
     for(let i = 9;i < 23;i++){
-    let hm = i + ":00";
-    let hm2 = i + ":30";
+    if(i<=9){
+        let hm = "0" + i + ":00";
+        let hm2 = "0" + i + ":30";
+    }
+    else{
+        let hm = i + ":00";
+        let hm2 = i + ":30";
+    }
     $("#time").append("<option value=" + hm + ">" + hm + "</option>");
     $("#time").append("<option value=" + hm2 + ">" + hm2 + "</option>");
 }

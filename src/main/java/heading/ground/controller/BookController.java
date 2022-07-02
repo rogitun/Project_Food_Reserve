@@ -45,7 +45,7 @@ public class BookController {
 
     @GetMapping("/test-book")
     public String testbook() {
-        return "/book/bookDetailDemo";
+        return "book/bookDetailDemo";
     }
 
     @PostMapping("/list-confirm")

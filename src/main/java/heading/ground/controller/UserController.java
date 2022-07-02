@@ -63,7 +63,7 @@ public class UserController {
 
     @GetMapping("/signup-seller")
     public String sellerSignUpForm() {
-        return "/user/seller-signup";
+        return "user/seller-signup";
     }
 
     @GetMapping("/profile") //프로필
@@ -112,7 +112,7 @@ public class UserController {
             }
             model.addAttribute("account", sellerDto);
 
-            return "/user/account";
+            return "user/account";
         } else if (principal.getRole().equals("STUDENT")) {
             //Student student = userRepository.findStudentByIdForAccount(principal.getId());
             Optional<BaseUser> byId = userRepository.findById(principal.getId());

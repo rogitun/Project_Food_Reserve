@@ -115,7 +115,7 @@ public class PostController {
         List<Menu> menus = menuRepository.findMenusBySellerId(principal.getId());
         List<MenuManageDto> menuDtos = menus.stream().map(m -> new MenuManageDto(m)).collect(Collectors.toList());
         model.addAttribute("menus", menuDtos);
-        return "/post/manage-menu";
+        return "post/manage-menu";
     }
 
     @PreAuthorize("hasAuthority('SELLER')")
