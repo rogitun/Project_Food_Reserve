@@ -87,7 +87,8 @@ public class MainController {
     @ResponseBody
     @GetMapping("/image/{image}")
     public Resource showImage(@PathVariable String image) throws MalformedURLException {
-        return new UrlResource("file:" + fileStore.getFullPath(image));
+        return new UrlResource("file:imageUpload/" + image);
+        //return new UrlResource("file:imageUpload/" + fileStore.getFullPath(image));
     }
 
     @GetMapping("/notices")

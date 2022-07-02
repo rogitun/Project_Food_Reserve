@@ -38,7 +38,6 @@ public class PostService {
 
     @Transactional
     public void addMenu(MenuForm form, Long id) throws IOException {
-        //Seller seller = sellerRepository.findById(id).get();
         Seller seller = (Seller) userRepository.findById(id).get();
         Menu menu = form.toEntity();
 

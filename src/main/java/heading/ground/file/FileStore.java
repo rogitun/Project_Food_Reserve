@@ -7,13 +7,19 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.UUID;
 
 @Component
 public class FileStore {
 
-    @Value("${file.dir}")
-    private String fileDir;
+//    @Value("${file.dir}")
+//    private String fileDir;
+    private final String fileDir = "imageUpload";
 
     public String getFullPath(String fileName){
         return fileDir + fileName;
@@ -23,16 +29,31 @@ public class FileStore {
         if(multipartFile.isEmpty()){
             return null;
         }
+
         String originalFilename = multipartFile.getOriginalFilename();
         String storeFileName = createStoreFileName(originalFilename);
 
-        multipartFile.transferTo(new File(getFullPath(storeFileName)));
+        Path uploadPath = Paths.get(fileDir);
+
+        if(!Files.exists(uploadPath)){
+            Files.createDirectories(uploadPath);
+        }
+
+        try(InputStream inputStream = multipartFile.getInputStream()){
+            Path filePath = uploadPath.resolve(storeFileName);
+            Files.copy(inputStream,filePath, StandardCopyOption.REPLACE_EXISTING);
+        }catch (IOException e){
+            throw new IOException("Cannot Save file : " + storeFileName,e);
+        }
+
+
+       // multipartFile.transferTo(new File(getFullPath(storeFileName)));
 
         return new ImageFile(originalFilename,storeFileName);
     }
 
     public void deleteImage(String imageName){
-        File file = new File(fileDir + imageName);
+        File file = new File(fileDir +"/"+ imageName);
         file.delete();
     }
 
