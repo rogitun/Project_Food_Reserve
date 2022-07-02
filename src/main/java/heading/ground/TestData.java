@@ -22,19 +22,17 @@ import javax.annotation.PostConstruct;
 @RequiredArgsConstructor
 public class TestData {
 
-    private final MenuRepository mu;
     private final UserRepository us;
     private final BCryptPasswordEncoder passwordEncoder;
-    private final CategoryRepository cr;
     private final ShopCartRepository shopCartRepository;
 
     @PostConstruct
     @Transactional
     public void init(){
 
-        String[] stores = new String[]{"갈비탕","순대국","떡볶이","등갈비","백반집","기사식당","해장국전문","다팔아요","국수천국","코리안피자","코리안마라"};
+        String[] stores = new String[]{"하늘지기","청와삼대","중국관","바지락칼국수","스와레","쇼쿠오쿠",};
 
-        for(int i=0;i<11;i++){
+        for(int i=0;i<6;i++){
             Seller seller = Seller.builder()
                     .loginId("abc"+i)
                     .name(stores[i])
@@ -57,7 +55,6 @@ public class TestData {
                 .name("abcd")
                 .email("abc@abcd.com")
                 .build();
-
 
         Student save = us.save(student);
         shopCartRepository.save(new ShopCart(save));
