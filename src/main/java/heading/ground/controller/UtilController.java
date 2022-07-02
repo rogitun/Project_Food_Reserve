@@ -254,7 +254,7 @@ public class UtilController {
             model.addAttribute("menus", cart);
         }
 
-        return "/util/shopCart";
+        return "util/shopCart";
     }
 
     @PreAuthorize("hasAuthority('STUDENT')")

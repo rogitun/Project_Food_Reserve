@@ -31,7 +31,7 @@ public class AdminController {
     @GetMapping()
     @PreAuthorize("hasAuthority('ADMIN')")
     public String adminPage(){
-        return "/admin/main";
+        return "admin/main";
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
@@ -39,7 +39,7 @@ public class AdminController {
     public String addCategory(Model model){
         List<Category> all = categoryRepository.findAll();
         model.addAttribute("category",all);
-        return "/admin/addCategory";
+        return "admin/addCategory";
     }
 
 
@@ -64,7 +64,7 @@ public class AdminController {
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/add-notice")
     public String addNotice(){
-        return "/admin/addNotice";
+        return "admin/addNotice";
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
@@ -86,7 +86,7 @@ public class AdminController {
 
         model.addAttribute("notice",notice);
 
-        return "/admin/noticeEdit";
+        return "admin/noticeEdit";
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
@@ -112,7 +112,7 @@ public class AdminController {
     public String notices(Model model){
         List<Notice> all = noticeRepository.findAll();
         model.addAttribute("notice",all);
-        return "/admin/notices";
+        return "admin/notices";
     }
 
 }

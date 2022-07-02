@@ -20,6 +20,7 @@ import heading.ground.repository.util.ShopCartRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -122,6 +123,9 @@ public class UtilService {
         javaMailSender.send(mimeMessage);
     }
 
+    @Value("${deploy.url}")
+    private String pwdUrl;
+
     private String createMessage(String uuid) {
         StringBuffer content = new StringBuffer();
         content.append("<!DOCTYPE html>");
@@ -132,7 +136,7 @@ public class UtilService {
         content.append(
                 "<div>" +
                         "<p>아래 URL을 통해 비밀번호를 변경해주세요.</p><br>" +
-                        "<a href = http://localhost:8080/reset-password/" + uuid + ">비밀번호 변경</a>"
+                        "<a href = "+ pwdUrl + "/reset-password/" + uuid + ">비밀번호 변경</a>"
                         + "</div>");
         content.append("</body>");
         content.append("</html>");
