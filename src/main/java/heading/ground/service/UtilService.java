@@ -52,8 +52,8 @@ public class UtilService {
     private final NoticeRepository noticeRepository;
 
 
-    @Autowired
-    private JavaMailSender javaMailSender;
+
+    private final JavaMailSender javaMailSender;
 
     @Transactional
     public void editNotice(Long id, String title, String content) {
