@@ -1,7 +1,7 @@
 package heading.ground.security.user;
 
-import heading.ground.entity.user.BaseUser;
-import heading.ground.repository.user.UserRepository;
+import heading.ground.user.entity.BaseUser;
+import heading.ground.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -17,7 +17,7 @@ public class MyUserDetailsService implements UserDetailsService {
     private final UserRepository userRepository;
 
     @Override
-    public MyUserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public MyUserDetails loadUserByUsername(String username){
         Optional<BaseUser> optional = userRepository.findByLoginId(username);
 
         optional.orElseThrow(()->new UsernameNotFoundException("Unknown : " + username));

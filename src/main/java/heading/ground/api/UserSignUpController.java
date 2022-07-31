@@ -1,14 +1,14 @@
 package heading.ground.api;
 
 import heading.ground.api.dto.user.StudentFormJson;
-import heading.ground.entity.user.MyRole;
-import heading.ground.entity.user.Seller;
+import heading.ground.user.entity.MyRole;
+import heading.ground.user.entity.Seller;
 import heading.ground.api.dto.user.SellerFormJson;
-import heading.ground.entity.user.Student;
-import heading.ground.entity.util.ShopCart;
-import heading.ground.repository.user.UserRepository;
-import heading.ground.repository.util.ShopCartRepository;
-import heading.ground.service.UserService;
+import heading.ground.user.entity.Student;
+import heading.ground.utils.entity.ShopCart;
+import heading.ground.user.repository.UserRepository;
+import heading.ground.utils.repository.ShopCartRepository;
+import heading.ground.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

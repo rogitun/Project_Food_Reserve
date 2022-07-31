@@ -1,7 +1,7 @@
 package heading.ground.security.config;
 
-import heading.ground.entity.user.BaseUser;
-import heading.ground.repository.user.UserRepository;
+import heading.ground.user.entity.BaseUser;
+import heading.ground.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.BadCredentialsException;

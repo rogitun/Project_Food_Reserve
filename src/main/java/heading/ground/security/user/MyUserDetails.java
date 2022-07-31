@@ -1,6 +1,6 @@
 package heading.ground.security.user;
 
-import heading.ground.entity.user.BaseUser;
+import heading.ground.user.entity.BaseUser;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
