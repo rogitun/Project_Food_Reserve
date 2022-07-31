@@ -24,7 +24,7 @@ https://abstracted-match-95f.notion.site/9a64e31d3a544c8fbf016e7e1d1cf0e4
 - Server
   - AWS
 - Back End
-  - Spring Boot, Spring Security, JPA
+  - Spring Boot, Spring Security, JPA, QueryDsl(적용중)
   - MySQL
 - Front End
   - HTML, CSS, JS, Thymeleaf
