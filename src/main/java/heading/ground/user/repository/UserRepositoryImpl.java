@@ -25,7 +25,6 @@ import static heading.ground.booking.entity.post.QMenu.menu;
 import static heading.ground.file.QImageFile.imageFile;
 import static heading.ground.user.entity.QBaseUser.baseUser;
 import static heading.ground.user.entity.QSeller.seller;
-import static heading.ground.user.entity.QStudent.student;
 import static heading.ground.utils.entity.QCategory.category;
 
 @RequiredArgsConstructor
@@ -35,8 +34,6 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
 
     @Override
     public Student findStudentById(Long id) {
-        //@Query("select s from Student s " +
-//            "where s.id = :uid")
 
         Student student = queryFactory.selectFrom(QStudent.student)
                 .where(QStudent.student.id.eq(id))
@@ -56,10 +53,6 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
 
     @Override
     public Seller findByIdWithMenu(Long id) {
-//        @Query("select s from Seller s " +
-//                "left join fetch s.menus m " +
-//                "where s.id = :uid")
-//
         Seller seller = queryFactory.select(QSeller.seller)
                 .from(QSeller.seller)
                 .leftJoin(QSeller.seller.menus, menu).fetchJoin()
@@ -71,9 +64,6 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
 
     @Override
     public String findUserNameById(Long id) {
-//        @Query("select u.name from BaseUser u " +
-//                "where u.id = :uid")
-//        String findUserNameById(@Param("uid") Long id);
         String userName = queryFactory.select(baseUser.name)
                 .from(baseUser)
                 .where(baseUser.id.eq(id)).fetchOne();
@@ -98,11 +88,6 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
         return PageableExecutionUtils.getPage(data, pageRequest, countQuery::fetchOne);
     }
 
-    //    @Query(value = "select distinct s from Seller s " +
-//            "left join fetch s.category c " +
-//            "left join fetch s.imageFile i " +
-//            "where s.name like %:key%",
-//            countQuery = "select count(s) from Seller s where s.name like %:key%")
     @Override
     public Page<Seller> findAllByKeyword(String key, String cat, Pageable pageable) {
         List<Seller> data = queryFactory.select(seller).distinct()
@@ -133,4 +118,16 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
             builder.or(seller.category.name.eq(cat));
         return builder;
     }
+
+//    private BooleanExpression iskeyEqual(String key) {
+//        if (StringUtils.hasText(key))
+//            return seller.name.contains(key);
+//        return null;
+//    }
+//
+//    private BooleanExpression iscatEqual(String cat) {
+//        if (StringUtils.hasText(cat))
+//            return seller.category.name.eq(cat);
+//        return null;
+//    }
 }

@@ -158,5 +158,8 @@ public class UserService {
         }
     }
 
-
+    public Seller getSeller(Long id) {
+        Optional<BaseUser> byId = userRepository.findById(id);
+        return (Seller) byId.get();
+    }
 }

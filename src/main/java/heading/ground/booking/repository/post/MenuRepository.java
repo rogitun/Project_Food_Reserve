@@ -11,24 +11,24 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-public interface MenuRepository extends JpaRepository<Menu,Long> {
+public interface MenuRepository extends JpaRepository<Menu,Long>, MenuRepositoryCustom {
 
-    @Query(value = "select m from Menu m " +
-            "join fetch m.seller s ",
-    countQuery = "select count(m) from Menu m")
-    Page<Menu> findMenusWithSeller(Pageable pageable);
+//    @Query(value = "select m from Menu m " +
+//            "join fetch m.seller s ",
+//    countQuery = "select count(m) from Menu m")
+//    Page<Menu> findMenusWithSeller(Pageable pageable);
 
-    @Query(value = "select m from Menu m " +
-            "join fetch m.seller s " +
-            "where s.id = :sid",
-    countQuery = "select count(m) from Menu m")
-    Page<Menu> findBySellerPage(@Param("sid") Long id, Pageable pageable);
+//    @Query(value = "select m from Menu m " +
+//            "join fetch m.seller s " +
+//            "where s.id = :sid",
+//    countQuery = "select count(m) from Menu m")
+//    Page<Menu> findBySellerPage(@Param("sid") Long id, Pageable pageable);
 
-    @Query(value = "select m from Menu m " +
-            "join fetch m.seller s " +
-            "where m.name like %:key%",
-    countQuery = "select count(m) from Menu m where m.name like %:key%")
-    Page<Menu> findAllByKey(Pageable pageRequest,@Param("key") String key);
+//    @Query(value = "select m from Menu m " +
+//            "join fetch m.seller s " +
+//            "where m.name like %:key%",
+//    countQuery = "select count(m) from Menu m where m.name like %:key%")
+//    Page<Menu> findAllByKey(Pageable pageRequest,@Param("key") String key);
 
     @Query("select m from Menu m " +
             "join fetch m.seller s " +

@@ -69,7 +69,8 @@ public class UserController {
         if (principal.getRole().equals("SELLER")) {
             //TODO MENU는 Best 메뉴만
             //TODO SellerWithMenu & Book 나눠서 가져오기
-            Seller seller = (Seller) userRepository.findById(principal.getId()).get();
+            Seller seller = userService.getSeller(principal.getId());
+
             List<Menu> bestMenus = menuRepository.findBestMenusBySellerId(seller.getId(), PageRequest.of(0, 4));
             List<Book> books = bookRepository.findBySellerId(principal.getId(), pageRequest);
             SellerDto sellerDto = SellerDto.builder()
