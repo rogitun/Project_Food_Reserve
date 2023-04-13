@@ -47,7 +47,7 @@ function beforePay(){
 
 //parameter  = 가게이름,bookId ,구매자이름, 이메일, 전화번호,결제금액
 function requestPay(api) {
-    IMP.init("imp26725094"); // 예: imp00000000
+    IMP.init("imp000000"); // 예: imp00000000
       // IMP.request_pay(param, callback) 결제창 호출
       IMP.request_pay({ // param
           pg: "kcp",
